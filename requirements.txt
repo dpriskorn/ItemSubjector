@@ -1,0 +1,5 @@
+spacy~=3.1.2
+#spacy-transformers
+pynif~=0.2.0
+requests~=2.26.0
+rich~=10.9.0
