@@ -19,30 +19,62 @@ baseurl = "https://www.wikidata.org/wiki/"
 # and with the entity label in the item label
 # upload main subject to all
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0',
-    'Accept': '*/*',
-    'Accept-Language': 'sv-SE,sv;q=0.8,en-US;q=0.5,en;q=0.3',
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Origin': 'https://opentapioca.org',
-    'DNT': '1',
-    'Connection': 'keep-alive',
-    'Referer': 'https://opentapioca.org/',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-}
+def select_lexical_category():
+    menu = SelectionMenu(WikidataLexicalCategory.__members__.keys(), "Select a lexical category")
+    menu.show()
+    menu.join()
+    selected_lexical_category_index = menu.selected_option
+    category_mapping = {}
+    for index, item in enumerate(WikidataLexicalCategory):
+        category_mapping[index] = item
+    selected_lexical_category = category_mapping[selected_lexical_category_index]
+    logger.debug(f"selected:{selected_lexical_category_index}="
+                 f"{selected_lexical_category}")
+    return selected_lexical_category
 
-data = {
-  'query': "Patient Perspectives of Dignity, Autonomy and Control at the End of Life: Systematic Review and Meta-Ethnography"
-}
 
-response = requests.post('https://opentapioca.org/api/annotate', headers=headers, data=data)
-if response.status_code == 200:
-    console.print("Got 200")
-    json_data = response.json()
-    console.print(json_data)
+def select_language():
+    menu = SelectionMenu(WikimediaLanguageCode.__members__.keys(), "Select a language")
+    menu.show()
+    menu.join()
+    selected_language_index = menu.selected_option
+    mapping = {}
+    for index, item in enumerate(WikimediaLanguageCode):
+        mapping[index] = item
+    selected_language = mapping[selected_language_index]
+    logger.debug(f"selected:{selected_language_index}="
+                 f"{selected_language}")
+    return selected_language
+
+def get_entities():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0',
+        'Accept': '*/*',
+        'Accept-Language': 'sv-SE,sv;q=0.8,en-US;q=0.5,en;q=0.3',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Origin': 'https://opentapioca.org',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Referer': 'https://opentapioca.org/',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+    }
+
+    data = {
+      'query': "Patient Perspectives of Dignity, Autonomy and Control at the End of Life: Systematic Review and Meta-Ethnography"
+    }
+
+    response = requests.post('https://opentapioca.org/api/annotate', headers=headers, data=data)
+    if response.status_code == 200:
+        console.print("Got 200")
+        json_data = response.json()
+        console.print(json_data)
+        return json_data
+
+
+def process_entities():
     #exit(0)
     for annotation in json_data["annotations"]:
         # we select first tag only for now
@@ -59,6 +91,10 @@ if response.status_code == 200:
     # and that does not have this entity as main subject already
     # and upload to all
 
+
+def main():
+
+    get_entities()
 # NER = spacy.load("en_core_web_sm")
 # raw_text=("The Indian Space Research Organisation or is the "
 #           "national space agency of India, headquartered in Bengaluru. "
