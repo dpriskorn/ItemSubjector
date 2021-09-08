@@ -1,3 +1,4 @@
+import requests
 from rich.console import Console
 console = Console()
 # import spacy
@@ -5,24 +6,18 @@ console = Console()
 
 baseurl = "https://www.wikidata.org/wiki/"
 
+# pseudo code
+# let user choose what to work on ie.
 # let user choose language and subgraph
 # e.g. Swedish documents from Riksdagen
 # e.g. English scientific articles
-# get 20 items with labels from WD that has no "main subject"
-# load the relevant model
-# parse the first label
-# if a NE is found
-## ask user if it is correct
-##
-
-# Tests
-# English
-# NIF test with opentapioca
-# from pynif import NIFCollection
-# collection = NIFCollection(uri="https://opentapioca.org/api/nif")
-
-# test annotate
-import requests
+# loop:
+# get some items with labels
+# do NER on a label
+# let the user chose 1 meaningful match
+# download all items without main subject matching the matched entity
+# and with the entity label in the item label
+# upload main subject to all
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0',
@@ -63,7 +58,7 @@ if response.status_code == 200:
     # scientific articles with this entity label (using elastic search?)
     # and that does not have this entity as main subject already
     # and upload to all
-    
+
 # NER = spacy.load("en_core_web_sm")
 # raw_text=("The Indian Space Research Organisation or is the "
 #           "national space agency of India, headquartered in Bengaluru. "
