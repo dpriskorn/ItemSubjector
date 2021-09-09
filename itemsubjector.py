@@ -49,9 +49,9 @@ def find_entities(item: Item = None):
     }
     response = requests.post('https://opentapioca.org/api/annotate', headers=headers, data=data)
     if response.status_code == 200:
-        console.print("Got 200")
+        logging.info("Got 200")
         json_data = response.json()
-        console.print(json_data)
+        logging.debug(json_data)
         return json_data
     else:
         raise Exception(f"Got f{response.status_code} from opentapioca")
@@ -76,17 +76,20 @@ def process_entities(json_data):
 
 
 def main():
+    logger = logging.getLogger(__name__)
+    print("Starting")
     # for now only English
     # chose_language()
     task: Task = select_task()
     if task is None:
         raise ValueError("Got no task")
+    task.items.fetch()
     for item in task.items.list:
         json_data = find_entities(item=item)
         process_entities(json_data)
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
 
 # NER = spacy.load("en_core_web_sm")
