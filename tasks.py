@@ -22,8 +22,7 @@ class ScholarlyArticles(Items):
                         rdfs:label ?label.
                   ?statement0 (ps:P31/(wdt:P279*)) wd:Q13442814.
                   minus{{
-                    # FIXME
-                    ?item wdt:main subject [].
+                    ?item wdt:P921 [].  # main subject
                     }}
                   filter(lang(?label) = "en").
                 }}
