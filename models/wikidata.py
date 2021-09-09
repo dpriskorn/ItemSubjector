@@ -86,6 +86,14 @@ class WikidataNamespaceLetters(Enum):
     #SENSE = "S"
 
 
+# todo import the one from WBI
+class WikibaseSnakValueType(Enum):
+    KNOWN_VALUE = "value"
+    NO_VALUE = "novalue"
+    # fixme
+    UNKNOWN_VALUE = "cannot remember"
+
+
 class EntityID:
     letter: WikidataNamespaceLetters
     # This can be e.g. "32698-F1" in the case of a lexeme
@@ -129,6 +137,34 @@ class ForeignID:
         self.id = id
         self.property = EntityID(property).to_string()
         self.source_item_id = EntityID(source_item_id).to_string()
+
+
+class Statement:
+    property: str
+    value: str = None
+    value_type: WikibaseSnakValueType = WikibaseSnakValueType.KNOWN_VALUE
+
+    def __init__(self,
+                 property: str = None,
+                 value: str = None,
+                 value_type: WikibaseSnakValueType = None):
+        """This supports just giving a property and a value
+        without specifying value_type"""
+        if property is None:
+            raise ValueError("Got no property")
+        if value is None and value_type is None:
+            raise ValueError("Got no value or value_type")
+        # We got a property and a value or a value_type
+        if value is None:
+            # So we got a value_type
+            if value_type is WikibaseSnakValueType.KNOWN_VALUE:
+                raise ValueError("Got no value but a KNOWN_VALUE type")
+            self.value_type = value_type
+        else:
+            # We got a value!
+            self.value = value
+        # Set the property
+        self.property = str(EntityID(property))
 
 
 class Form:
