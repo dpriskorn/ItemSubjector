@@ -14,19 +14,25 @@ class ScholarlyArticles(Items):
         logger = logging.getLogger(__name__)
         results = (execute_sparql_query(f'''
             #title:Scientific articles missing main subject
-            SELECT DISTINCT ?item ?itemLabel WHERE {{
-              SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-              {{
-                SELECT DISTINCT ?item WHERE {{
-                  ?item p:P31 ?statement0;
-                        rdfs:label ?label.
-                  ?statement0 (ps:P31/(wdt:P279*)) wd:Q13442814.
-                  minus{{
-                    ?item wdt:P921 [].  # main subject
-                    }}
-                  filter(lang(?label) = "en").
-                }}
-                LIMIT 10
+            #author:So9q inspired a query by Azertus
+            #date:2021-09-09
+            SELECT ?item ?itemLabel WHERE {{
+                {{ SELECT * WHERE {{
+                  SERVICE wikibase:mwapi {{
+                    bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                                    wikibase:api "Search";
+                                    mwapi:srsearch 'haswbstatement:P31=Q13442814';
+                                    mwapi:language "en".
+                    ?title wikibase:apiOutput mwapi:title. 
+                  }}
+                  BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
+                }} LIMIT 50 }}  
+              MINUS {{
+                ?item wdt:P921 [].  # main subject
+              }}
+              SERVICE wikibase:label {{
+                bd:serviceParam wikibase:language "en" .
+                ?item rdfs:label ?itemLabel .
               }}
             }}
         ''', endpoint=config.endpoint))
