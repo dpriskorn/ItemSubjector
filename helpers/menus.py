@@ -1,5 +1,7 @@
 import logging
 
+from consolemenu import SelectionMenu
+
 from models.wikidata import WikimediaLanguageCode
 
 
