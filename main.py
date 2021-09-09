@@ -4,12 +4,12 @@ import requests
 
 # import spacy
 # from spacy import displacy
+import config
 from helpers.console import console
 from helpers.menus import select_task
 from models.task import Task
 from models.wikidata import Item
 
-baseurl = "https://www.wikidata.org/wiki/"
 
 # pseudo code
 # let user choose what to work on ie.
@@ -66,7 +66,7 @@ def process_entities(json_data):
         description = tag["desc"]
         console.print(f"label:{label}\n"
                       f"desc:{description}\n"
-                      f"{baseurl+qid}\n")
+                      f"{config.wd_prefix+qid}\n")
     # give the user a list to choose from
     # when the user has chosen something, find other
     # scientific articles with this entity label (using elastic search?)
