@@ -6,7 +6,8 @@ from enum import Enum
 from typing import List, Dict
 
 import requests
-from wikibaseintegrator import wbi_login, wbi_config
+from wikibaseintegrator import WikibaseIntegrator, wbi_login, wbi_config
+from wikibaseintegrator.datatypes import BaseDataType
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 # We get the URL for the Wikibase from here
@@ -86,14 +87,6 @@ class WikidataNamespaceLetters(Enum):
     #SENSE = "S"
 
 
-# todo import the one from WBI
-class WikibaseSnakValueType(Enum):
-    KNOWN_VALUE = "value"
-    NO_VALUE = "novalue"
-    # fixme
-    UNKNOWN_VALUE = "cannot remember"
-
-
 class EntityID:
     letter: WikidataNamespaceLetters
     # This can be e.g. "32698-F1" in the case of a lexeme
@@ -143,9 +136,9 @@ class Statement:
     """Implements WBI datatypes and an extra label"""
     # This is used for UI facing code. E.g. uploading Statement.label to Item.label
     label: str = None
-    statement: wbi_datatype
-    qualifiers = []  #type: List[wbi_datatype]
-    references = []  # type: List[wbi_datatype]
+    statement: BaseDataType
+    qualifiers: List[BaseDataType] = []
+    references: List[BaseDataType] = []
 
     # def __init__(self,
     #              property: str = None,
@@ -232,15 +225,14 @@ class Entity:
         if statement.label is None:
             raise ValueError("statement label was None")
         print(f"Uploading {statement.label} to {self.id}: {self.label}")
-        if statement.value_type is WikibaseSnakValueType.KNOWN_VALUE:
-            item = wbi_core.ItemEngine(
-                data=[statement.statement, statement.qualifiers, statement.references],
-                item_id=self.id
-            )
-            # debug WBI error
-            # print(item.get_json_representation())
+        wbi = WikibaseIntegrator(login=config.login_instance)
+        item = wbi.Item(
+            data=[statement.statement, statement.qualifiers, statement.references],
+            item_id=self.id
+        )
+        # debug WBI error
+        # print(item.get_json_representation())
         result = item.write(
-            config.login_instance,
             edit_summary=f"Added {statement.label} with [[{config.tool_url}]]"
         )
         logger.debug(f"result from WBI:{result}")
