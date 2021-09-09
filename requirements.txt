@@ -1,7 +1,7 @@
-spacy~=3.1.2
+#spacy~=3.1.2
 #spacy-transformers
-pynif~=0.2.0
+#pynif~=0.2.0
 requests~=2.26.0
 rich~=10.9.0
-wikibaseintegrator==0.11.0
 console-menu
+git+git://github.com/LeMyst/WikibaseIntegrator@0.12.0.dev2#egg=wikibaseintegrator
