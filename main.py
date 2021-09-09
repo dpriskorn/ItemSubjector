@@ -10,6 +10,7 @@ from helpers.menus import select_task
 from models.task import Task
 from models.wikidata import Item
 
+logging.basicConfig(level=logging.DEBUG)
 
 # pseudo code
 # let user choose what to work on ie.
