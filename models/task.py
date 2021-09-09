@@ -24,4 +24,4 @@ class Task:
         self.items = items
 
     def __str__(self):
-        return f"self.label"
+        return f"{self.label}"

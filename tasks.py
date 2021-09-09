@@ -4,14 +4,17 @@ from wikibaseintegrator import wbi_config
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 import config
+from helpers.console import console
 from models.task import Task
 from models.wikidata import Items, Item
 
 #wbi_config.config['SPARQL_ENDPOINT_URL'] = config.endpoint
 
 class ScholarlyArticles(Items):
-    def fetch_scientific_articles_without_main_subject(self):
+    def fetch(self):
+        """fetch_scientific_articles_without_main_subject"""
         logger = logging.getLogger(__name__)
+        console.print("Fetching items")
         results = (execute_sparql_query(f'''
             #title:Scientific articles missing main subject
             #author:So9q inspired a query by Azertus
@@ -26,7 +29,7 @@ class ScholarlyArticles(Items):
                     ?title wikibase:apiOutput mwapi:title. 
                   }}
                   BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
-                }} LIMIT 50 }}  
+                }} LIMIT 5 }}  
               MINUS {{
                 ?item wdt:P921 [].  # main subject
               }}
@@ -51,7 +54,6 @@ class ScholarlyArticles(Items):
                     f"items from WDQS")
 
 scholarly_items = ScholarlyArticles()
-scholarly_items.fetch_scientific_articles_without_main_subject()
 
 tasks = [
     Task(

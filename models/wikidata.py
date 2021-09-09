@@ -828,7 +828,7 @@ class Item(Entity):
             pass
         try:
             logger.info(json["itemLabel"])
-            self.label = str(EntityID(json["itemLabel"]["value"]))
+            self.label = (json["itemLabel"]["value"])
         except KeyError:
             pass
 
@@ -845,3 +845,5 @@ class Item(Entity):
 class Items:
     list: List[Item] = []
 
+    def fetch(self):
+        pass
