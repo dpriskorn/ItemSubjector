@@ -140,31 +140,34 @@ class ForeignID:
 
 
 class Statement:
-    property: str
-    value: str = None
-    value_type: WikibaseSnakValueType = WikibaseSnakValueType.KNOWN_VALUE
+    """Implements WBI datatypes and an extra label"""
+    # This is used for UI facing code. E.g. uploading Statement.label to Item.label
+    label: str = None
+    statement: wbi_datatype
+    qualifiers = []  #type: List[wbi_datatype]
+    references = []  # type: List[wbi_datatype]
 
-    def __init__(self,
-                 property: str = None,
-                 value: str = None,
-                 value_type: WikibaseSnakValueType = None):
-        """This supports just giving a property and a value
-        without specifying value_type"""
-        if property is None:
-            raise ValueError("Got no property")
-        if value is None and value_type is None:
-            raise ValueError("Got no value or value_type")
-        # We got a property and a value or a value_type
-        if value is None:
-            # So we got a value_type
-            if value_type is WikibaseSnakValueType.KNOWN_VALUE:
-                raise ValueError("Got no value but a KNOWN_VALUE type")
-            self.value_type = value_type
-        else:
-            # We got a value!
-            self.value = value
-        # Set the property
-        self.property = str(EntityID(property))
+    # def __init__(self,
+    #              property: str = None,
+    #              value: str = None,
+    #              value_type: WikibaseSnakValueType = None):
+    #     """This supports just giving a property and a value
+    #     without specifying value_type"""
+    #     if property is None:
+    #         raise ValueError("Got no property")
+    #     if value is None and value_type is None:
+    #         raise ValueError("Got no value or value_type")
+    #     # We got a property and a value or a value_type
+    #     if value is None:
+    #         # So we got a value_type
+    #         if value_type is WikibaseSnakValueType.KNOWN_VALUE:
+    #             raise ValueError("Got no value but a KNOWN_VALUE type")
+    #         self.value_type = value_type
+    #     else:
+    #         # We got a value!
+    #         self.value = value
+    #     # Set the property
+    #     self.property = str(EntityID(property))
 
 
 class Form:
@@ -218,7 +221,34 @@ class Sense:
     pass
 
 
-class Lexeme:
+class Entity:
+    """Base entity with code that is the same for both items and lexemes"""
+    def upload_one_statement_to_wikidata(self,
+                                         statement: Statement = None):
+        """Upload one statement"""
+        logger = logging.getLogger(__name__)
+        if statement is None:
+            raise ValueError("Statement was None")
+        if statement.label is None:
+            raise ValueError("statement label was None")
+        print(f"Uploading {statement.label} to {self.id}: {self.label}")
+        if statement.value_type is WikibaseSnakValueType.KNOWN_VALUE:
+            item = wbi_core.ItemEngine(
+                data=[statement.statement, statement.qualifiers, statement.references],
+                item_id=self.id
+            )
+            # debug WBI error
+            # print(item.get_json_representation())
+        result = item.write(
+            config.login_instance,
+            edit_summary=f"Added {statement.label} with [[{config.tool_url}]]"
+        )
+        logger.debug(f"result from WBI:{result}")
+        print(self.url())
+        # exit(0)
+
+
+class Lexeme(Entity):
     id: str
     lemma: str
     lexical_category: WikidataLexicalCategory
@@ -779,7 +809,7 @@ class LexemeStatistics:
               f"lexemes out of {self.total_lexemes} in total ({percent}%)")
 
 
-class Item:
+class Item(Entity):
     id: str
     label: str
     description: str
@@ -811,54 +841,21 @@ class Item:
             pass
 
     def parse_from_wdqs_json(self, json):
+        """Parse the json into the object"""
         for variable in json:
             logging.debug(variable)
             if variable == "item":
-                form = Form(variable)
-                self.forms.append(form)
+                self.id = variable
             if variable == "itemLabel":
-                sense = Sense(variable)
-                self.senses.append(sense)
-
-    def upload_main_subject_to_wikidata(self,
-                                        subject: str = None):
-        """Upload to enrich the wonderful Wikidata <3"""
-        logger = logging.getLogger(__name__)
-        if subject is None:
-            raise Exception("Subject was None")
-        print(f"Uploading {subject} to {self.id}: {self.lemma}")
-        statement = wbi_datatype.ItemID(
-            # FIXME
-            prop_nr=,
-            value=,
-
-        )
-        described_by_source = wbi_datatype.ItemID(
-            prop_nr="P1343",  # stated in
-            value=foreign_id.source_item_id
-        )
-        # TODO does this overwrite or append?
-        item = wbi_core.ItemEngine(
-            data=[statement,
-                  described_by_source],
-            item_id=self.id
-        )
-        # debug WBI error
-        # print(item.get_json_representation())
-        result = item.write(
-            config.login_instance,
-            edit_summary=f"Added foreign identifier with [[{config.tool_url}]]"
-        )
-        logger.debug(f"result from WBI:{result}")
-        print(self.url())
-        # exit(0)
+                self.label = variable
 
 
 class Items:
-    list: Item
+    list: List[Item] = []
 
     def fetch_scientific_articles_without_main_subject(self):
-        result = (execute_sparql_query(f'''
+        logger = logging.getLogger(__name__)
+        results = (execute_sparql_query(f'''
             #title:Scientific articles missing main subject
             SELECT DISTINCT ?item ?itemLabel WHERE {{
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -873,7 +870,20 @@ class Items:
                     }}
                   filter(lang(?label) = "en").
                 }}
-                LIMIT 100
+                LIMIT 10
               }}
             }}
-        ''')
+        '''))
+        logger.info("Got the data")
+        logger.debug(f"data:{results.keys()}")
+        try:
+            logger.debug(f"data:{results['results']['bindings']}")
+            for entry in results["results"]['bindings']:
+                logger.debug(f"data:{entry.keys()}")
+                logging.debug(f"json:{entry}")
+                item = Item(json=entry)
+                self.list.append(item)
+        except KeyError:
+            logger.error("Got no results")
+        logger.info(f"Got {len(self.list)} "
+                    f"items from WDQS")
