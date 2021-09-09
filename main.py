@@ -25,7 +25,6 @@ baseurl = "https://www.wikidata.org/wiki/"
 # upload main subject to all
 
 
-
 def find_entities(item: Item = None):
     logger = logging.getLogger(__name__)
     if item is None:
@@ -81,9 +80,13 @@ def main():
     task: Task = select_task()
     if task is None:
         raise ValueError("Got no task")
-    for item in task.items:
-        json_data = find_entities()
+    for item in task.items.list:
+        json_data = find_entities(item=item)
         process_entities(json_data)
+
+
+if __name__ == "main":
+    main()
 
 # NER = spacy.load("en_core_web_sm")
 # raw_text=("The Indian Space Research Organisation or is the "
