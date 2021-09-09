@@ -1,8 +1,13 @@
 import logging
 
+from wikibaseintegrator import wbi_config
+from wikibaseintegrator.wbi_helpers import execute_sparql_query
+
+import config
 from models.task import Task
 from models.wikidata import Items, Item
 
+#wbi_config.config['SPARQL_ENDPOINT_URL'] = config.endpoint
 
 class ScholarlyArticles(Items):
     def fetch_scientific_articles_without_main_subject(self):
@@ -25,7 +30,7 @@ class ScholarlyArticles(Items):
                 LIMIT 10
               }}
             }}
-        '''))
+        ''', endpoint=config.endpoint))
         logger.info("Got the data")
         logger.debug(f"data:{results.keys()}")
         try:
