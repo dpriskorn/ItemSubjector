@@ -1,9 +1,10 @@
 import logging
+from typing import List
 
 from consolemenu import SelectionMenu
 
-from models.wikidata import WikimediaLanguageCode
-
+from models.suggestion import Suggestion
+from models.wikidata import WikimediaLanguageCode, Item
 
 # def select_lexical_category():
 #     logger = logging.getLogger(__name__)
@@ -46,3 +47,21 @@ def select_task():
     logger.debug(f"selected:{task_index}="
                  f"{selected_task}")
     return selected_task
+
+
+def select_suggestion(suggestions: List[Suggestion] = None,
+                      item: Item = None):
+    if item is None or suggestions is None:
+        raise ValueError("Did not get what we need")
+    logger = logging.getLogger(__name__)
+    menu = SelectionMenu(suggestions, f"Does any of these fit the label \n'{item.label}'")
+    menu.show()
+    menu.join()
+    selected_index = menu.selected_option
+    if selected_index == len(suggestions) +1:
+        logger.debug("The user choosed to skip")
+    else:
+        selected_suggestion = tasks[selected_index]
+        logger.debug(f"selected:{selected_index}="
+                     f"{selected_suggestion}")
+    return selected_suggestion

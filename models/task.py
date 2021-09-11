@@ -1,4 +1,4 @@
-from models.wikidata import Items
+from models.wikidata import Labels
 
 
 class Task:
@@ -7,21 +7,21 @@ class Task:
     and the sparql query needed as a method"""
     label: str
     question: str
-    items: Items
+    labels: Labels
 
     def __init__(self,
                  label: str = None,
                  question: str = None,
-                 items: Items = None):
+                 labels: Labels = None):
         if label is None:
             raise ValueError("Got no label")
         if question is None:
             raise ValueError("Got no question")
-        if items is None:
+        if labels is None:
             raise ValueError("Got no items class")
         self.label = label
         self.question = question
-        self.items = items
+        self.labels = labels
 
     def __str__(self):
         return f"{self.label}"

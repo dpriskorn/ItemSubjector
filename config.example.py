@@ -6,7 +6,9 @@ password = ""
 
 # Global settings
 version = "0.1"  # Don't touch this.
-# Global settings
 wd_prefix = "http://www.wikidata.org/entity/"
-user_agent = f"ItemSubjector (https://github.com/dpriskorn/ItemSubjector)"
 endpoint = "https://query.wikidata.org/sparql"
+username = "User:So9q"
+user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubjector), {username}"
+tool_url = "https://github.com/dpriskorn/ItemSubjector"
+login_instance = None

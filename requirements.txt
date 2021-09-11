@@ -1,7 +1,6 @@
-#spacy~=3.1.2
-#spacy-transformers
-#pynif~=0.2.0
 requests~=2.26.0
 rich~=10.9.0
 console-menu
 git+git://github.com/LeMyst/WikibaseIntegrator@v0.12.0.dev2#egg=wikibaseintegrator
+pandas~=1.3.2
+SPARQLWrapper~=1.8.5
