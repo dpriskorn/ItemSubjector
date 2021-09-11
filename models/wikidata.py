@@ -137,22 +137,6 @@ class ForeignID:
         self.source_item_id = str(EntityID(source_item_id))
 
 
-class Statement:
-    """Implements WBI datatypes and an extra label"""
-    # This is used for UI facing code. E.g. uploading Statement.label to Item.label
-    label: str = None
-    statement: BaseDataType
-    qualifiers: List[BaseDataType] = []
-    references: List[BaseDataType] = []
-
-    def __init__(self,
-                 statement: BaseDataType = None,
-                 qualifiers: List[BaseDataType] = None,
-                 references: List[BaseDataType] = None):
-        self.statement = statement
-        self.qualifiers = qualifiers
-        self.references = references
-
 class Form:
     """
     Model for a Wikibase form
@@ -210,20 +194,20 @@ class Entity:
 
     """Base entity with code that is the same for both items and lexemes"""
     def upload_one_statement_to_wikidata(self,
-                                         statement: Statement = None):
+                                         statement: BaseDataType = None,
+                                         summary: str = None):
         """Upload one statement"""
         logger = logging.getLogger(__name__)
         if statement is None:
             raise ValueError("Statement was None")
+        if summary is None:
+            raise ValueError("summary was None")
         wbi = WikibaseIntegrator(login=config.login_instance)
-        item = wbi.Item(
-            data=[statement.statement, statement.qualifiers, statement.references],
-            item_id=self.id
-        )
+        wbi.item.claims.add([statement])
         # debug WBI error
         # print(item.get_json_representation())
-        result = item.write(
-            edit_summary=f"Added {statement.label} with [[{config.tool_url}]]"
+        result = wbi.item.write(
+            edit_summary=f"Added {summary} with [[{config.tool_url}]]"
         )
         logger.debug(f"result from WBI:{result}")
 
@@ -834,6 +818,8 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
+    def __str__(self):
+        return f"{self.id}:{self.label}"
 
 class Labels:
     dataframe: DataFrame = None

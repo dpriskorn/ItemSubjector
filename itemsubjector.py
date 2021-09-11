@@ -1,13 +1,12 @@
 import logging
 
+from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item
 
+import config
 from helpers.console import console, ask_yes_no_question, introduction
-from helpers.menus import select_task
 from models.ngram import NGram
 from models.scholarly_articles import ScholarlyArticleItems
-from models.task import Task
-from models.wikidata import Statement
 from tasks import tasks
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,8 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # loop:
 # get some labels
-# do NER on a label
-# let the user chose 1 meaningful match
+# let the user chose 1 meaningful match from our home cooked NER
 # download all items without main subject matching the matched entity
 # and with the entity label in the item label
 # upload main subject to all
@@ -58,39 +56,39 @@ logging.basicConfig(level=logging.DEBUG)
 
 def process_results(results):
     suggestions = []
-    console.status("Searching the Wikidata API for entities matching the found n-grams...")
-    for result in results:
-        ngram = NGram(
-            label=result,
-            frequency=results[result]
-        )
-        suggestion = ngram.recognize_named_entity()
-        if suggestion is not None:
-            suggestions.append(suggestion)
-    console.print("Found the following candidates:", "bold")
+    with console.status("Searching the Wikidata API for entities matching the found n-grams..."):
+        for result in results:
+            ngram = NGram(
+                label=result,
+                frequency=results[result]
+            )
+            suggestion = ngram.recognize_named_entity()
+            if suggestion is not None:
+                suggestions.append(suggestion)
+    console.print("[bold,green]Found the following candidates:")
     for suggestion in suggestions:
         answer = ask_yes_no_question(f"{str(suggestion)}\n"
                                      f"Is this a valid main subject?")
         if answer:
-            console.print(f"Fetching items with labels that have '{suggestion.ngram.label}'")
-            items = ScholarlyArticleItems()
-            items.fetch_based_on_label(suggestion=suggestion)
+            with console.status(f"Fetching items with labels that have '{suggestion.ngram.label}'..."):
+                items = ScholarlyArticleItems()
+                items.fetch_based_on_label(suggestion=suggestion)
             console.print(items.list)
             for item in items.list:
-                console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}")
-                reference = Item(
-                        "Q69652283", # inferred from title
-                        prop_nr="P887"  # based on heuristic
+                with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
+                    reference = Item(
+                            "Q69652283",  # inferred from title
+                            prop_nr="P887"  # based on heuristic
+                        )
+                    statement = Item(
+                            suggestion.id,
+                            prop_nr="P921",  # main subject
+                            references=[reference]
+                        )
+                    item.upload_one_statement_to_wikidata(
+                        statement=statement,
+                        summary=f"{suggestion.id}: {suggestion.label}"
                     )
-                main_statement = Item(
-                        suggestion.id,
-                        prop_nr="P921"  # main subject
-                    )
-                statement = Statement(
-                    statement=main_statement,
-                    references=[reference]
-                )
-                item.upload_one_statement_to_wikidata(statement)
                 console.print(item.url())
                 exit(0)
             raise Exception("exit here now")
@@ -103,6 +101,15 @@ def process_results(results):
 def main():
     logger = logging.getLogger(__name__)
     introduction()
+    with console.status("Logging in with WikibaseIntegrator..."):
+        config.login_instance = wbi_login.Login(
+            auth_method='login',
+            user=config.username,
+            password=config.password,
+            debug=True
+        )
+        # Set User-Agent
+        wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
     # for now only English
     # chose_language()
     # task: Task = select_task()
