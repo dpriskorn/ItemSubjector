@@ -1,4 +1,5 @@
 from pprint import pprint
+from urllib.parse import quote
 
 import requests
 from wikibaseintegrator.wbi_helpers import search_entities
@@ -25,4 +26,15 @@ class Suggestion(Item):
 
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
-        return f"{self.label}: {self.description[:50]}..."
+        return (f"n-gram: [green][bold]{self.ngram.label}[/bold][/green]\n"
+                f"label: [bold]{self.label}[/bold]\n"
+                f"description: {self.description[:70]}\n"
+                f"{self.url()}\n"
+                f"{self.search_url()}")
+
+    def url(self):
+        return f"https://www.wikidata.org/wiki/{self.id}"
+
+    def search_url(self):
+        search_term = quote(f'"{self.ngram.label}"')
+        return f"https://www.wikidata.org/w/index.php?search={search_term}"

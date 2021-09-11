@@ -12,10 +12,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wikibaseintegrator import WikibaseIntegrator, wbi_config
 from wikibaseintegrator.datatypes import BaseDataType
 
-# We get the URL for the Wikibase from here
 import config
 from helpers.console import console
 from helpers.sparql_dataframe import query_wikidata
+
+# We get the URL for the Wikibase from here
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -144,28 +145,13 @@ class Statement:
     qualifiers: List[BaseDataType] = []
     references: List[BaseDataType] = []
 
-    # def __init__(self,
-    #              property: str = None,
-    #              value: str = None,
-    #              value_type: WikibaseSnakValueType = None):
-    #     """This supports just giving a property and a value
-    #     without specifying value_type"""
-    #     if property is None:
-    #         raise ValueError("Got no property")
-    #     if value is None and value_type is None:
-    #         raise ValueError("Got no value or value_type")
-    #     # We got a property and a value or a value_type
-    #     if value is None:
-    #         # So we got a value_type
-    #         if value_type is WikibaseSnakValueType.KNOWN_VALUE:
-    #             raise ValueError("Got no value but a KNOWN_VALUE type")
-    #         self.value_type = value_type
-    #     else:
-    #         # We got a value!
-    #         self.value = value
-    #     # Set the property
-    #     self.property = str(EntityID(property))
-
+    def __init__(self,
+                 statement: BaseDataType = None,
+                 qualifiers: List[BaseDataType] = None,
+                 references: List[BaseDataType] = None):
+        self.statement = statement
+        self.qualifiers = qualifiers
+        self.references = references
 
 class Form:
     """
@@ -229,9 +215,6 @@ class Entity:
         logger = logging.getLogger(__name__)
         if statement is None:
             raise ValueError("Statement was None")
-        if statement.label is None:
-            raise ValueError("statement label was None")
-        print(f"Uploading {statement.label} to {self.id}: {self.label}")
         wbi = WikibaseIntegrator(login=config.login_instance)
         item = wbi.Item(
             data=[statement.statement, statement.qualifiers, statement.references],
@@ -243,8 +226,6 @@ class Entity:
             edit_summary=f"Added {statement.label} with [[{config.tool_url}]]"
         )
         logger.debug(f"result from WBI:{result}")
-        print(self.url())
-        # exit(0)
 
     def url(self):
         """This should be implemented by inheritors"""
@@ -866,7 +847,7 @@ class Labels:
             raise ValueError("Get no query")
         if quantity is None:
             raise ValueError("Get no quantity")
-        console.print(f"Fetching {quantity} labels")
+        console.status(f"Fetching {quantity} labels...")
         dataframe = (query_wikidata(f'''
             #author:So9q inspired a query by Azertus
             #date:2021-09-11
@@ -897,7 +878,7 @@ class Labels:
         # rename column
         dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
         # debug
-        logger.info(dataframe.head())
+        logger.debug(dataframe.head())
         self.dataframe = dataframe
 
     def clean_labels(self):
@@ -931,11 +912,13 @@ class Labels:
                              ngram_range=(2, 3))
         data_cv = cv.fit_transform(self.dataframe.label)
         self.document_term_matrix = pd.DataFrame(data_cv.toarray(), columns=cv.get_feature_names())
-        logger.info(self.document_term_matrix)
+        logger.debug(self.document_term_matrix)
 
-    def extract_top_100_ngrams(self) -> Dict:
-        """This extracts the top 100 n-grams from our Document Term Matrix"""
+    def extract_most_frequent_ngrams(self, quantity: int = None) -> Dict:
+        """This extracts the most frequent n-grams from our Document Term Matrix"""
         logger = logging.getLogger(__name__)
+        if quantity is None:
+            raise ValueError("quantity was None")
         self.create_document_term_matrix()
         top_dict = {}
         # We want the dict to be structured like this:
@@ -948,11 +931,11 @@ class Labels:
         # Sort descending
         sorted_list = sorted(top_dict.items(), key=lambda x: x[1], reverse=True)
         # sorted_dict
-        return dict(sorted_list[0:100])
+        return dict(sorted_list[0:quantity])
 
 
-# class Items:
-#     list: List[Item] = []
-#
-#     def fetch(self):
-#         pass
+class Items:
+    list: List[Item] = []
+
+    def fetch_based_on_label(self):
+        pass
