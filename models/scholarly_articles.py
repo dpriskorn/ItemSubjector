@@ -37,6 +37,9 @@ class ScholarlyArticleItems(Items):
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
               filter(contains(?label, "{suggestion.ngram.label}"@en))
+              # remove more specific forms of the main subject also
+              # Thanks to Jan Ainali for this improvement :)
+              MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
         ''')
