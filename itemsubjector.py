@@ -76,21 +76,21 @@ def process_results(results):
             console.print(f"Got {len(items.list)} items from WDQS")
             for item in items.list:
                 with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
-                    # NOTE when upgrading to v0.12 change ItemID -> Item
+                    main_subject_property = "P921"
                     reference = Item(
                             "Q69652283",  # inferred from title
                             prop_nr="P887"  # based on heuristic
                         )
                     statement = Item(
                             suggestion.id,
-                            prop_nr="P921",  # main subject
+                            prop_nr=main_subject_property,
                             references=[reference]
                         )
                     item.upload_one_statement_to_wikidata(
                         statement=statement,
-                        summary=f"{suggestion.id}: {suggestion.label}"
+                        summary=f"[[{main_subject_property}]]: [[{suggestion.id}]]"
                     )
-                console.print(item.url())
+                console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
                 exit(0)
             raise Exception("exit here now")
         else:

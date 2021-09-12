@@ -225,14 +225,12 @@ class Entity:
             item = wbi.item.get(self.id)
             item.claims.add([statement])
             result = item.write(
-                summary=f"Added {summary} with [[{config.tool_url}]]"
+                summary=f"Added {summary} with [[{config.tool_wikipage}]]"
             )
             logger.debug(f"result from WBI:{result}")
 
-
     def url(self):
-        """This should be implemented by inheritors"""
-        pass
+        return f"http://www.wikidata.org/entity/{self.id}"
 
 
 # class Lexeme(Entity):
@@ -839,6 +837,7 @@ class Item(Entity):
 
     def __str__(self):
         return f"{self.id}:{self.label}"
+
 
 class Labels:
     dataframe: DataFrame = None
