@@ -4,12 +4,12 @@ from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item
 
 import config
-from helpers.console import console, ask_yes_no_question, introduction
+from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table
 from models.ngram import NGram
 from models.scholarly_articles import ScholarlyArticleItems
 from tasks import tasks
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 # pseudo code
 # let user choose what to work on ie.
@@ -76,6 +76,7 @@ def process_results(results):
             console.print(items.list)
             for item in items.list:
                 with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
+                    # NOTE when upgrading to v0.12 change ItemID -> Item
                     reference = Item(
                             "Q69652283",  # inferred from title
                             prop_nr="P887"  # based on heuristic
@@ -97,19 +98,29 @@ def process_results(results):
         console.print("\n")
 
 
+def login():
+    with console.status("Logging in with WikibaseIntegrator..."):
+        if config.legacy_wbi:
+            config.login_instance = wbi_login.Login(
+                user=config.username, pwd=config.password
+            )
+            # Set User-Agent
+            wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
+        else:
+            config.login_instance = wbi_login.Login(
+                auth_method='login',
+                user=config.username,
+                password=config.password,
+                debug=False
+            )
+            # Set User-Agent
+            wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
+
 
 def main():
     logger = logging.getLogger(__name__)
     introduction()
-    with console.status("Logging in with WikibaseIntegrator..."):
-        config.login_instance = wbi_login.Login(
-            auth_method='login',
-            user=config.username,
-            password=config.password,
-            debug=True
-        )
-        # Set User-Agent
-        wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
+    login()
     # for now only English
     # chose_language()
     # task: Task = select_task()
@@ -118,8 +129,9 @@ def main():
     # We only have 1 task so don't bother about showing the menu
     task = tasks[0]
     results = task.labels.get_ngrams()
-    console.print(results)
+    logger.debug(results)
     if results is not None:
+        print_ngram_table(results)
         process_results(results)
     else:
         raise ValueError("results was None")

@@ -12,3 +12,4 @@ username = "User:So9q"
 user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubjector), {username}"
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 login_instance = None
+wbi_legacy=False

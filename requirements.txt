@@ -4,3 +4,4 @@ console-menu
 git+git://github.com/LeMyst/WikibaseIntegrator@v0.12.0.dev3#egg=wikibaseintegrator
 pandas~=1.3.2
 SPARQLWrapper~=1.8.5
+#wikibaseintegrator==0.11.0

@@ -1,4 +1,5 @@
 from rich.console import Console
+from rich.table import Table
 
 console = Console()
 
@@ -20,10 +21,21 @@ def ask_yes_no_question(message: str):
 def introduction():
     console.input(
         "This tool enables you to find n-grams from labels "
-        "semi-automatically and validate the items found by searching Wikidata.\n"
+        "semi-automatically and validate the match between the n-grams "
+        "with items found by searching Wikidata.\n"
         "E.g. the 2-gram 'breast cancer' corresponds to the item: Q128581: "
         "Breast cancer: cancer that originates in the mammary gland.\n"
         "The tool makes it simple to add main subject to a lot of items "
         "(in the example above there are ~8000 matches).\n"
+        "Note: If unsure you should reject a match when validating.\n"
         "Press Enter to start."
     )
+
+
+def print_ngram_table(results):
+    table = Table(title="N-grams found")
+    table.add_column("N-gram")
+    table.add_column("Frequency")
+    for ngram in results:
+        table.add_row(ngram, str(results[ngram]))
+    console.print(table)

@@ -9,7 +9,7 @@ from typing import List, Dict
 import pandas as pd
 from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
-from wikibaseintegrator import WikibaseIntegrator, wbi_config
+from wikibaseintegrator import wbi_config, WikibaseIntegrator
 from wikibaseintegrator.datatypes import BaseDataType
 
 import config
@@ -189,10 +189,10 @@ class Sense:
 
 
 class Entity:
+    """Base entity with code that is the same for both items and lexemes"""
     id: str
     label: str
 
-    """Base entity with code that is the same for both items and lexemes"""
     def upload_one_statement_to_wikidata(self,
                                          statement: BaseDataType = None,
                                          summary: str = None):
@@ -202,14 +202,30 @@ class Entity:
             raise ValueError("Statement was None")
         if summary is None:
             raise ValueError("summary was None")
-        wbi = WikibaseIntegrator(login=config.login_instance)
-        wbi.item.claims.add([statement])
-        # debug WBI error
-        # print(item.get_json_representation())
-        result = wbi.item.write(
-            edit_summary=f"Added {summary} with [[{config.tool_url}]]"
-        )
-        logger.debug(f"result from WBI:{result}")
+        if config.legacy_wbi:
+            raise Exception("legacy WBI is disabled")
+            # item = wbi_core.ItemEngine(
+            #     data=[statement],
+            #     item_id=self.id
+            # )
+            # # debug WBI error
+            # # print(item.get_json_representation())
+            # result = item.write(
+            #     config.login_instance,
+            #     edit_summary=f"Added foreign identifier with [[{config.tool_url}]]"
+            # )
+            # logger.debug(f"result from WBI:{result}")
+            # print(self.url())
+        else:
+            wbi = WikibaseIntegrator(login=config.login_instance)
+            wbi.item.claims.add([statement])
+            # debug WBI error
+            # print(item.get_json_representation())
+            result = wbi.item.write(
+                summary=f"Added {summary} with [[{config.tool_url}]]"
+            )
+            logger.debug(f"result from WBI:{result}")
+
 
     def url(self):
         """This should be implemented by inheritors"""
@@ -833,39 +849,39 @@ class Labels:
             raise ValueError("Get no query")
         if quantity is None:
             raise ValueError("Get no quantity")
-        console.status(f"Fetching {quantity} labels...")
-        dataframe = (query_wikidata(f'''
-            #author:So9q inspired a query by Azertus
-            #date:2021-09-11
-            SELECT #?item 
-            ?itemLabel 
-            WHERE {{
-                {{ SELECT * WHERE {{
-                  SERVICE wikibase:mwapi {{
-                    bd:serviceParam wikibase:endpoint "www.wikidata.org";
-                                    wikibase:api "Search";
-                                    # scientific article without main subject
-                                    mwapi:srsearch '{query}'; 
-                                    mwapi:language "en".
-                    ?title wikibase:apiOutput mwapi:title. 
+        with console.status(f"Fetching {quantity} labels..."):
+            dataframe = (query_wikidata(f'''
+                #author:So9q inspired a query by Azertus
+                #date:2021-09-11
+                SELECT #?item 
+                ?itemLabel 
+                WHERE {{
+                    {{ SELECT * WHERE {{
+                      SERVICE wikibase:mwapi {{
+                        bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                                        wikibase:api "Search";
+                                        # scientific article without main subject
+                                        mwapi:srsearch '{query}'; 
+                                        mwapi:language "en".
+                        ?title wikibase:apiOutput mwapi:title. 
+                      }}
+                      BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
+                    }} 
+                    LIMIT {quantity}
+                    }}  
+                  SERVICE wikibase:label {{
+                    bd:serviceParam wikibase:language "en" .
+                    ?item rdfs:label ?itemLabel .
                   }}
-                  BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
-                }} 
-                LIMIT {quantity}
-                }}  
-              SERVICE wikibase:label {{
-                bd:serviceParam wikibase:language "en" .
-                ?item rdfs:label ?itemLabel .
-              }}
-            }}
-        ''', config.endpoint))
-        # remove unwanted columns
-        dataframe = dataframe[["itemLabel.value"]]
-        # rename column
-        dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
-        # debug
-        logger.debug(dataframe.head())
-        self.dataframe = dataframe
+                }}
+            ''', config.endpoint))
+            # remove unwanted columns
+            dataframe = dataframe[["itemLabel.value"]]
+            # rename column
+            dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
+            # debug
+            logger.debug(dataframe.head())
+            self.dataframe = dataframe
 
     def clean_labels(self):
         if self.dataframe is None:

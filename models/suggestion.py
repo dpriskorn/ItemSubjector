@@ -1,11 +1,5 @@
-from pprint import pprint
 from urllib.parse import quote
 
-import requests
-from wikibaseintegrator.wbi_helpers import search_entities
-
-import config
-from helpers.console import console
 from models.ngram import NGram
 from models.wikidata import Item, EntityID
 
