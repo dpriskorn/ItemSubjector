@@ -880,7 +880,9 @@ class Labels:
                   }}
                 }}
             ''', config.endpoint))
-            if len(dataframe) > 0:
+            quantity = len(dataframe)
+            if quantity > 0:
+                console.print(f"Got {quantity} items with English labels")
                 # remove unwanted columns
                 dataframe = dataframe[["itemLabel.value"]]
                 # rename column
