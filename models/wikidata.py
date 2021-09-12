@@ -198,6 +198,8 @@ class Entity:
                                          summary: str = None):
         """Upload one statement"""
         logger = logging.getLogger(__name__)
+        if self.id is None:
+            raise ValueError("no id on item")
         if statement is None:
             raise ValueError("Statement was None")
         if summary is None:
@@ -220,10 +222,9 @@ class Entity:
             if config.login_instance is None:
                 raise ValueError("No login instance in config.login_instance")
             wbi = WikibaseIntegrator(login=config.login_instance)
-            wbi.item.claims.add([statement])
-            # debug WBI error
-            # print(item.get_json_representation())
-            result = wbi.item.write(
+            item = wbi.item.get(self.id)
+            item.claims.add([statement])
+            result = item.write(
                 summary=f"Added {summary} with [[{config.tool_url}]]"
             )
             logger.debug(f"result from WBI:{result}")
