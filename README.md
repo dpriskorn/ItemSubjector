@@ -12,5 +12,17 @@ with figuring out how to query the API using the
 CirrusSearch extensions and to remove more 
 specific main subjects from the query results.
 
+# Installation
+Clone the repo and run
+
+`pip install -r requirements.txt`
+
+to install all requirements.
+
+# Setup
+Like my other tools, copy config.example.py -> 
+config.py and enter the botusername 
+(e.g. So9q@itemsubjector) and password
+
 # License
 GPLv3+
