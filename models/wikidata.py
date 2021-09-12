@@ -217,6 +217,8 @@ class Entity:
             # logger.debug(f"result from WBI:{result}")
             # print(self.url())
         else:
+            if config.login_instance is None:
+                raise ValueError("No login instance in config.login_instance")
             wbi = WikibaseIntegrator(login=config.login_instance)
             wbi.item.claims.add([statement])
             # debug WBI error

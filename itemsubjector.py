@@ -73,7 +73,7 @@ def process_results(results):
             with console.status(f"Fetching items with labels that have '{suggestion.ngram.label}'..."):
                 items = ScholarlyArticleItems()
                 items.fetch_based_on_label(suggestion=suggestion)
-            console.print(items.list)
+            console.print(f"Got len(items.list) items from WDQS")
             for item in items.list:
                 with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
                     # NOTE when upgrading to v0.12 change ItemID -> Item
