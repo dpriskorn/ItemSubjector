@@ -91,8 +91,6 @@ def process_results(results):
                         summary=f"[[Property:{main_subject_property}]]: [[{suggestion.id}]]"
                     )
                 console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
-                exit(0)
-            raise Exception("exit here now")
         else:
             console.print("Skipping this suggestion")
         console.print("\n")
