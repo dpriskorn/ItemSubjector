@@ -44,8 +44,7 @@ class ScholarlyArticleItems(Items):
             }}
         ''')
         self.list = []
-        # debug limit to first 2 items only
-        for item_json in results["results"]["bindings"][0:2]:
+        for item_json in results["results"]["bindings"]:
             logging.debug(f"item_json:{item_json}")
             item = Item(json=item_json)
             self.list.append(item)
