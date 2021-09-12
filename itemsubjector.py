@@ -88,7 +88,7 @@ def process_results(results):
                         )
                     item.upload_one_statement_to_wikidata(
                         statement=statement,
-                        summary=f"[[{main_subject_property}]]: [[{suggestion.id}]]"
+                        summary=f"[[Property:{main_subject_property}]]: [[{suggestion.id}]]"
                     )
                 console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
                 exit(0)
