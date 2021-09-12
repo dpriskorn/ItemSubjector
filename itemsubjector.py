@@ -119,7 +119,6 @@ def main():
     logger = logging.getLogger(__name__)
     introduction()
     login()
-
     # for now only English
     # chose_language()
     # task: Task = select_task()
@@ -134,6 +133,7 @@ def main():
         process_results(results)
     else:
         raise ValueError("results was None")
+
 
 if __name__ == "__main__":
     main()
