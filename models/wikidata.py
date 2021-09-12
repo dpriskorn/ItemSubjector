@@ -809,8 +809,14 @@ class Item(Entity):
         else:
             if id is not None:
                 self.id = str(EntityID(id))
-            self.label = label
+            if label is None:
+                self.fetch_english_label()
+            else:
+                self.label = label
             self.description = description
+
+    def __str__(self):
+        return f"{self.id}:{self.label}"
 
     def parse_json(self, json):
         """Parse the form json"""
@@ -835,8 +841,12 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
-    def __str__(self):
-        return f"{self.id}:{self.label}"
+    def fetch_english_label(self):
+        """Add label from Wikidata API"""
+        with console.status("Fetching English label..."):
+            wbi = WikibaseIntegrator()
+            item = wbi.item.get(self.id)
+            self.label = item.labels.get("en")
 
 
 class Labels:

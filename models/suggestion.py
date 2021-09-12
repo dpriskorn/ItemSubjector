@@ -1,5 +1,8 @@
 from urllib.parse import quote
 
+from wikibaseintegrator import WikibaseIntegrator
+
+from helpers.console import console
 from models.ngram import NGram
 from models.wikidata import Item, EntityID
 

@@ -1,12 +1,15 @@
+import argparse
 import logging
 
 from wikibaseintegrator import wbi_login, wbi_config
-from wikibaseintegrator.datatypes import Item
+from wikibaseintegrator.datatypes import Item as ItemType
 
 import config
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table
 from models.ngram import NGram
 from models.scholarly_articles import ScholarlyArticleItems
+from models.suggestion import Suggestion
+from models.wikidata import Item
 from tasks import tasks
 
 logging.basicConfig(level=logging.WARNING)
@@ -17,7 +20,6 @@ logging.basicConfig(level=logging.WARNING)
 # e.g. Swedish documents from Riksdagen
 # e.g. English scientific articles
 
-
 # loop:
 # get some labels
 # let the user chose 1 meaningful match from our home cooked NER
@@ -25,33 +27,31 @@ logging.basicConfig(level=logging.WARNING)
 # and with the entity label in the item label
 # upload main subject to all
 
-# def process_entities(json_data):
-#     #exit(0)
-#     suggestions: List[Suggestion] = []
-#     for annotation in json_data["annotations"]:
-#         # we select first tag only for now
-#         tag = annotation["tags"][0]
-#         suggestion = Suggestion(
-#             id=tag["id"],
-#             # Pick the first label
-#             label=tag["label"][0],
-#             description=tag["desc"]
-#         )
-#         console.print(suggestion)
-#         suggestions.append(suggestion)
-#         # qid = tag["id"]
-#         # label = tag["label"]
-#         # description = tag["desc"]
-#         # console.print(f"tag:{tag}\n"
-#         #               f"label:{label}\n"
-#         #               f"desc:{description}\n"
-#         #               f"{config.wd_prefix+qid}\n")
-#     return suggestions
-#     # give the user a list to choose from
-#     # when the user has chosen something, find other
-#     # scientific articles with this entity label (using elastic search?)
-#     # and that does not have this entity as main subject already
-#     # and upload to all
+
+def add_suggestion_to_items(suggestion: Suggestion = None):
+    if suggestion is None:
+        raise ValueError("Suggestion was None")
+    with console.status(f"Fetching items with labels that have '{suggestion.ngram.label}'..."):
+        items = ScholarlyArticleItems()
+        items.fetch_based_on_label(suggestion=suggestion)
+    console.print(f"Got {len(items.list)} items from WDQS")
+    for item in items.list:
+        with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
+            main_subject_property = "P921"
+            reference = ItemType(
+                "Q69652283",  # inferred from title
+                prop_nr="P887"  # based on heuristic
+            )
+            statement = ItemType(
+                suggestion.id,
+                prop_nr=main_subject_property,
+                references=[reference]
+            )
+            item.upload_one_statement_to_wikidata(
+                statement=statement,
+                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.id}]]"
+            )
+        console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
 
 
 def process_results(results):
@@ -70,27 +70,7 @@ def process_results(results):
         answer = ask_yes_no_question(f"{str(suggestion)}\n"
                                      f"Is this a valid main subject?")
         if answer:
-            with console.status(f"Fetching items with labels that have '{suggestion.ngram.label}'..."):
-                items = ScholarlyArticleItems()
-                items.fetch_based_on_label(suggestion=suggestion)
-            console.print(f"Got {len(items.list)} items from WDQS")
-            for item in items.list:
-                with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
-                    main_subject_property = "P921"
-                    reference = Item(
-                            "Q69652283",  # inferred from title
-                            prop_nr="P887"  # based on heuristic
-                        )
-                    statement = Item(
-                            suggestion.id,
-                            prop_nr=main_subject_property,
-                            references=[reference]
-                        )
-                    item.upload_one_statement_to_wikidata(
-                        statement=statement,
-                        summary=f"[[Property:{main_subject_property}]]: [[{suggestion.id}]]"
-                    )
-                console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
+            add_suggestion_to_items(suggestion=suggestion)
         else:
             console.print("Skipping this suggestion")
         console.print("\n")
@@ -117,22 +97,50 @@ def login():
 
 def main():
     logger = logging.getLogger(__name__)
-    introduction()
-    login()
-    # for now only English
-    # chose_language()
-    # task: Task = select_task()
-    # if task is None:
-    #     raise ValueError("Got no task")
-    # We only have 1 task so don't bother about showing the menu
-    task = tasks[0]
-    results = task.labels.get_ngrams()
-    logger.debug(results)
-    if results is not None:
-        print_ngram_table(results)
-        process_results(results)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--list',
+                        nargs='+',
+                        help=('List of QIDs that are to be added as '
+                              'main subjects on scientific articles. '
+                              'Always add the most specific ones first. '
+                              'See the README for an example'),
+                        required=False)
+    args = parser.parse_args()
+    console.print(args.list)
+    if args.list is None:
+        introduction()
+        login()
+        # for now only English
+        # chose_language()
+        # task: Task = select_task()
+        # if task is None:
+        #     raise ValueError("Got no task")
+        # We only have 1 task so don't bother about showing the menu
+        task = tasks[0]
+        results = task.labels.get_ngrams()
+        logger.debug(results)
+        if results is not None:
+            print_ngram_table(results)
+            process_results(results)
+        else:
+            raise ValueError("results was None")
     else:
-        raise ValueError("results was None")
+        login()
+        for qid in args.list:
+            item = Item(
+                id=qid
+            )
+            console.print(f"Working on {item}")
+            # generate suggestion
+            suggestion = Suggestion(
+                id=item.id,
+                label=item.label,
+                ngram=NGram(
+                    label=item.label,
+                    frequency=None
+                )
+            )
+            add_suggestion_to_items(suggestion=suggestion)
 
 
 if __name__ == "__main__":
