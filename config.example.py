@@ -11,6 +11,7 @@ endpoint = "https://query.wikidata.org/sparql"
 wiki_user = "User:So9q"  # Change this to your username
 user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubjector), {wiki_user}"
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
+tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
 legacy_wbi=False
 random_offset=None
