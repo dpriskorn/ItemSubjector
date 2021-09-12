@@ -119,6 +119,7 @@ def main():
     logger = logging.getLogger(__name__)
     introduction()
     login()
+
     # for now only English
     # chose_language()
     # task: Task = select_task()

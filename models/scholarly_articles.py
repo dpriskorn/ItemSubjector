@@ -2,6 +2,9 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
+import config
+from helpers.calculations import calculate_random_offset
+from helpers.console import console
 from models.suggestion import Suggestion
 from models.wikidata import Labels, Items, Item
 
@@ -11,6 +14,9 @@ class ScholarlyArticleLabels(Labels):
     clean them and find the top n-grams we need"""
 
     def get_ngrams(self):
+        calculate_random_offset()
+        console.print(f"Calculated offset is: {config.random_offset} and will be used to randomize "
+                      f"the selection of scientific articles that are fetched")
         self.fetch_labels_into_dataframe(quantity=5000,
                                          # Fetch scientific articles without main subject
                                          query="haswbstatement:P31=Q13442814 -haswbstatement:P921")

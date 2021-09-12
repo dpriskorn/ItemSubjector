@@ -851,6 +851,8 @@ class Labels:
             raise ValueError("Get no query")
         if quantity is None:
             raise ValueError("Get no quantity")
+        if config.random_offset is None:
+            raise ValueError("No random offset present in the config")
         with console.status(f"Fetching {quantity} labels..."):
             dataframe = (query_wikidata(f'''
                 #author:So9q inspired a query by Azertus
@@ -869,6 +871,7 @@ class Labels:
                       }}
                       BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
                     }} 
+                    OFFSET {config.random_offset}
                     LIMIT {quantity}
                     }}  
                   SERVICE wikibase:label {{
@@ -877,13 +880,16 @@ class Labels:
                   }}
                 }}
             ''', config.endpoint))
-            # remove unwanted columns
-            dataframe = dataframe[["itemLabel.value"]]
-            # rename column
-            dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
-            # debug
-            logger.debug(dataframe.head())
-            self.dataframe = dataframe
+            if len(dataframe) > 0:
+                # remove unwanted columns
+                dataframe = dataframe[["itemLabel.value"]]
+                # rename column
+                dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
+                # debug
+                logger.debug(dataframe.head())
+                self.dataframe = dataframe
+            else:
+                raise ValueError("Got no data from WDQS")
 
     def clean_labels(self):
         if self.dataframe is None:

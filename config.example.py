@@ -12,5 +12,5 @@ wiki_user = "User:So9q"  # Change this to your username
 user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubjector), {wiki_user}"
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 login_instance = None
-wbi_legacy=False
+legacy_wbi=False
 random_offset=None
