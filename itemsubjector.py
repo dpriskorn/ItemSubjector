@@ -3,6 +3,7 @@ import logging
 
 from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item as ItemType
+from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
@@ -46,7 +47,8 @@ def add_suggestion_to_items(suggestion: Suggestion = None):
             statement = ItemType(
                 suggestion.id,
                 prop_nr=main_subject_property,
-                references=[reference]
+                references=[reference],
+                action_if_exists=ActionIfExists.APPEND
             )
             item.upload_one_statement_to_wikidata(
                 statement=statement,
