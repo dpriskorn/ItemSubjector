@@ -31,7 +31,8 @@ It has 2 modes:
 Both modes conclude by adding the 
 validated or supplied QID to all 
 scientific articles where the 
-n-gram/label appears in the label.
+n-gram/label appears in the label 
+of the target item (e.g. scientific article).
 
 ## Adding QIDs manually
 *Always provide the most precise subjects first*
