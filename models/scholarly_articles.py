@@ -37,7 +37,9 @@ class ScholarlyArticleItems(Items):
               SERVICE wikibase:mwapi {{
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";
-                                mwapi:srsearch 'haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.id} "{suggestion.ngram.label}"' .
+                                # Include spaces around the n-gram to avoid edits like this one
+                                # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
+                                mwapi:srsearch 'haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.id} " {suggestion.ngram.label} "' .
                 ?title wikibase:apiOutput mwapi:title. 
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
