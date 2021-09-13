@@ -2,6 +2,8 @@
 Tool made to add main subject statements to 
 items based on the title using a home-brewed 
 CirrusSearch-based Named Entity Recognition algorithm. 
+![bild](https://user-images.githubusercontent.com/68460690/133050804-9030b3a5-ae75-47d4-9828-7f2b9107a80a.png)
+*The tool running in PAWS adding manually found main subject QIDs*
 
 # Thanks
 During the development of this tool the author got a 
