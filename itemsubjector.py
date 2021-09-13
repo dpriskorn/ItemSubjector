@@ -5,7 +5,8 @@ from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item as ItemType
 
 import config
-from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table
+from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
+    print_best_practice_information
 from models.ngram import NGram
 from models.scholarly_articles import ScholarlyArticleItems
 from models.suggestion import Suggestion
@@ -76,6 +77,25 @@ def process_results(results):
         console.print("\n")
 
 
+def process_user_supplied_qids(args):
+    print_best_practice_information()
+    for qid in args.list:
+        item = Item(
+            id=qid
+        )
+        console.print(f"Working on {item}")
+        # generate suggestion
+        suggestion = Suggestion(
+            id=item.id,
+            label=item.label,
+            ngram=NGram(
+                label=item.label,
+                frequency=None
+            )
+        )
+        add_suggestion_to_items(suggestion=suggestion)
+
+
 def login():
     with console.status("Logging in with WikibaseIntegrator..."):
         if config.legacy_wbi:
@@ -126,21 +146,7 @@ def main():
             raise ValueError("results was None")
     else:
         login()
-        for qid in args.list:
-            item = Item(
-                id=qid
-            )
-            console.print(f"Working on {item}")
-            # generate suggestion
-            suggestion = Suggestion(
-                id=item.id,
-                label=item.label,
-                ngram=NGram(
-                    label=item.label,
-                    frequency=None
-                )
-            )
-            add_suggestion_to_items(suggestion=suggestion)
+        process_user_supplied_qids(args)
 
 
 if __name__ == "__main__":

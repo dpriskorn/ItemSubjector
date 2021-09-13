@@ -32,6 +32,22 @@ def introduction():
     )
 
 
+def print_best_practice_information():
+    console.input(
+        "When adding QID main subjects please try to first "
+        "educate yourself about the subarea of science a little "
+        "and find/create items as specific as possible.\n"
+        "E.g. when searching for 'cancer screening' in Wikidata "
+        "we find 'gastric cancer screening' but there is "
+        "perhaps no item for this yet.\n"
+        "In this case it is preferred to first create that item "
+        "(done in Q108532542 and add that as main subject and "
+        "avoid the more general 'cancer screening' until all "
+        "subforms of screening are added.\n"
+        "Press Enter to start."
+    )
+
+
 def print_ngram_table(results):
     table = Table(title="N-grams found")
     table.add_column("N-gram")
