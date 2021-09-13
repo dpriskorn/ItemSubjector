@@ -47,8 +47,7 @@ def add_suggestion_to_items(suggestion: Suggestion = None):
             statement = ItemType(
                 suggestion.id,
                 prop_nr=main_subject_property,
-                references=[reference],
-                action_if_exists=ActionIfExists.APPEND
+                references=[reference]
             )
             item.upload_one_statement_to_wikidata(
                 statement=statement,

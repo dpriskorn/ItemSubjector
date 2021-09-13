@@ -19,6 +19,7 @@ def ask_yes_no_question(message: str):
 
 
 def introduction():
+    print_keep_an_eye_on_wdqs_lag()
     console.input(
         "This tool enables you to find n-grams from labels "
         "semi-automatically and validate the match between the n-grams "
@@ -32,7 +33,12 @@ def introduction():
     )
 
 
+def print_keep_an_eye_on_wdqs_lag():
+    console.print("Please keep an eye on the lag of the WDQS cluster here and avoid working if it is over a few minutes.\nhttps://grafana.wikimedia.org/d/000000489/wikidata-query-service?orgId=1&viewPanel=8&from=now-30m&to=now&refresh=1d")
+
+
 def print_best_practice_information():
+    print_keep_an_eye_on_wdqs_lag()
     console.input(
         "When adding QID main subjects please try to first "
         "educate yourself about the subarea of science a little "

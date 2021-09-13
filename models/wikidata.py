@@ -11,6 +11,7 @@ from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
 from wikibaseintegrator import wbi_config, WikibaseIntegrator
 from wikibaseintegrator.datatypes import BaseDataType
+from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
 from helpers.console import console
@@ -196,7 +197,7 @@ class Entity:
     def upload_one_statement_to_wikidata(self,
                                          statement: BaseDataType = None,
                                          summary: str = None):
-        """Upload one statement"""
+        """Upload one statement and always append"""
         logger = logging.getLogger(__name__)
         if self.id is None:
             raise ValueError("no id on item")
@@ -223,7 +224,9 @@ class Entity:
                 raise ValueError("No login instance in config.login_instance")
             wbi = WikibaseIntegrator(login=config.login_instance)
             item = wbi.item.get(self.id)
-            item.claims.add([statement])
+            item.add_claims(
+                [statement],
+                action_if_exists=ActionIfExists.APPEND)
             result = item.write(
                 summary=f"Added {summary} with [[{config.tool_wikipage}]]"
             )
