@@ -39,12 +39,12 @@ class ScholarlyArticleItems(Items):
                                 wikibase:endpoint "www.wikidata.org";
                                 # Include spaces around the n-gram to avoid edits like this one
                                 # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
-                                mwapi:srsearch 'haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.id} " {suggestion.ngram.label} "' .
+                                mwapi:srsearch 'haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.id} "{suggestion.ngram.label}"' .
                 ?title wikibase:apiOutput mwapi:title. 
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
-              filter(contains(?label, "{suggestion.ngram.label}"@en))
+              filter(contains(?label, " {suggestion.ngram.label} "@en))
               # remove more specific forms of the main subject also
               # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.id}. }}

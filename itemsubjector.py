@@ -127,7 +127,7 @@ def main():
                               'See the README for an example'),
                         required=False)
     args = parser.parse_args()
-    console.print(args.list)
+    # console.print(args.list)
     if args.list is None:
         introduction()
         login()
