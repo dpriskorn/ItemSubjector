@@ -2,7 +2,7 @@
 Tool made to add main subject statements to 
 items based on the title using a home-brewed 
 CirrusSearch-based Named Entity Recognition algorithm. 
-![bild](https://user-images.githubusercontent.com/68460690/133050804-9030b3a5-ae75-47d4-9828-7f2b9107a80a.png)
+![bild](https://user-images.githubusercontent.com/68460690/133230724-40a610b7-5557-4b2b-b66e-2d80ca89e90d.png)
 *The tool running in PAWS adding manually found main subject QIDs*
 
 # Features
@@ -50,13 +50,15 @@ config.py and enter the botusername
 # Use
 It has 2 modes:
 1) automatic finding n-grams and trying to 
-   detect items that match
+   detect items that match (default if no
+   arguments are given on the command line)
 2) add main subject items to scholarly articles
 
 Both modes conclude by adding the 
 validated or supplied QID to all 
 scientific articles where the 
-n-gram/label appears in the label 
+n-gram or search string appears (with 
+spaces around it) in the label 
 of the target item (e.g. scientific article).
 
 ## Adding QIDs manually
