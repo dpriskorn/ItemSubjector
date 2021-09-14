@@ -75,7 +75,7 @@ subclass of the second *breast cancer*
 In this case the tool is smart enough 
 (thanks to Jan Ainali) to first add 
 *metastatic breast cancer* to items 
-and then exclude those when adding the 
+and then exclude those items when adding the 
 more general subject afterwards.
 
 This way we avoid redundancy since we 
