@@ -3,7 +3,6 @@ import logging
 
 from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item as ItemType
-from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
@@ -31,29 +30,33 @@ logging.basicConfig(level=logging.WARNING)
 
 
 def add_suggestion_to_items(suggestion: Suggestion = None):
+    """Add a suggested QID as main subject on all items that
+    have a label that matches one of the search strings for this QID"""
     if suggestion is None:
         raise ValueError("Suggestion was None")
-    with console.status(f"Fetching items with labels that have '{suggestion.ngram.label}'..."):
+    with console.status(f'Fetching items with labels that have one of '
+                        f'the search strings by running a total of '
+                        f'{len(suggestion.search_strings)} queries on WDQS...'):
         items = ScholarlyArticleItems()
         items.fetch_based_on_label(suggestion=suggestion)
-    console.print(f"Got {len(items.list)} items from WDQS")
     for item in items.list:
-        with console.status(f"Uploading main subject {suggestion.ngram.label} to {item.label}"):
+        with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
             main_subject_property = "P921"
             reference = ItemType(
                 "Q69652283",  # inferred from title
                 prop_nr="P887"  # based on heuristic
             )
             statement = ItemType(
-                suggestion.id,
+                suggestion.item.id,
                 prop_nr=main_subject_property,
                 references=[reference]
             )
             item.upload_one_statement_to_wikidata(
                 statement=statement,
-                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.id}]]"
+                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]"
             )
-        console.print(f"Added {suggestion.label} to {item.label}: {item.url()}")
+        console.print(f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
+        # input("Press enter to continue")
 
 
 def process_results(results):
@@ -85,10 +88,9 @@ def process_user_supplied_qids(args):
             id=qid
         )
         console.print(f"Working on {item}")
-        # generate suggestion
+        # generate suggestion with all we need
         suggestion = Suggestion(
-            id=item.id,
-            label=item.label,
+            item=item,
             ngram=NGram(
                 label=item.label,
                 frequency=None

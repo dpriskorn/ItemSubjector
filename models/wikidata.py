@@ -11,6 +11,7 @@ from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
 from wikibaseintegrator import wbi_config, WikibaseIntegrator
 from wikibaseintegrator.datatypes import BaseDataType
+from wikibaseintegrator.models import Alias
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
@@ -798,28 +799,39 @@ class Entity:
 #
 #
 class Item(Entity):
+    """This represents an item in Wikidata
+    We always work on one language at a time,
+    so don't bother with languages here and keep to simple strings"""
     id: str
     label: str
     description: str
+    aliases: List[str] = None
 
     def __init__(self,
                  id: str = None,
                  json: str = None,
                  label: str = None,
-                 description: str = None):
+                 description: str = None,
+                 aliases: List[str] = None):
         if json is not None:
             self.parse_json(json)
         else:
             if id is not None:
                 self.id = str(EntityID(id))
-            if label is None:
-                self.fetch_english_label()
+            if label is None and aliases is None:
+                logging.debug("here now")
+                self.fetch_english_label_and_aliases()
+            elif label is None or aliases is None:
+                raise ValueError("This is not supported. "
+                                 "Either both state the label and "
+                                 "aliases or None of them")
             else:
                 self.label = label
+                self.aliases = aliases
             self.description = description
 
     def __str__(self):
-        return f"{self.id}:{self.label}"
+        return f"{self.id}: {self.label}"
 
     def parse_json(self, json):
         """Parse the form json"""
@@ -844,12 +856,20 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
-    def fetch_english_label(self):
+    def fetch_english_label_and_aliases(self):
         """Add label from Wikidata API"""
-        with console.status("Fetching English label..."):
+        with console.status("Fetching English label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
-            self.label = item.labels.get("en")
+            self.label = str(item.labels.get("en"))
+            aliases: List[Alias] = item.aliases.get("en")
+            #logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
+            if aliases is not None:
+                self.aliases = []
+                for alias in aliases:
+                    self.aliases.append(str(alias))
+                    # logging.debug(f"appended:{alias.value}")
+                # logging.debug(f"aliases:{self.aliases}")
 
 
 class Labels:

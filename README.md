@@ -5,12 +5,23 @@ CirrusSearch-based Named Entity Recognition algorithm.
 ![bild](https://user-images.githubusercontent.com/68460690/133050804-9030b3a5-ae75-47d4-9828-7f2b9107a80a.png)
 *The tool running in PAWS adding manually found main subject QIDs*
 
+# Features
+This tool has the following features
+* adding a list of main subjects to items 
+  (for now only scholarly articles are supported)
+* automatically extracting n-grams from labels of 10.000 articles 
+  (this is not that powerful because users know better than scikit 
+  what subjects are meaningful to have on our scientific articles)
+
 # Thanks
 During the development of this tool the author got a 
-help multiple times from *Jan Ainali* and *Jon Søby*
+help multiple times from **Jan Ainali** and **Jon Søby**
 with figuring out how to query the API using the 
 CirrusSearch extensions and to remove more 
 specific main subjects from the query results.
+
+A special thanks also to **Magnus Sälgö** for his valuable input 
+and ideas, e.g. to search for aliases also.
 
 # Installation
 Clone the repo and run
@@ -40,7 +51,7 @@ config.py and enter the botusername
 It has 2 modes:
 1) automatic finding n-grams and trying to 
    detect items that match
-2) user added main subject item
+2) add main subject items to scholarly articles
 
 Both modes conclude by adding the 
 validated or supplied QID to all 
@@ -70,6 +81,12 @@ want the most specific subjects on the
 items and not 
 all the general ones above it in the 
 classification system.
+
+Please investigate before adding broad 
+subjects and try to nail down specific 
+subjects and add them first. If you are 
+unsure, please ask on-wiki or in the 
+[Wikicite Telegram group](https://meta.wikimedia.org/wiki/Telegram)
 
 # License
 GPLv3+

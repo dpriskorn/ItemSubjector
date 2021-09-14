@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from rich.console import Console
 from rich.table import Table
 
@@ -55,10 +57,18 @@ def print_best_practice_information():
     )
 
 
-def print_ngram_table(results):
+def print_ngram_table(results: Dict):
     table = Table(title="N-grams found")
     table.add_column("N-gram")
     table.add_column("Frequency")
     for ngram in results:
         table.add_row(ngram, str(results[ngram]))
+    console.print(table)
+
+
+def print_search_strings_table(search_strings: List[str]):
+    table = Table(title="Search strings")
+    table.add_column(f"Extracted the following {len(search_strings)} search strings:")
+    for string in search_strings:
+        table.add_row(string)
     console.print(table)

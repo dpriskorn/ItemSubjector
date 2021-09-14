@@ -16,7 +16,7 @@ class NGram:
         self.label = label
         self.frequency = frequency
 
-    def recognize_named_entity(self):
+    def recognize_named_entity(self):  # typing: -> Suggestion
         if self.label is None:
             raise ValueError("ngram was None")
         #console.print(f"Results for {self.label}")
