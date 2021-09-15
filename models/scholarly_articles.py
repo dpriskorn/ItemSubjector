@@ -11,7 +11,7 @@ class ScholarlyArticleLabels(Labels):
     """This class has all code needed to fetch scientific articles, extract the labels,
     clean them and find the top n-grams we need"""
 
-    def get_ngrams(self):
+    def get_ngrams(self) -> dict:
         # calculate_random_offset()
         # console.print(f"Calculated offset is: {config.random_offset} and will be used to randomize "
         #               f"the selection of scientific articles that are fetched")

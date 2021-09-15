@@ -32,7 +32,9 @@ logging.basicConfig(level=logging.WARNING)
 
 def add_suggestion_to_items(suggestion: Suggestion = None):
     """Add a suggested QID as main subject on all items that
-    have a label that matches one of the search strings for this QID"""
+    have a label that matches one of the search strings for this QID
+    We calculate a new edit group hash each time this function is
+    called so similar edits are grouped and easily be undone."""
     if suggestion is None:
         raise ValueError("Suggestion was None")
     with console.status(f'Fetching items with labels that have one of '
@@ -62,7 +64,7 @@ def add_suggestion_to_items(suggestion: Suggestion = None):
         # input("Press enter to continue")
 
 
-def process_results(results):
+def process_ngrams(results):
     suggestions = []
     with console.status("Searching the Wikidata API for entities matching the found n-grams..."):
         for result in results:
@@ -85,6 +87,8 @@ def process_results(results):
 
 
 def process_user_supplied_qids(args):
+    """Given a list of QIDs, we go through
+    them and call add_suggestion_to_items() on each one"""
     print_best_practice_information()
     for qid in args.list:
         item = Item(
@@ -143,11 +147,11 @@ def main():
         #     raise ValueError("Got no task")
         # We only have 1 task so don't bother about showing the menu
         task = tasks[0]
-        results = task.labels.get_ngrams()
-        logger.debug(results)
-        if results is not None:
-            print_ngram_table(results)
-            process_results(results)
+        ngrams: dict = task.labels.get_ngrams()
+        # logger.debug(results)
+        if ngrams is not None:
+            print_ngram_table(ngrams)
+            process_ngrams(ngrams)
         else:
             raise ValueError("results was None")
     else:
