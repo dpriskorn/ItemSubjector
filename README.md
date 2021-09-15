@@ -38,7 +38,6 @@ issues.
 * make sure you clone somewhere not public `cd /tmp`
 * run `git clone https://github.com/dpriskorn/ItemSubjector.git`
 * run the pip-command above
-* because of a WBI bug run also `pip install frozendict`
 * copy config `cp config.example.py config.py`
 * edit `nano config.py` and add your credentials
 
