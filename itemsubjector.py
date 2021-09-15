@@ -5,6 +5,7 @@ from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.datatypes import Item as ItemType
 
 import config
+from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
     print_best_practice_information
 from models.ngram import NGram
@@ -39,6 +40,7 @@ def add_suggestion_to_items(suggestion: Suggestion = None):
                         f'{len(suggestion.search_strings)} queries on WDQS...'):
         items = ScholarlyArticleItems()
         items.fetch_based_on_label(suggestion=suggestion)
+    editgroups_hash: str = calculate_random_editgroups_hash()
     for item in items.list:
         with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
             main_subject_property = "P921"
@@ -53,7 +55,8 @@ def add_suggestion_to_items(suggestion: Suggestion = None):
             )
             item.upload_one_statement_to_wikidata(
                 statement=statement,
-                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]"
+                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]",
+                editgroups_hash=editgroups_hash
             )
         console.print(f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
         # input("Press enter to continue")

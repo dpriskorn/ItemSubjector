@@ -1,8 +1,5 @@
 import random
 
-import config
 
-
-def calculate_random_offset():
-    # Calculate offset between 0 and
-    config.random_offset = random.randint(0, 10000)
+def calculate_random_editgroups_hash():
+    return "{:x}".format(random.randrange(0, 2 ** 48))

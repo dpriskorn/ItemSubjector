@@ -1,4 +1,6 @@
 # ItemSubjector
+*still in BETA*
+
 Tool made to add main subject statements to 
 items based on the title using a home-brewed 
 CirrusSearch-based Named Entity Recognition algorithm. 
@@ -12,6 +14,10 @@ This tool has the following features
 * automatically extracting n-grams from labels of 10.000 articles 
   (this is not that powerful because users know better than scikit 
   what subjects are meaningful to have on our scientific articles)
+
+It supports 
+[Wikidata:Edit groups](https://www.wikidata.org/wiki/Wikidata:Edit_groups) 
+so that batches can easily be undone if needed.
 
 # Thanks
 During the development of this tool the author got a 

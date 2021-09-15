@@ -2,8 +2,6 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
-import config
-from helpers.calculations import calculate_random_offset
 from helpers.console import console
 from models.suggestion import Suggestion
 from models.wikidata import Labels, Items, Item
