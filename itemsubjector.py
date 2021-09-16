@@ -7,7 +7,8 @@ from wikibaseintegrator.datatypes import Item as ItemType
 import config
 from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
-    print_scholarly_articles_best_practice_information, print_riksdagen_documents_best_practice_information
+    print_scholarly_articles_best_practice_information, print_riksdagen_documents_best_practice_information, \
+    print_found_items_table, ask_continue_with_the_rest
 from helpers.enums import TaskIds
 from helpers.menus import select_language, select_task
 from models.ngram import NGram
@@ -55,6 +56,8 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
             raise ValueError(f"{task.id} was not recognized")
         items.fetch_based_on_label(suggestion=suggestion,
                                    task=task)
+    print_found_items_table(items=items)
+    ask_continue_with_the_rest()
     editgroups_hash: str = calculate_random_editgroups_hash()
     for item in items.list:
         with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):

@@ -3,6 +3,8 @@ from typing import List, Dict
 from rich.console import Console
 from rich.table import Table
 
+from models.wikidata import Items
+
 console = Console()
 
 
@@ -84,3 +86,17 @@ def print_search_strings_table(search_strings: List[str]):
     for string in search_strings:
         table.add_row(string)
     console.print(table)
+
+
+def print_found_items_table(items: Items = None):
+    if items is None:
+        raise ValueError("items was None")
+    table = Table(title="Matched items found")
+    table.add_column("Showing only the first 50 items if more are found")
+    for item in items.list[0:50]:
+        table.add_row(item.label)
+    console.print(table)
+
+
+def ask_continue_with_the_rest():
+    console.input("Press enter to continue or ctrl+c to quit")

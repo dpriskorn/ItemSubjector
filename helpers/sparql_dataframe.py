@@ -1,8 +1,6 @@
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-from helpers.console import console
-
 
 def query_wikidata(sparql_query, sparql_service_url):
     """Query the endpoint with the given query string
@@ -17,6 +15,7 @@ def query_wikidata(sparql_query, sparql_service_url):
     sparql.setReturnFormat(JSON)
 
     # ask for the result
+    from helpers.console import console
     console.status("Fetching data from WDQS...")
     result = sparql.query().convert()
     return pd.json_normalize(result["results"]["bindings"])

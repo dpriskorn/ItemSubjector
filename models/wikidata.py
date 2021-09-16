@@ -15,7 +15,6 @@ from wikibaseintegrator.models import Alias
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
-from helpers.console import console
 from helpers.sparql_dataframe import query_wikidata
 
 # We get the URL for the Wikibase from here
@@ -853,6 +852,7 @@ class Item(Entity):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
+        from helpers.console import console
         with console.status(f"Fetching {task.language_code.value} label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
@@ -881,6 +881,7 @@ class Labels:
             raise ValueError("Get no quantity")
         if config.random_offset is None:
             raise ValueError("No random offset present in the config")
+        from helpers.console import console
         with console.status(f"Fetching {quantity} labels..."):
             dataframe = (query_wikidata(f'''
                 #author:So9q inspired a query by Azertus
