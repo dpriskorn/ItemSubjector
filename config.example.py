@@ -13,5 +13,4 @@ user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubject
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
-legacy_wbi=False
 random_offset=0

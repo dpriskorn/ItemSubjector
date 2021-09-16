@@ -48,7 +48,11 @@ class ScholarlyArticleItems(Items):
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
-              filter(contains(?label, " {search_string} "@{task.language_code.value}))
+              # We try matching beginning, middle and end
+              # We don't lowercase for now as it could result in false matches
+              FILTER(CONTAINS(?label, " {search_string} "@{task.language_code.value}) || 
+                     REGEX(?label, ".* {search_string}$"@{task.language_code.value}) ||
+                     REGEX(?label, "^{search_string} .*"@{task.language_code.value}))
               # remove more specific forms of the main subject also
               # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}

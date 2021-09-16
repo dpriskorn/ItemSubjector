@@ -1,4 +1,4 @@
-from helpers.enums import SupportedLanguageCode
+from helpers.enums import SupportedLanguageCode, TaskIds
 
 
 class Task:
@@ -12,7 +12,7 @@ class Task:
     language_code: SupportedLanguageCode
 
     def __init__(self,
-                 id: str = None,
+                 id: TaskIds = None,
                  label: str = None,
                  question: str = None,
                  labels=None,

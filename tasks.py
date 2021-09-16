@@ -1,23 +1,25 @@
-from helpers.enums import SupportedLanguageCode
+from helpers.enums import SupportedLanguageCode, TaskIds
 from models.riksdagen_documents import RiksdagenDocumentLabels
 from models.scholarly_articles import ScholarlyArticleLabels
 from models.task import Task
 
-scholarly_labels = ScholarlyArticleLabels()
-riksdagen_labels = RiksdagenDocumentLabels()
+# When adding a new task, also add it in the enum
+
+# scholarly_labels = ScholarlyArticleLabels()
+# riksdagen_labels = RiksdagenDocumentLabels()
 tasks = [
     Task(
-        id="scholarly_articles",
+        id=TaskIds.SCHOLARLY_ARTICLES,
         label="Add main subject to scholarly articles",
         question="Is this a valid subject for this article?",
-        labels=scholarly_labels,
+        labels=ScholarlyArticleLabels(),
         language_code=SupportedLanguageCode.ENGLISH
     ),
     Task(
-        id="riksdagen_documents",
+        id=TaskIds.RIKSDAGEN_DOCUMENTS,
         label="Add main subject to documents from Riksdagen",
         question="Is this a valid subject for this document?",
-        labels=riksdagen_labels,
+        labels=RiksdagenDocumentLabels(),
         language_code=SupportedLanguageCode.SWEDISH
     )
 ]

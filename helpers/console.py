@@ -36,12 +36,19 @@ def introduction():
 
 
 def print_keep_an_eye_on_wdqs_lag():
-    console.print("Please keep an eye on the lag of the WDQS cluster here and avoid working if it is over a few minutes.\nhttps://grafana.wikimedia.org/d/000000489/wikidata-query-service?orgId=1&viewPanel=8&from=now-30m&to=now&refresh=1d")
+    console.print("Please keep an eye on the lag of the WDQS cluster here and avoid "
+                  "working if it is over a few minutes.\n"
+                  "https://grafana.wikimedia.org/d/000000489/wikidata-query-service?"
+                  "orgId=1&viewPanel=8&from=now-30m&to=now&refresh=1d")
 
 
-def print_best_practice_information():
+def press_enter_to_start():
+    console.input("Press Enter to start.")
+
+
+def print_scholarly_articles_best_practice_information():
     print_keep_an_eye_on_wdqs_lag()
-    console.input(
+    console.print(
         "When adding QID main subjects please try to first "
         "educate yourself about the subarea of science a little "
         "and find/create items as specific as possible.\n"
@@ -52,9 +59,14 @@ def print_best_practice_information():
         "In this case it is preferred to first create that item "
         "(done in Q108532542 and add that as main subject and "
         "avoid the more general 'cancer screening' until all "
-        "subforms of screening are added.\n"
-        "Press Enter to start."
+        "subforms of screening are added."
     )
+    press_enter_to_start()
+
+
+def print_riksdagen_documents_best_practice_information():
+    print_keep_an_eye_on_wdqs_lag()
+    press_enter_to_start()
 
 
 def print_ngram_table(results: Dict):

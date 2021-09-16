@@ -7,7 +7,8 @@ from wikibaseintegrator.datatypes import Item as ItemType
 import config
 from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
-    print_best_practice_information
+    print_scholarly_articles_best_practice_information, print_riksdagen_documents_best_practice_information
+from helpers.enums import TaskIds
 from helpers.menus import select_language, select_task
 from models.ngram import NGram
 from models.riksdagen_documents import RiksdagenDocumentItems
@@ -46,9 +47,9 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
     with console.status(f'Fetching items with labels that have one of '
                         f'the search strings by running a total of '
                         f'{len(suggestion.search_strings)} queries on WDQS...'):
-        if task.id == "scholarly_articles":
+        if task.id == TaskIds.SCHOLARLY_ARTICLES:
             items = ScholarlyArticleItems()
-        elif task.id == "riksdagen_documents":
+        elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
             items = RiksdagenDocumentItems()
         else:
             raise ValueError(f"{task.id} was not recognized")
@@ -105,8 +106,12 @@ def process_user_supplied_qids(args = None, task: Task = None):
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    if task.id == "scholarly_articles":
-        print_best_practice_information()
+    if task.id == TaskIds.SCHOLARLY_ARTICLES:
+        print_scholarly_articles_best_practice_information()
+    elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+        print_riksdagen_documents_best_practice_information()
+    else:
+        raise ValueError(f"taskid {task.id} not recognized")
     for qid in args.list:
         item = Item(
             id=qid,
@@ -127,21 +132,14 @@ def process_user_supplied_qids(args = None, task: Task = None):
 
 def login():
     with console.status("Logging in with WikibaseIntegrator..."):
-        if config.legacy_wbi:
-            config.login_instance = wbi_login.Login(
-                user=config.username, pwd=config.password
-            )
-            # Set User-Agent
-            wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
-        else:
-            config.login_instance = wbi_login.Login(
-                auth_method='login',
-                user=config.username,
-                password=config.password,
-                debug=False
-            )
-            # Set User-Agent
-            wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
+        config.login_instance = wbi_login.Login(
+            auth_method='login',
+            user=config.username,
+            password=config.password,
+            debug=False
+        )
+        # Set User-Agent
+        wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
 
 
 def main():
