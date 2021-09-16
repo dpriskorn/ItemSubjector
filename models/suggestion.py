@@ -30,6 +30,7 @@ class Suggestion:
         if task is None:
             raise ValueError("task was None")
         else:
+            self.task = task
             self.extract_search_strings()
 
     def __str__(self):
