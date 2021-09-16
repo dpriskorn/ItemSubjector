@@ -57,7 +57,7 @@ class RiksdagenDocumentItems(Items):
               # remove more specific forms of the main subject also
               # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
-              SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+              SERVICE wikibase:label {{ bd:serviceParam wikibase:language "sv". }}
             }}
             ''')
             for item_json in results["results"]["bindings"]:
