@@ -56,7 +56,7 @@ class Suggestion:
         return f"https://www.wikidata.org/w/index.php?search={search_term}"
 
     def extract_search_strings(self):
-        logger = logging.getLogger(__name__)
+        # logger = logging.getLogger(__name__)
         self.search_strings: List[str] = [self.item.label]
         if self.item.aliases is not None:
             for alias in self.item.aliases:

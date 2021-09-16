@@ -5,7 +5,7 @@ class Task:
     """This class holds the tasks presented to the
     user in the menu, the question asked when working
     and the sparql query needed as a method"""
-    id: str
+    id: TaskIds
     label: str
     question: str
     labels = None  # typing: Labels

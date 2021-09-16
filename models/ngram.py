@@ -4,6 +4,7 @@ import requests
 from wikibaseintegrator.wbi_helpers import search_entities
 
 import config
+from models.wikidata import Item
 
 
 class NGram:
@@ -19,7 +20,7 @@ class NGram:
     def recognize_named_entity(self):  # typing: -> Suggestion
         if self.label is None:
             raise ValueError("ngram was None")
-        #console.print(f"Results for {self.label}")
+        # console.print(f"Results for {self.label}")
         search_expression = (
                 "-haswbstatement:P31=Q13442814 " +  # scientific article
                 "-haswbstatement:P31=Q5633421 " +  # journal
@@ -54,12 +55,15 @@ class NGram:
                 )
                 if search_results is not None:
                     first_result = search_results[0]
-                    #pprint(first_result)
+                    # pprint(first_result)
                     from models.suggestion import Suggestion
-                    return Suggestion(
+                    item = Item(
                         id=first_result["id"],
                         label=first_result["label"],
                         description=first_result["description"],
+                    )
+                    return Suggestion(
+                        item=item,
                         ngram=self
                     )
             except IndexError:

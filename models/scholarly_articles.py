@@ -26,7 +26,7 @@ class ScholarlyArticleItems(Items):
     def fetch_based_on_label(self,
                              suggestion: Suggestion = None,
                              task: Task = None):
-        logger = logging.getLogger(__name__)
+        # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
         if task is None:

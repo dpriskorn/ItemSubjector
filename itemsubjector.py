@@ -10,7 +10,7 @@ from helpers.console import console, ask_yes_no_question, introduction, print_ng
     print_scholarly_articles_best_practice_information, print_riksdagen_documents_best_practice_information, \
     print_found_items_table, ask_continue_with_the_rest
 from helpers.enums import TaskIds
-from helpers.menus import select_language, select_task
+from helpers.menus import select_task
 from models.ngram import NGram
 from models.riksdagen_documents import RiksdagenDocumentItems
 from models.scholarly_articles import ScholarlyArticleItems
@@ -82,6 +82,7 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
     else:
         console.print("No matching items found")
 
+
 def process_ngrams(results):
     suggestions = []
     with console.status("Searching the Wikidata API for entities matching the found n-grams..."):
@@ -104,7 +105,7 @@ def process_ngrams(results):
         console.print("\n")
 
 
-def process_user_supplied_qids(args = None, task: Task = None):
+def process_user_supplied_qids(args=None, task: Task = None):
     """Given a list of QIDs, we go through
     them and call add_suggestion_to_items() on each one"""
     if args is None:
@@ -148,8 +149,9 @@ def login():
 
 
 def main():
-    logger = logging.getLogger(__name__)
+    # logger = logging.getLogger(__name__)
     parser = argparse.ArgumentParser()
+    # TODO support turning off aliases
     parser.add_argument('-l', '--list',
                         nargs='+',
                         help=('List of QIDs that are to be added as '
