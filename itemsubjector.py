@@ -56,29 +56,31 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
             raise ValueError(f"{task.id} was not recognized")
         items.fetch_based_on_label(suggestion=suggestion,
                                    task=task)
-    print_found_items_table(items=items)
-    ask_continue_with_the_rest()
-    editgroups_hash: str = calculate_random_editgroups_hash()
-    for item in items.list:
-        with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
-            main_subject_property = "P921"
-            reference = ItemType(
-                "Q69652283",  # inferred from title
-                prop_nr="P887"  # based on heuristic
-            )
-            statement = ItemType(
-                suggestion.item.id,
-                prop_nr=main_subject_property,
-                references=[reference]
-            )
-            item.upload_one_statement_to_wikidata(
-                statement=statement,
-                summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]",
-                editgroups_hash=editgroups_hash
-            )
-        console.print(f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
-        # input("Press enter to continue")
-
+    if len(items.list) > 0:
+        print_found_items_table(items=items)
+        ask_continue_with_the_rest()
+        editgroups_hash: str = calculate_random_editgroups_hash()
+        for item in items.list:
+            with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
+                main_subject_property = "P921"
+                reference = ItemType(
+                    "Q69652283",  # inferred from title
+                    prop_nr="P887"  # based on heuristic
+                )
+                statement = ItemType(
+                    suggestion.item.id,
+                    prop_nr=main_subject_property,
+                    references=[reference]
+                )
+                item.upload_one_statement_to_wikidata(
+                    statement=statement,
+                    summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]",
+                    editgroups_hash=editgroups_hash
+                )
+            console.print(f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
+            # input("Press enter to continue")
+    else:
+        console.print("No matching items found")
 
 def process_ngrams(results):
     suggestions = []
