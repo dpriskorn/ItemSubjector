@@ -2,7 +2,7 @@ import logging
 from typing import List
 from urllib.parse import quote
 
-from helpers.console import console, print_search_strings_table
+from helpers.console import print_search_strings_table
 from models.ngram import NGram
 from models.wikidata import Item
 
@@ -58,9 +58,10 @@ class Suggestion:
     def extract_search_strings(self):
         logger = logging.getLogger(__name__)
         self.search_strings: List[str] = [self.item.label]
-        for alias in self.item.aliases:
-            # logger.debug(f"extracting alias:{alias}")
-            self.search_strings.append(alias)
+        if self.item.aliases is not None:
+            for alias in self.item.aliases:
+                # logger.debug(f"extracting alias:{alias}")
+                self.search_strings.append(alias)
         # logger.debug(f"search_strings:{self.search_strings}")
         print_search_strings_table(self.search_strings)
 

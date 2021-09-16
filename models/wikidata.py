@@ -19,6 +19,7 @@ from helpers.console import console
 from helpers.sparql_dataframe import query_wikidata
 
 # We get the URL for the Wikibase from here
+from models.task import Task
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -802,7 +803,8 @@ class Item(Entity):
                  json: str = None,
                  label: str = None,
                  description: str = None,
-                 aliases: List[str] = None):
+                 aliases: List[str] = None,
+                 task: Task = None):
         if json is not None:
             self.parse_json(json)
         else:
@@ -810,7 +812,7 @@ class Item(Entity):
                 self.id = str(EntityID(id))
             if label is None and aliases is None:
                 logging.debug("here now")
-                self.fetch_english_label_and_aliases()
+                self.fetch_label_and_aliases(task=task)
             elif label is None or aliases is None:
                 raise ValueError("This is not supported. "
                                  "Either both state the label and "
@@ -824,7 +826,7 @@ class Item(Entity):
         return f"{self.id}: {self.label}"
 
     def parse_json(self, json):
-        """Parse the form json"""
+        """Parse the WDQS json"""
         logger = logging.getLogger(__name__)
         try:
             logger.info(json["item"])
@@ -846,14 +848,17 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
-    def fetch_english_label_and_aliases(self):
-        """Add label from Wikidata API"""
-        with console.status("Fetching English label and aliases..."):
+    def fetch_label_and_aliases(self,
+                                task: Task = None):
+        """Fetch label and aliases in the task language from the Wikidata API"""
+        if task is None:
+            raise ValueError("task was None")
+        with console.status(f"Fetching {task.language_code.value} label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
-            self.label = str(item.labels.get("en"))
-            aliases: List[Alias] = item.aliases.get("en")
-            #logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
+            self.label = str(item.labels.get(task.language_code.value))
+            aliases: List[Alias] = item.aliases.get(task.language_code.value)
+            # logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
             if aliases is not None:
                 self.aliases = []
                 for alias in aliases:

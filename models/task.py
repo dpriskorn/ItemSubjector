@@ -1,27 +1,38 @@
-from models.wikidata import Labels
+from helpers.enums import SupportedLanguageCode
 
 
 class Task:
     """This class holds the tasks presented to the
     user in the menu, the question asked when working
     and the sparql query needed as a method"""
+    id: str
     label: str
     question: str
-    labels: Labels
+    labels = None  # typing: Labels
+    language_code: SupportedLanguageCode
 
     def __init__(self,
+                 id: str = None,
                  label: str = None,
                  question: str = None,
-                 labels: Labels = None):
+                 labels=None,
+                 language_code: SupportedLanguageCode = None):
+        if id is None:
+            raise ValueError("Got no id")
         if label is None:
             raise ValueError("Got no label")
         if question is None:
             raise ValueError("Got no question")
         if labels is None:
-            raise ValueError("Got no items class")
+            raise ValueError("Got no labels class")
+        if language_code is None:
+            raise ValueError("Got no language_code")
+        self.id = id
         self.label = label
         self.question = question
-        self.labels = labels
+        from models.wikidata import Labels
+        self.labels: Labels = labels
+        self.language_code = language_code
 
     def __str__(self):
         return f"{self.label}"

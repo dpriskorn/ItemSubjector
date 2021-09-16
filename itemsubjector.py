@@ -8,9 +8,12 @@ import config
 from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import console, ask_yes_no_question, introduction, print_ngram_table, \
     print_best_practice_information
+from helpers.menus import select_language, select_task
 from models.ngram import NGram
+from models.riksdagen_documents import RiksdagenDocumentItems
 from models.scholarly_articles import ScholarlyArticleItems
 from models.suggestion import Suggestion
+from models.task import Task
 from models.wikidata import Item
 from tasks import tasks
 
@@ -30,18 +33,27 @@ logging.basicConfig(level=logging.WARNING)
 # upload main subject to all
 
 
-def add_suggestion_to_items(suggestion: Suggestion = None):
+def add_suggestion_to_items(suggestion: Suggestion = None,
+                            task: Task = None):
     """Add a suggested QID as main subject on all items that
     have a label that matches one of the search strings for this QID
     We calculate a new edit group hash each time this function is
     called so similar edits are grouped and easily be undone."""
     if suggestion is None:
-        raise ValueError("Suggestion was None")
+        raise ValueError("suggestion was None")
+    if task is None:
+        raise ValueError("task was None")
     with console.status(f'Fetching items with labels that have one of '
                         f'the search strings by running a total of '
                         f'{len(suggestion.search_strings)} queries on WDQS...'):
-        items = ScholarlyArticleItems()
-        items.fetch_based_on_label(suggestion=suggestion)
+        if task.id == "scholarly_articles":
+            items = ScholarlyArticleItems()
+        elif task.id == "riksdagen_documents":
+            items = RiksdagenDocumentItems()
+        else:
+            raise ValueError(f"{task.id} was not recognized")
+        items.fetch_based_on_label(suggestion=suggestion,
+                                   task=task)
     editgroups_hash: str = calculate_random_editgroups_hash()
     for item in items.list:
         with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
@@ -86,13 +98,19 @@ def process_ngrams(results):
         console.print("\n")
 
 
-def process_user_supplied_qids(args):
+def process_user_supplied_qids(args = None, task: Task = None):
     """Given a list of QIDs, we go through
     them and call add_suggestion_to_items() on each one"""
-    print_best_practice_information()
+    if args is None:
+        raise ValueError("args was None")
+    if task is None:
+        raise ValueError("task was None")
+    if task.id == "scholarly_articles":
+        print_best_practice_information()
     for qid in args.list:
         item = Item(
-            id=qid
+            id=qid,
+            task=task
         )
         console.print(f"Working on {item}")
         # generate suggestion with all we need
@@ -103,7 +121,8 @@ def process_user_supplied_qids(args):
                 frequency=None
             )
         )
-        add_suggestion_to_items(suggestion=suggestion)
+        add_suggestion_to_items(suggestion=suggestion,
+                                task=task)
 
 
 def login():
@@ -140,8 +159,8 @@ def main():
     if args.list is None:
         introduction()
         login()
-        # for now only English
-        # chose_language()
+        # disabled for now
+        # select_language()
         # task: Task = select_task()
         # if task is None:
         #     raise ValueError("Got no task")
@@ -155,8 +174,11 @@ def main():
         else:
             raise ValueError("results was None")
     else:
+        task: Task = select_task()
+        if task is None:
+            raise ValueError("Got no task")
         login()
-        process_user_supplied_qids(args)
+        process_user_supplied_qids(args=args, task=task)
 
 
 if __name__ == "__main__":
