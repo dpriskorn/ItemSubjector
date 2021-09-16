@@ -2,6 +2,7 @@
 Model from LexUtils
 """
 import logging
+import random
 import re
 from enum import Enum
 from typing import List, Dict
@@ -980,3 +981,6 @@ class Items:
 
     def fetch_based_on_label(self):
         pass
+
+    def random_shuffle_list(self):
+        random.shuffle(self.list)

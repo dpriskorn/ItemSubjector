@@ -57,6 +57,8 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
         items.fetch_based_on_label(suggestion=suggestion,
                                    task=task)
     if len(items.list) > 0:
+        # Randomize the list
+        items.random_shuffle_list()
         print_found_items_table(items=items)
         ask_continue_with_the_rest()
         editgroups_hash: str = calculate_random_editgroups_hash()
