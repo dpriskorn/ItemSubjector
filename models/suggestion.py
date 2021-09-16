@@ -3,7 +3,9 @@ from typing import List
 from urllib.parse import quote
 
 from helpers.console import print_search_strings_table
+from helpers.enums import TaskIds
 from models.ngram import NGram
+from models.task import Task
 from models.wikidata import Item
 
 
@@ -11,15 +13,24 @@ class Suggestion:
     item: Item = None
     ngram: NGram = None
     search_strings: List[str] = None
+    task: Task = None
 
     def __init__(self,
                  item: Item = None,
-                 ngram: NGram = None):
-        if item is not None:
+                 ngram: NGram = None,
+                 task: Task = None):
+        if item is None:
+            raise ValueError("item was None")
+        else:
             self.item = item
-        if ngram is not None:
+        if ngram is None:
+            raise ValueError("ngram was None")
+        else:
             self.ngram: NGram = ngram
-        self.extract_search_strings()
+        if task is None:
+            raise ValueError("task was None")
+        else:
+            self.extract_search_strings()
 
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
@@ -58,7 +69,8 @@ class Suggestion:
     def extract_search_strings(self):
         # logger = logging.getLogger(__name__)
         self.search_strings: List[str] = [self.item.label]
-        if self.item.aliases is not None:
+        # Turn off alias matching for Riksdagen documents for now
+        if self.item.aliases is not None and self.task.id != TaskIds.RIKSDAGEN_DOCUMENTS:
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
                 self.search_strings.append(alias)

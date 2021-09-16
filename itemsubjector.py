@@ -131,7 +131,8 @@ def process_user_supplied_qids(args=None, task: Task = None):
             ngram=NGram(
                 label=item.label,
                 frequency=None
-            )
+            ),
+            task=task
         )
         add_suggestion_to_items(suggestion=suggestion,
                                 task=task)
