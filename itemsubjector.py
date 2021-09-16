@@ -118,6 +118,7 @@ def process_user_supplied_qids(args=None, task: Task = None):
         print_riksdagen_documents_best_practice_information()
     else:
         raise ValueError(f"taskid {task.id} not recognized")
+    login()
     for qid in args.list:
         item = Item(
             id=qid,
@@ -182,7 +183,6 @@ def main():
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
-        login()
         process_user_supplied_qids(args=args, task=task)
 
 
