@@ -41,16 +41,16 @@ The tool runs in PAWS with no known
 issues.
 * log in to PAWS
 * open a terminal
-* make sure you clone somewhere not public `cd /tmp`
-* run `git clone https://github.com/dpriskorn/ItemSubjector.git`
+* run `git clone https://github.com/dpriskorn/ItemSubjector.git .itemsubjector && cd .itemsubjector` 
+  <- note the dot in front of the directory name 
+  that hides it from publication.
 * run the pip-command above
-* copy config `cp config.example.py config.py`
-* edit `nano config.py` and add your credentials
 
 # Setup
 Like my other tools, copy config.example.py -> 
 config.py and enter the botusername 
 (e.g. So9q@itemsubjector) and password
+* e.g. `cp config.example.py config.py && nano config.py`
 
 # Use
 It has 2 modes:
