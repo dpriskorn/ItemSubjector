@@ -50,9 +50,9 @@ class ScholarlyArticleItems(Items):
               ?item rdfs:label ?label.
               # We try matching beginning, middle and end
               # We don't lowercase for now as it could result in false matches
-              FILTER(CONTAINS(?label, " {search_string} "@{task.language_code.value}) || 
-                     REGEX(?label, ".* {search_string}$"@{task.language_code.value}) ||
-                     REGEX(?label, "^{search_string} .*"@{task.language_code.value}))
+              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+                     REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
+                     REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
               # remove more specific forms of the main subject also
               # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
