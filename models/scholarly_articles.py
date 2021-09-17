@@ -48,11 +48,14 @@ class ScholarlyArticleItems(Items):
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
+              # We lowercase and remove common symbols
+              BIND(REPLACE(LCASE(?label), ",", "") as ?label1)
+              BIND(REPLACE(?label1, ":", "") as ?label2)
+              BIND(REPLACE(?label2, ";", "") as ?label3)            
               # We try matching beginning, middle and end
-              # We don't lowercase for now as it could result in false matches
-              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
-                     REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
-                     REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
+              FILTER(CONTAINS(?label3, " {search_string.lower()} "@{task.language_code.value}) || 
+                     REGEX(?label3, ".* {search_string.lower()}$"@{task.language_code.value}) ||
+                     REGEX(?label3, "^{search_string.lower()} .*"@{task.language_code.value}))
               # remove more specific forms of the main subject also
               # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
