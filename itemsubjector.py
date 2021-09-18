@@ -62,7 +62,9 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
         print_found_items_table(items=items)
         ask_continue_with_the_rest()
         editgroups_hash: str = calculate_random_editgroups_hash()
+        count = 0
         for item in items.list:
+            count += 1
             with console.status(f"Uploading main subject [green]{suggestion.item.label}[/green] to {item.label}"):
                 main_subject_property = "P921"
                 reference = ItemType(
@@ -79,7 +81,8 @@ def add_suggestion_to_items(suggestion: Suggestion = None,
                     summary=f"[[Property:{main_subject_property}]]: [[{suggestion.item.id}]]",
                     editgroups_hash=editgroups_hash
                 )
-            console.print(f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
+            console.print(f"({count}/{len(items.list)}) "
+                          f"Added '{suggestion.item.label}' to {item.label}: {item.url()}")
             # input("Press enter to continue")
     else:
         console.print("No matching items found")
