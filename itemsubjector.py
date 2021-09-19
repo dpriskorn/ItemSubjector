@@ -167,7 +167,7 @@ def main():
                               'Always add the most specific ones first. '
                               'See the README for an example'),
                         required=False)
-    parser.add_argument('-na', '--no-alias',
+    parser.add_argument('-na', '--no-aliases',
                         action='store_true',
                         help='Turn off alias matching'
                         )
