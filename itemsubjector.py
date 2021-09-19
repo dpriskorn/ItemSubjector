@@ -137,7 +137,8 @@ def process_user_supplied_qids(args=None, task: Task = None):
                 label=item.label,
                 frequency=None
             ),
-            task=task
+            task=task,
+            args=args
         )
         add_suggestion_to_items(suggestion=suggestion,
                                 task=task)
@@ -166,6 +167,10 @@ def main():
                               'Always add the most specific ones first. '
                               'See the README for an example'),
                         required=False)
+    parser.add_argument('-na', '--no-aliases',
+                        action='store_true',
+                        help='Turn off alias matching'
+                        )
     args = parser.parse_args()
     # console.print(args.list)
     if args.list is None:

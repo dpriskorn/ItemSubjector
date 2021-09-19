@@ -57,7 +57,7 @@ It has 2 modes:
 1) automatic finding n-grams and trying to 
    detect items that match (default if no
    arguments are given on the command line)
-2) add main subject items to scholarly articles
+2) add main subject items to scholarly articles (see details below)
 
 Both modes conclude by adding the 
 validated or supplied QID to all 
@@ -69,7 +69,7 @@ of the target item (e.g. scientific article).
 ## Adding QIDs manually
 *Always provide the most precise subjects first*
 
-Run the script with the -l or -list argument followed by one or more QIDs:
+Run the script with the -l or --list argument followed by one or more QIDs:
 * `python itemsubjector.py -l Q108528107`
   
 Here is a more advanced example:
@@ -90,10 +90,32 @@ all the general ones above it in the
 classification system.
 
 Please investigate before adding broad 
-subjects and try to nail down specific 
+subjects (with thousands of matches) 
+and try to nail down specific 
 subjects and add them first. If you are 
 unsure, please ask on-wiki or in the 
 [Wikicite Telegram group](https://meta.wikimedia.org/wiki/Telegram)
 
+### Disable alias matching
+Sometimes e.g. for main subjects like 
+[Sweden](https://www.wikidata.org/wiki/Q34) 
+it is necessary to disable alias matching to 
+avoid garbage matches. 
+
+Usage example:
+`python itemsubjector.py -l Q34 --no-aliases` 
+(the shorthand `-na` also works)
+
+## List of all options
+This is the output of `itemsubjector.py -h`:
+```buildoutcfg
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LIST [LIST ...], --list LIST [LIST ...]
+                        List of QIDs that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the README for an example
+  -na, --no-aliases     Turn off alias matching
+```
 # License
 GPLv3+

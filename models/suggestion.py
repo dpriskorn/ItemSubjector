@@ -2,7 +2,7 @@ import logging
 from typing import List
 from urllib.parse import quote
 
-from helpers.console import print_search_strings_table
+from helpers.console import print_search_strings_table, console
 from helpers.enums import TaskIds
 from models.ngram import NGram
 from models.task import Task
@@ -14,11 +14,13 @@ class Suggestion:
     ngram: NGram = None
     search_strings: List[str] = None
     task: Task = None
+    args = None
 
     def __init__(self,
                  item: Item = None,
                  ngram: NGram = None,
-                 task: Task = None):
+                 task: Task = None,
+                 args=None):
         if item is None:
             raise ValueError("item was None")
         else:
@@ -31,6 +33,7 @@ class Suggestion:
             raise ValueError("task was None")
         else:
             self.task = task
+            self.args = args
             self.extract_search_strings()
 
     def __str__(self):
@@ -69,9 +72,21 @@ class Suggestion:
 
     def extract_search_strings(self):
         # logger = logging.getLogger(__name__)
+        if self.args is None:
+            raise ValueError("args was None")
+        else:
+            if self.args.no_alias is True:
+                console.print("Alias matching is turned off")
+                no_alias = True
+            else:
+                no_alias = False
         self.search_strings: List[str] = [self.item.label]
         # Turn off alias matching for Riksdagen documents for now
-        if self.item.aliases is not None and self.task.id != TaskIds.RIKSDAGEN_DOCUMENTS:
+        if (
+            self.item.aliases is not None and
+            no_alias is False and
+            self.task.id != TaskIds.RIKSDAGEN_DOCUMENTS
+        ):
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
                 self.search_strings.append(alias)
