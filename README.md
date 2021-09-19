@@ -90,7 +90,8 @@ all the general ones above it in the
 classification system.
 
 Please investigate before adding broad 
-subjects and try to nail down specific 
+subjects (with thousands of matches) 
+and try to nail down specific 
 subjects and add them first. If you are 
 unsure, please ask on-wiki or in the 
 [Wikicite Telegram group](https://meta.wikimedia.org/wiki/Telegram)
@@ -105,5 +106,16 @@ Usage example:
 `python itemsubjector.py -l Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
+## List of all options
+This is the output of `itemsubjector.py -h`:
+```buildoutcfg
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LIST [LIST ...], --list LIST [LIST ...]
+                        List of QIDs that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the README for an example
+  -na, --no-aliases     Turn off alias matching
+```
 # License
 GPLv3+
