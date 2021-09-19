@@ -137,7 +137,8 @@ def process_user_supplied_qids(args=None, task: Task = None):
                 label=item.label,
                 frequency=None
             ),
-            task=task
+            task=task,
+            args=args
         )
         add_suggestion_to_items(suggestion=suggestion,
                                 task=task)
