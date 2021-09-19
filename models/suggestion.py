@@ -71,20 +71,21 @@ class Suggestion:
         return f"https://www.wikidata.org/w/index.php?search={search_term}"
 
     def extract_search_strings(self):
-        # logger = logging.getLogger(__name__)
+        logger = logging.getLogger(__name__)
         if self.args is None:
             raise ValueError("args was None")
         else:
-            if self.args.no_alias is True:
+            logger.debug(f"args:{self.args}")
+            if self.args.no_aliases is True:
                 console.print("Alias matching is turned off")
-                no_alias = True
+                no_aliases = True
             else:
-                no_alias = False
+                no_aliases = False
         self.search_strings: List[str] = [self.item.label]
         # Turn off alias matching for Riksdagen documents for now
         if (
             self.item.aliases is not None and
-            no_alias is False and
+            no_aliases is False and
             self.task.id != TaskIds.RIKSDAGEN_DOCUMENTS
         ):
             for alias in self.item.aliases:

@@ -19,7 +19,7 @@ from models.task import Task
 from models.wikidata import Item
 from tasks import tasks
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 # pseudo code
 # let user choose what to work on ie.
