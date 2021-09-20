@@ -111,6 +111,17 @@ Usage example:
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LIST [LIST ...], --list LIST [LIST ...]
+                        List of QIDs or URLs to Q-items 
+                        that are to be added as main subjects 
+                        on scientific articles. Always add the 
+                        most specific ones first. 
+                        See the README for examples
+  -na, --no-aliases     Turn off alias matching
 
 ```
 # License
