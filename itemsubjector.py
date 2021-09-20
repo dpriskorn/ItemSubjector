@@ -113,6 +113,7 @@ def process_ngrams(results):
 def process_user_supplied_qids(args=None, task: Task = None):
     """Given a list of QIDs, we go through
     them and call add_suggestion_to_items() on each one"""
+    logger = logging.getLogger(__name__)
     if args is None:
         raise ValueError("args was None")
     if task is None:
@@ -125,6 +126,11 @@ def process_user_supplied_qids(args=None, task: Task = None):
         raise ValueError(f"taskid {task.id} not recognized")
     login()
     for qid in args.list:
+        if "https://www.wikidata.org/wiki/" in qid:
+            qid = qid[30:]
+        if "http://www.wikidata.org/entity/" in qid:
+            qid = qid[31:]
+        logger.debug(f"qid:{qid}")
         item = Item(
             id=qid,
             task=task
@@ -162,10 +168,11 @@ def main():
     # TODO support turning off aliases
     parser.add_argument('-l', '--list',
                         nargs='+',
-                        help=('List of QIDs that are to be added as '
+                        help=('List of QIDs or URLs to Q-items that '
+                              'are to be added as '
                               'main subjects on scientific articles. '
                               'Always add the most specific ones first. '
-                              'See the README for an example'),
+                              'See the README for examples'),
                         required=False)
     parser.add_argument('-na', '--no-aliases',
                         action='store_true',

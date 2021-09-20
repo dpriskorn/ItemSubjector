@@ -69,13 +69,15 @@ of the target item (e.g. scientific article).
 ## Adding QIDs manually
 *Always provide the most precise subjects first*
 
-Run the script with the -l or --list argument followed by one or more QIDs:
-* `python itemsubjector.py -l Q108528107`
+Run the script with the -l or --list argument 
+followed by one or more QIDs or URLS:
+* `python itemsubjector.py -l Q108528107` or
+* `python itemsubjector.py -l https://www.wikidata.org/wiki/Q108528107`
   
 Here is a more advanced example:
 The first is *metastatic breast cancer* which is a 
 subclass of the second *breast cancer*
-* `python itemsubjector.py -l Q108528107 Q128581`
+* `python itemsubjector.py -l Q108528107 Q128581` or
 
 In this case the tool is smart enough 
 (thanks to Jan Ainali) to first add 
@@ -109,13 +111,7 @@ Usage example:
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -l LIST [LIST ...], --list LIST [LIST ...]
-                        List of QIDs that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the README for an example
-  -na, --no-aliases     Turn off alias matching
 ```
 # License
 GPLv3+
