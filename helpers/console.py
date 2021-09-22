@@ -100,3 +100,9 @@ def print_found_items_table(items: Items = None):
 
 def ask_continue_with_the_rest():
     console.input("Press enter to continue or ctrl+c to quit")
+
+
+def print_running_jobs(jobs):
+    console.print(f"Running {len(jobs)} job(s) "
+                  f"non-interactively now. You can take a "
+                  f" coffee break and lean back :)")

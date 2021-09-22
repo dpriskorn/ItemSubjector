@@ -2,11 +2,14 @@ import logging
 from typing import List
 from urllib.parse import quote
 
+from wikibaseintegrator.datatypes import Item as ItemType
+
+from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import print_search_strings_table, console
 from helpers.enums import TaskIds
 from models.ngram import NGram
 from models.task import Task
-from models.wikidata import Item
+from models.wikidata import Item, Items
 
 
 class Suggestion:
@@ -93,4 +96,38 @@ class Suggestion:
                 self.search_strings.append(alias)
         # logger.debug(f"search_strings:{self.search_strings}")
         print_search_strings_table(self.search_strings)
+
+    def add_to_items(self, items: Items = None):
+        """Add a suggested QID as main subject on all items that
+        have a label that matches one of the search strings for this QID
+        We calculate a new edit group hash each time this function is
+        called so similar edits are grouped and easily be undone.
+
+        This function is non-interactive"""
+        if items is None:
+            raise ValueError("Items was None")
+        editgroups_hash: str = calculate_random_editgroups_hash()
+        count = 0
+        for target_item in items.list:
+            count += 1
+            with console.status(f"Uploading main subject [green]{self.item.label}[/green] to {target_item.label}"):
+                main_subject_property = "P921"
+                reference = ItemType(
+                    "Q69652283",  # inferred from title
+                    prop_nr="P887"  # based on heuristic
+                )
+                statement = ItemType(
+                    self.item.id,
+                    prop_nr=main_subject_property,
+                    references=[reference]
+                )
+                target_item.upload_one_statement_to_wikidata(
+                    statement=statement,
+                    summary=f"[[Property:{main_subject_property}]]: [[{self.item.id}]]",
+                    editgroups_hash=editgroups_hash
+                )
+            console.print(f"({count}/{len(items.list)}) "
+                          f"Added '{self.item.label}' to {target_item.label}: {target_item.url()}")
+            # input("Press enter to continue")
+
 

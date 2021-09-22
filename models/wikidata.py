@@ -880,8 +880,6 @@ class Labels:
             raise ValueError("Get no query")
         if quantity is None:
             raise ValueError("Get no quantity")
-        if config.random_offset is None:
-            raise ValueError("No random offset present in the config")
         from helpers.console import console
         with console.status(f"Fetching {quantity} labels..."):
             dataframe = (query_wikidata(f'''
@@ -901,7 +899,6 @@ class Labels:
                       }}
                       BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
                     }} 
-                    OFFSET {config.random_offset}
                     LIMIT {quantity}
                     }}  
                   SERVICE wikibase:label {{

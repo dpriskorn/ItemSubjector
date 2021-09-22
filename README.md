@@ -2,18 +2,15 @@
 *still in BETA*
 
 Tool made to add main subject statements to 
-items based on the title using a home-brewed 
-CirrusSearch-based Named Entity Recognition algorithm. 
+items based on a heuristic matching the subject with the title of the item. 
 ![bild](https://user-images.githubusercontent.com/68460690/133230724-40a610b7-5557-4b2b-b66e-2d80ca89e90d.png)
 *The tool running in PAWS adding manually found main subject QIDs*
 
 # Features
-This tool has the following features
+This tool has the following features:
 * adding a list of main subjects to items 
-  (for now only scholarly articles are supported)
-* automatically extracting n-grams from labels of 10.000 articles 
-  (this is not that powerful because users know better than scikit 
-  what subjects are meaningful to have on our scientific articles)
+  (for now scholarly articles and documents 
+  from Riksdagen are supported)
 
 It supports 
 [Wikidata:Edit groups](https://www.wikidata.org/wiki/Wikidata:Edit_groups) 
@@ -53,17 +50,12 @@ config.py and enter the botusername
 * e.g. `cp config.example.py config.py && nano config.py`
 
 # Use
-It has 2 modes:
-1) automatic finding n-grams and trying to 
-   detect items that match (default if no
-   arguments are given on the command line)
-2) add main subject items to scholarly articles (see details below)
-
-Both modes conclude by adding the 
+This tool helps by adding the 
 validated or supplied QID to all 
 scientific articles where the 
-n-gram or search string appears (with 
-spaces around it) in the label 
+search string appears (with 
+spaces around it or in the the beginning
+or end of the string) in the label 
 of the target item (e.g. scientific article).
 
 ## Adding QIDs manually
@@ -108,21 +100,36 @@ Usage example:
 `python itemsubjector.py -l Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
+## Batch job features
+The tool now can help prepare jobs and then run 
+them later non-interactively. This enables the user
+to submit them as jobs e.g. on the Toolserver 
+Grid Engine or Kubernettes cluster so you don't 
+have to run them locally if you don't want to.
+
+See the commands below for how to use it.
+
+*Note: if you quit a list of jobs that are 
+currently running, please remove the 
+unfinished prepared jobs before preparing 
+new jobs by running --remove-prepared-jobs*
+
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na]
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm]
 
 optional arguments:
   -h, --help            show this help message and exit
   -l LIST [LIST ...], --list LIST [LIST ...]
-                        List of QIDs or URLs to Q-items 
-                        that are to be added as main subjects 
-                        on scientific articles. Always add the 
-                        most specific ones first. 
-                        See the README for examples
+                        List of QIDs or URLs to Q-items that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the README
+                        for examples
   -na, --no-aliases     Turn off alias matching
-
+  -p, --prepare-jobs    Prepare a job for later execution, e.g. in a job engine
+  -r, --run-prepared-jobs
+                        Run prepared jobs non-interactively
+  -rm, --remove-prepared-jobs
+                        Remove prepared jobs
 ```
 # License
 GPLv3+
