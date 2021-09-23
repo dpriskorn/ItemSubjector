@@ -171,9 +171,9 @@ def main():
             console.print("Adding job(s) to the jobs file")
             for job in jobs:
                 add_to_pickle(job)
-            console.print(f"{len(jobs)} jobs prepared. You can run them "
+            console.print(f"You can run the jobs "
                           f"non-interactively e.g. on the Toolforge "
-                          f"Kubernetes cluster using --run-prepared-jobs. "
+                          f"Kubernetes cluster using -r or --run-prepared-jobs. "
                           f"See https://phabricator.wikimedia.org/T285944 "
                           f"for details")
         else:
