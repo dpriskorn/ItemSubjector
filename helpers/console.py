@@ -105,8 +105,7 @@ def print_found_items_table(items: Items = None):
 
 
 def ask_add_to_job_queue():
-    # TODO implement yes/no
-    console.input("Press enter to add this job to the queue ctrl+c to quit")
+    return ask_yes_no_question("Do you want to add this job to the queue?")
 
 
 def print_running_jobs(jobs):

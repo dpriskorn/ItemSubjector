@@ -6,11 +6,11 @@ from wikibaseintegrator import wbi_login, wbi_config
 import config
 from helpers.console import console, print_scholarly_articles_best_practice_information, \
     print_riksdagen_documents_best_practice_information, \
-    print_found_items_table, ask_add_to_job_queue, print_running_jobs
+    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question
 from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
-from helpers.pickle import parse_pickle, remove_pickle, add_to_pickle
+from helpers.pickle import parse_pickle, remove_pickle, add_to_pickle, check_if_pickle_exists
 from models.batch_job import BatchJob
 from models.riksdagen_documents import RiksdagenDocumentItems
 from models.scholarly_articles import ScholarlyArticleItems
@@ -76,12 +76,13 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
             # Randomize the list
             items.random_shuffle_list()
             print_found_items_table(items=items)
-            ask_add_to_job_queue()
-            job = BatchJob(
-                items=items,
-                suggestion=suggestion
-            )
-            jobs.append(job)
+            answer = ask_add_to_job_queue()
+            if answer:
+                job = BatchJob(
+                    items=items,
+                    suggestion=suggestion
+                )
+                jobs.append(job)
         else:
             console.print("No matching items found")
     return jobs
@@ -150,6 +151,12 @@ def main():
         if args.list is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
+        if check_if_pickle_exists():
+            answer = ask_yes_no_question("A prepared list of jobs already exist, "
+                                "do you want to overwrite it? "
+                                "(pressing no will append to it)")
+            if answer:
+                remove_pickle()
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")

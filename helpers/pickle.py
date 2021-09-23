@@ -31,9 +31,16 @@ def read_from_pickle(path):
             pass
 
 
+def check_if_pickle_exists():
+    if os.path.exists(pickle_path):
+        return True
+    else:
+        return False
+
+
 def parse_pickle() -> List[BatchJob]:
     """Reads the picle into a list of batch jobs"""
-    if os.path.exists(pickle_path):
+    if check_if_pickle_exists():
         jobs: List[BatchJob] = []
         for job in read_from_pickle(pickle_path):
             jobs.append(job)
@@ -48,3 +55,4 @@ def parse_pickle() -> List[BatchJob]:
 def remove_pickle():
     if os.path.exists(pickle_path):
         os.remove(pickle_path)
+        console.print("The joblist was removed")
