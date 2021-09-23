@@ -33,7 +33,7 @@ def read_from_pickle(path):
 
 def parse_pickle() -> List[BatchJob]:
     """Reads the picle into a list of batch jobs"""
-    if os.path.exists():
+    if os.path.exists(pickle_path):
         jobs: List[BatchJob] = []
         for job in read_from_pickle(pickle_path):
             jobs.append(job)

@@ -6,7 +6,7 @@ from wikibaseintegrator import wbi_login, wbi_config
 import config
 from helpers.console import console, print_scholarly_articles_best_practice_information, \
     print_riksdagen_documents_best_practice_information, \
-    print_found_items_table, ask_continue_with_the_rest, print_running_jobs
+    print_found_items_table, ask_add_to_job_queue, print_running_jobs
 from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
@@ -76,7 +76,7 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
             # Randomize the list
             items.random_shuffle_list()
             print_found_items_table(items=items)
-            ask_continue_with_the_rest()
+            ask_add_to_job_queue()
             job = BatchJob(
                 items=items,
                 suggestion=suggestion

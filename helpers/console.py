@@ -104,8 +104,9 @@ def print_found_items_table(items: Items = None):
     console.print(table)
 
 
-def ask_continue_with_the_rest():
-    console.input("Press enter to continue or ctrl+c to quit")
+def ask_add_to_job_queue():
+    # TODO implement yes/no
+    console.input("Press enter to add this job to the queue ctrl+c to quit")
 
 
 def print_running_jobs(jobs):
