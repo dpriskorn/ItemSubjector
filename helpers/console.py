@@ -112,3 +112,7 @@ def print_running_jobs(jobs):
     console.print(f"Running {len(jobs)} job(s) "
                   f"non-interactively now. You can take a "
                   f" coffee break and lean back :)")
+
+
+def print_finished():
+    console.print("All jobs finished successfully")

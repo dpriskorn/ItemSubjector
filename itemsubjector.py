@@ -6,7 +6,7 @@ from wikibaseintegrator import wbi_login, wbi_config
 import config
 from helpers.console import console, print_scholarly_articles_best_practice_information, \
     print_riksdagen_documents_best_practice_information, \
-    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question
+    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question, print_finished
 from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
@@ -145,6 +145,7 @@ def main():
             print_running_jobs(jobs)
             for job in jobs:
                 job.run()
+            print_finished()
             # Remove the pickle afterwards
             remove_pickle()
     else:
@@ -174,6 +175,7 @@ def main():
             print_running_jobs(jobs)
             for job in jobs:
                 job.run()
+            print_finished()
 
 
 if __name__ == "__main__":
