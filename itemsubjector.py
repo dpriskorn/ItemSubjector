@@ -12,7 +12,6 @@ from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
 from helpers.pickle import parse_pickle, remove_pickle, add_to_pickle
 from models.batch_job import BatchJob
-from models.ngram import NGram
 from models.riksdagen_documents import RiksdagenDocumentItems
 from models.scholarly_articles import ScholarlyArticleItems
 from models.suggestion import Suggestion
@@ -57,10 +56,6 @@ def process_user_supplied_qids_into_batch_jobs(args=None, task: Task = None):
         # generate suggestion with all we need
         suggestion = Suggestion(
             item=item,
-            ngram=NGram(
-                label=item.label,
-                frequency=None
-            ),
             task=task,
             args=args
         )
