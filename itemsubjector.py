@@ -9,6 +9,7 @@ from helpers.console import console, print_scholarly_articles_best_practice_info
     print_found_items_table, ask_continue_with_the_rest, print_running_jobs
 from helpers.enums import TaskIds
 from helpers.menus import select_task
+from helpers.migration import migrate_pickle_detection
 from helpers.pickle import parse_pickle, remove_pickle, add_to_pickle
 from models.batch_job import BatchJob
 from models.ngram import NGram
@@ -104,6 +105,7 @@ def login():
 def main():
     """Collects arguments and branches off"""
     # logger = logging.getLogger(__name__)
+    migrate_pickle_detection()
     parser = argparse.ArgumentParser()
     # TODO support turning off aliases
     parser.add_argument('-l', '--list',
