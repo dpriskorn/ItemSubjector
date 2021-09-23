@@ -26,8 +26,8 @@ logging.basicConfig(level=logging.WARNING)
 # e.g. English scientific articles
 
 
-def process_user_supplied_qids_into_batch_jobs(args: 'argparse.Namespace' = None,
-                                               task: 'Task' = None):
+def process_user_supplied_qids_into_batch_jobs(args=None,
+                                               task=None):
     """Given a list of QIDs, we go through
     them and call add_suggestion_to_items() on each one"""
     logger = logging.getLogger(__name__)
