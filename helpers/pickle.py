@@ -1,5 +1,6 @@
 import os
 import pickle
+from pathlib import Path
 from typing import List
 
 import config
@@ -11,15 +12,13 @@ from models.batch_job import BatchJob
 # BatchJob
 # BatchJob
 
-# # load & show all stored objects
-# for item in read_from_pickle(PICKLE_FILE):
-#     print(repr(item))
-# os.remove(PICKLE_FILE)
+pickle_path = f"{Path.home()}/{config.pickle_file_path}"
+
 
 def add_to_pickle(job: BatchJob = None):
     if job is None:
         raise ValueError("Job was None")
-    with open(config.pickle_file_path, 'ab') as file:
+    with open(pickle_path, 'ab') as file:
         pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
 
 
@@ -34,9 +33,9 @@ def read_from_pickle(path):
 
 def parse_pickle() -> List[BatchJob]:
     """Reads the picle into a list of batch jobs"""
-    if os.path.exists(config.pickle_file_path):
+    if os.path.exists():
         jobs: List[BatchJob] = []
-        for job in read_from_pickle(config.pickle_file_path):
+        for job in read_from_pickle(pickle_path):
             jobs.append(job)
         if len(jobs) == 0:
             console.print("No prepared jobs found")
@@ -47,5 +46,5 @@ def parse_pickle() -> List[BatchJob]:
 
 
 def remove_pickle():
-    if os.path.exists(config.pickle_file_path):
-        os.remove(config.pickle_file_path)
+    if os.path.exists(pickle_path):
+        os.remove(pickle_path)
