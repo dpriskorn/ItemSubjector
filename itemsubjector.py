@@ -76,7 +76,7 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
             # Randomize the list
             items.random_shuffle_list()
             print_found_items_table(items=items)
-            answer = ask_add_to_job_queue()
+            answer = ask_add_to_job_queue(items)
             if answer:
                 job = BatchJob(
                     items=items,

@@ -104,8 +104,8 @@ def print_found_items_table(items: Items = None):
     console.print(table)
 
 
-def ask_add_to_job_queue():
-    return ask_yes_no_question("Do you want to add this job to the queue?")
+def ask_add_to_job_queue(items: Items = None):
+    return ask_yes_no_question(f"Do you want to add this job with {len(items.list)} items to the queue?")
 
 
 def print_running_jobs(jobs):
