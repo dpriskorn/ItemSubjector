@@ -100,6 +100,16 @@ def login():
         wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
 
 
+def run_jobs(jobs):
+    login()
+    print_running_jobs(jobs)
+    count = 0
+    for job in jobs:
+        count += 1
+        job.run(jobs=jobs, job_count=count)
+    print_finished()
+
+
 def main():
     """Collects arguments and branches off"""
     # logger = logging.getLogger(__name__)
@@ -133,19 +143,14 @@ def main():
     args = parser.parse_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
-
         remove_pickle()
-        console.print("Removed the jobs.")
+        console.print("Removed the joblist.")
         # exit(0)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
         jobs = parse_pickle()
         if jobs is not None and len(jobs) > 0:
-            login()
-            print_running_jobs(jobs)
-            for job in jobs:
-                job.run()
-            print_finished()
+            run_jobs(jobs)
             # Remove the pickle afterwards
             remove_pickle()
     else:
@@ -154,8 +159,8 @@ def main():
             exit(0)
         if check_if_pickle_exists():
             answer = ask_yes_no_question("A prepared list of jobs already exist, "
-                                "do you want to overwrite it? "
-                                "(pressing no will append to it)")
+                                         "do you want to overwrite it? "
+                                         "(pressing no will append to it)")
             if answer:
                 remove_pickle()
         task: Task = select_task()
@@ -172,11 +177,7 @@ def main():
                           f"See https://phabricator.wikimedia.org/T285944 "
                           f"for details")
         else:
-            login()
-            print_running_jobs(jobs)
-            for job in jobs:
-                job.run()
-            print_finished()
+            run_jobs(jobs)
 
 
 if __name__ == "__main__":

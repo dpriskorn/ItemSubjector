@@ -7,6 +7,7 @@ from wikibaseintegrator.datatypes import Item as ItemType
 from helpers.calculations import calculate_random_editgroups_hash
 from helpers.console import print_search_strings_table, console
 from helpers.enums import TaskIds
+from models.batch_job import BatchJob
 from models.task import Task
 from models.wikidata import Item, Items
 
@@ -76,7 +77,10 @@ class Suggestion:
         # logger.debug(f"search_strings:{self.search_strings}")
         print_search_strings_table(self.search_strings)
 
-    def add_to_items(self, items: Items = None):
+    def add_to_items(self,
+                     items: Items = None,
+                     jobs: List[BatchJob] = None,
+                     job_count: int = None):
         """Add a suggested QID as main subject on all items that
         have a label that matches one of the search strings for this QID
         We calculate a new edit group hash each time this function is
@@ -85,6 +89,10 @@ class Suggestion:
         This function is non-interactive"""
         if items is None:
             raise ValueError("Items was None")
+        if jobs is None:
+            raise ValueError("jobs was None")
+        if job_count is None:
+            raise ValueError("job count was None")
         editgroups_hash: str = calculate_random_editgroups_hash()
         count = 0
         for target_item in items.list:
@@ -105,7 +113,7 @@ class Suggestion:
                     summary=f"[[Property:{main_subject_property}]]: [[{self.item.id}]]",
                     editgroups_hash=editgroups_hash
                 )
-            console.print(f"({count}/{len(items.list)}) "
+            console.print(f"(job {job_count}/{len(jobs)})(item {count}/{len(items.list)}) "
                           f"Added '{self.item.label}' to {target_item.label}: {target_item.url()}")
             # input("Press enter to continue")
 

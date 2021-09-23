@@ -1,9 +1,10 @@
-import argparse
+from __future__ import annotations
 from dataclasses import dataclass
+from typing import List, TYPE_CHECKING
 
-from models.suggestion import Suggestion
-from models.task import Task
-from models.wikidata import Items
+if TYPE_CHECKING:
+    from models.suggestion import Suggestion
+    from models.wikidata import Items
 
 
 @dataclass
@@ -12,5 +13,9 @@ class BatchJob:
     suggestion: Suggestion
     items: Items
 
-    def run(self):
-        self.suggestion.add_to_items(items=self.items)
+    def run(self, jobs: List[BatchJob], job_count: int = None):
+        if jobs is None:
+            raise ValueError("jobs was None")
+        if job_count is None:
+            raise ValueError("job count was None")
+        self.suggestion.add_to_items(items=self.items, jobs=jobs, job_count=job_count)
