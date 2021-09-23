@@ -18,8 +18,9 @@ pickle_path = f"{Path.home()}/{config.pickle_file_path}"
 def add_to_pickle(job: BatchJob = None):
     if job is None:
         raise ValueError("Job was None")
-    with open(pickle_path, 'ab') as file:
-        pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
+    else:
+        with open(pickle_path, 'ab') as file:
+            pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
 
 
 def read_from_pickle(path):

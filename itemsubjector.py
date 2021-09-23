@@ -163,6 +163,7 @@ def main():
             raise ValueError("Got no task")
         jobs = process_user_supplied_qids_into_batch_jobs(args=args, task=task)
         if args.prepare_jobs:
+            console.print("Adding job(s) to the jobs file")
             for job in jobs:
                 add_to_pickle(job)
             console.print(f"{len(jobs)} jobs prepared. You can run them "
