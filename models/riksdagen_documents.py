@@ -5,21 +5,7 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query
 from helpers.console import console
 from models.suggestion import Suggestion
 from models.task import Task
-from models.wikidata import Labels, Items, Item
-
-
-class RiksdagenDocumentLabels(Labels):
-    """This class has all code needed to fetch Riksdagen documents, extract the labels,
-    clean them and find the top n-grams we need"""
-
-    # def get_ngrams(self) -> dict:
-    #     # calculate_random_offset()
-    #     # console.print(f"Calculated offset is: {config.random_offset} and will be used to randomize "
-    #     #               f"the selection of scientific articles that are fetched")
-    #     self.fetch_labels_into_dataframe(quantity=5000,
-    #                                      # Fetch Riksdagen documents without main subject
-    #                                      query="haswbstatement:P8433 -haswbstatement:P921")
-    #     return self.extract_most_frequent_ngrams(quantity=7)
+from models.wikidata import Items, Item
 
 
 class RiksdagenDocumentItems(Items):

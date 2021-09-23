@@ -26,8 +26,8 @@ logging.basicConfig(level=logging.WARNING)
 # e.g. English scientific articles
 
 
-def process_user_supplied_qids_into_batch_jobs(args=None,
-                                               task=None):
+def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
+                                               task: Task = None):
     """Given a list of QIDs, we go through
     them and call add_suggestion_to_items() on each one"""
     logger = logging.getLogger(__name__)
@@ -63,6 +63,7 @@ def process_user_supplied_qids_into_batch_jobs(args=None,
         with console.status(f'Fetching items with labels that have one of '
                             f'the search strings by running a total of '
                             f'{len(suggestion.search_strings)} queries on WDQS...'):
+            # TODO move this into task.py
             if task.id == TaskIds.SCHOLARLY_ARTICLES:
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:

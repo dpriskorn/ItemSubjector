@@ -23,15 +23,11 @@ class Task:
             raise ValueError("Got no label")
         if question is None:
             raise ValueError("Got no question")
-        if labels is None:
-            raise ValueError("Got no labels class")
         if language_code is None:
             raise ValueError("Got no language_code")
         self.id = id
         self.label = label
         self.question = question
-        from models.wikidata import Labels
-        self.labels: Labels = labels
         self.language_code = language_code
 
     def __str__(self):
