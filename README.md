@@ -101,15 +101,17 @@ Usage example:
 (the shorthand `-na` also works)
 
 ## Batch job features
-The tool now can help prepare jobs and then run 
+The tool can help prepare jobs and then run 
 them later non-interactively. This enables the user
-to submit them as jobs e.g. on the Toolserver 
-Grid Engine or Kubernettes cluster so you don't 
+to submit them as jobs on the Wikimedia Cloud Service 
+Beta Kubernetes cluster so you don't 
 have to run them locally if you don't want to.
 
-See the commands below for how to use it.
+See the commands below and 
+https://phabricator.wikimedia.org/T285944#7373913 
+for details.
 
-*Note: if you quit a list of jobs that are 
+*Note: if you quit/stop a list of jobs that are 
 currently running, please remove the 
 unfinished prepared jobs before preparing 
 new jobs by running --remove-prepared-jobs*
