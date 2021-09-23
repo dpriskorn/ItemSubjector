@@ -139,7 +139,7 @@ def main():
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
         jobs = parse_pickle()
-        if jobs is None and len(jobs) > 0:
+        if jobs is not None and len(jobs) > 0:
             login()
             print_running_jobs(jobs)
             for job in jobs:
