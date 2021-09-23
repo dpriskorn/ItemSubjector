@@ -45,8 +45,9 @@ def print_keep_an_eye_on_wdqs_lag():
                   "You can see if any lagging servers are pooled here\n"
                   "https://config-master.wikimedia.org/pybal/eqiad/wdqs\n"
                   "If any enabled servers are lagging more than 5-10 minutes "
-                  "you can search phabricator for open tickets to see if the team is on it. "
-                  "If not feel free to create a new ticket like this: https://phabricator.wikimedia.org/T291621")
+                  "you can search phabricator for open tickets to see if the team is on it.\n"
+                  "If you don't find any feel free to create a new ticket like this:\n"
+                  "https://phabricator.wikimedia.org/T291621")
 
 
 def press_enter_to_start():
