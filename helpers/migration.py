@@ -3,7 +3,7 @@ import config
 
 def migrate_pickle_detection():
     try:
-        if config.pickle_file is None:
+        if config.pickle_file_path is None:
             raise ValueError("the variable pickle_file in config "
                              "has to contain a string like 'pickle.dat'")
     except AttributeError:

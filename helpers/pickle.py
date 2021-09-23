@@ -19,7 +19,7 @@ from models.batch_job import BatchJob
 def add_to_pickle(job: BatchJob = None):
     if job is None:
         raise ValueError("Job was None")
-    with open(config.pickle_file, 'ab') as file:
+    with open(config.pickle_file_path, 'ab') as file:
         pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
 
 
@@ -34,15 +34,18 @@ def read_from_pickle(path):
 
 def parse_pickle() -> List[BatchJob]:
     """Reads the picle into a list of batch jobs"""
-    if os.path.exists(config.pickle_file):
+    if os.path.exists(config.pickle_file_path):
         jobs: List[BatchJob] = []
-        for job in read_from_pickle(config.pickle_file):
+        for job in read_from_pickle(config.pickle_file_path):
             jobs.append(job)
-        return jobs
+        if len(jobs) == 0:
+            console.print("No prepared jobs found")
+        else:
+            return jobs
     else:
-        console.print("No prepared jobs found")
+        console.print("No pickle file found")
 
 
 def remove_pickle():
-    if os.path.exists(config.pickle_file):
-        os.remove(config.pickle_file)
+    if os.path.exists(config.pickle_file_path):
+        os.remove(config.pickle_file_path)
