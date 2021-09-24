@@ -111,7 +111,7 @@ def run_jobs(jobs):
         job.run(jobs=jobs, job_count=count)
     print_finished()
     end_time = datetime.now()
-    console.print(f'Duration: {end_time - start_time}')
+    console.print(f'Total runtime: {end_time - start_time}')
 
 
 def main():
