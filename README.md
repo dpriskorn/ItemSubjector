@@ -8,13 +8,16 @@ items based on a heuristic matching the subject with the title of the item.
 
 # Features
 This tool has the following features:
-* adding a list of main subjects to items 
+* Adding a list of manually supplied main subjects to items 
   (for now scholarly articles and documents 
   from Riksdagen are supported)
+* Matching against 136.000 existing main subjects and adding them to scholarly articles
+* Batch mode that can be used together with the above features and be run non-interactively 
+  e.g. in the Wikimedia Cloud kubernetes beta cluster
 
 It supports 
 [Wikidata:Edit groups](https://www.wikidata.org/wiki/Wikidata:Edit_groups) 
-so that batches can easily be undone if needed.
+so that batches can easily be undone later if needed.
 
 # Thanks
 During the development of this tool the author got a 
@@ -24,7 +27,10 @@ CirrusSearch extensions and to remove more
 specific main subjects from the query results.
 
 A special thanks also to **Magnus Sälgö** for his valuable input 
-and ideas, e.g. to search for aliases also.
+and ideas, e.g. to search for aliases also and to *Jean* and the 
+incredibly
+helpful people in the Wikimedia Cloud Services Support chat that
+helped with making batch jobs run successfully.
 
 # Installation
 Clone the repo and run
@@ -43,6 +49,15 @@ issues.
   that hides it from publication.
 * run the pip-command above
 
+## Wikimedia Cloud Services kubernetes beta cluster
+See the batch commands below and 
+https://phabricator.wikimedia.org/T285944#7373913 
+for details.
+
+There is a `setup_environment.sh` in the root of this repo that can help 
+you prepare the pod/container so that the tool will work.
+
+
 # Setup
 Like my other tools, copy config.example.py -> 
 config.py and enter the botusername 
@@ -54,7 +69,7 @@ This tool helps by adding the
 validated or supplied QID to all 
 scientific articles where the 
 search string appears (with 
-spaces around it or in the the beginning
+spaces around it or in the beginning
 or end of the string) in the label 
 of the target item (e.g. scientific article).
 
@@ -100,11 +115,26 @@ Usage example:
 `python itemsubjector.py -l Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
+## Matching against ~136.000 existing main subjects
+The tool can create a list of jobs by picking random subjects from a
+big list based on 2 million samples where ~136.000 distinct subjects
+were found (see `data/`).
+
+This enables the user to quickly build up a big list of jobs to run 
+and improve the graph by improving the coverage on existing subjects.
+
+Usage example:
+`python itemsubjector.py -m`
+
+By using this function the author in 2 minutes created a list with 6 jobs
+improving a total of 10.000 articles. You can now make a list of jobs with
+little effort and let them run all day/night.
+
 ## Batch job features
 The tool can help prepare jobs and then run 
 them later non-interactively. This enables the user
 to submit them as jobs on the Wikimedia Cloud Service 
-Beta Kubernetes cluster so you don't 
+Beta Kubernetes cluster, so you don't 
 have to run them locally if you don't want to.
 
 See the commands below and 
@@ -119,7 +149,7 @@ new jobs by running --remove-prepared-jobs*
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm]
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -132,6 +162,8 @@ optional arguments:
                         Run prepared jobs non-interactively
   -rm, --remove-prepared-jobs
                         Remove prepared jobs
+  -m, --match-existing-main-subjects
+                        Match from list of 136.000 already used main subjects on other scientific articles
 ```
 # License
 GPLv3+

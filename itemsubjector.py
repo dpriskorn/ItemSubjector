@@ -1,6 +1,8 @@
 import argparse
 import logging
+import random
 from datetime import datetime
+from typing import List
 
 from wikibaseintegrator import wbi_login, wbi_config
 
@@ -18,6 +20,7 @@ from models.scholarly_articles import ScholarlyArticleItems
 from models.suggestion import Suggestion
 from models.task import Task
 from models.wikidata import Item
+from tasks import tasks
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -27,10 +30,62 @@ logging.basicConfig(level=logging.WARNING)
 # e.g. English scientific articles
 
 
+def process_qid_into_job(qid: str = None,
+                         task: Task = None,
+                         args: argparse.Namespace = None) -> BatchJob:
+    logger = logging.getLogger(__name__)
+    if qid is None:
+        raise ValueError("qid was None")
+    if args is None:
+        raise ValueError("args was None")
+    if task is None:
+        raise ValueError("task was None")
+    if "https://www.wikidata.org/wiki/" in qid:
+        qid = qid[30:]
+    if "http://www.wikidata.org/entity/" in qid:
+        qid = qid[31:]
+    logger.debug(f"qid:{qid}")
+    item = Item(
+        id=qid,
+        task=task
+    )
+    console.print(f"Working on {item}")
+    # generate suggestion with all we need
+    suggestion = Suggestion(
+        item=item,
+        task=task,
+        args=args
+    )
+    with console.status(f'Fetching items with labels that have one of '
+                        f'the search strings by running a total of '
+                        f'{len(suggestion.search_strings)} queries on WDQS...'):
+        # TODO move this into task.py
+        if task.id == TaskIds.SCHOLARLY_ARTICLES:
+            items = ScholarlyArticleItems()
+        elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+            items = RiksdagenDocumentItems()
+        else:
+            raise ValueError(f"{task.id} was not recognized")
+        items.fetch_based_on_label(suggestion=suggestion,
+                                   task=task)
+    if len(items.list) > 0:
+        # Randomize the list
+        items.random_shuffle_list()
+        print_found_items_table(items=items)
+        answer = ask_add_to_job_queue(items)
+        if answer:
+            return BatchJob(
+                items=items,
+                suggestion=suggestion
+            )
+    else:
+        console.print("No matching items found")
+
+
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
-                                               task: Task = None):
+                                               task: Task = None) -> List[BatchJob]:
     """Given a list of QIDs, we go through
-    them and call add_suggestion_to_items() on each one"""
+    them and return a list of jobs"""
     logger = logging.getLogger(__name__)
     if args is None:
         raise ValueError("args was None")
@@ -42,51 +97,25 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
         print_riksdagen_documents_best_practice_information()
     else:
         raise ValueError(f"taskid {task.id} not recognized")
-    # login()
     jobs = []
     for qid in args.list:
-        if "https://www.wikidata.org/wiki/" in qid:
-            qid = qid[30:]
-        if "http://www.wikidata.org/entity/" in qid:
-            qid = qid[31:]
-        logger.debug(f"qid:{qid}")
-        item = Item(
-            id=qid,
-            task=task
-        )
-        console.print(f"Working on {item}")
-        # generate suggestion with all we need
-        suggestion = Suggestion(
-            item=item,
-            task=task,
-            args=args
-        )
-        with console.status(f'Fetching items with labels that have one of '
-                            f'the search strings by running a total of '
-                            f'{len(suggestion.search_strings)} queries on WDQS...'):
-            # TODO move this into task.py
-            if task.id == TaskIds.SCHOLARLY_ARTICLES:
-                items = ScholarlyArticleItems()
-            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-                items = RiksdagenDocumentItems()
-            else:
-                raise ValueError(f"{task.id} was not recognized")
-            items.fetch_based_on_label(suggestion=suggestion,
-                                       task=task)
-        if len(items.list) > 0:
-            # Randomize the list
-            items.random_shuffle_list()
-            print_found_items_table(items=items)
-            answer = ask_add_to_job_queue(items)
-            if answer:
-                job = BatchJob(
-                    items=items,
-                    suggestion=suggestion
-                )
-                jobs.append(job)
-        else:
-            console.print("No matching items found")
+        jobs.append(process_qid_into_job(qid=qid,
+                                         task=task,
+                                         args=args))
     return jobs
+
+
+def process_existing_main_subject_into_batch_job(args: argparse.Namespace = None,
+                                                 task: Task = None,
+                                                 qid: str = None) -> BatchJob:
+    """Given a list of QIDs, we go through
+    them and return a list of jobs"""
+    # logger = logging.getLogger(__name__)
+    if args is None:
+        raise ValueError("args was None")
+    if task is None:
+        raise ValueError("task was None")
+    return
 
 
 def login():
@@ -112,6 +141,30 @@ def run_jobs(jobs):
     print_finished()
     end_time = datetime.now()
     console.print(f'Total runtime: {end_time - start_time}')
+
+
+def handle_existing_pickle():
+    if check_if_pickle_exists():
+        answer = ask_yes_no_question("A prepared list of jobs already exist, "
+                                     "do you want to overwrite it? "
+                                     "(pressing no will append to it)")
+        if answer:
+            remove_pickle()
+
+
+def handle_preparation_or_run_directly(args: argparse.Namespace = None,
+                                       jobs: List[BatchJob] = None):
+    if args.prepare_jobs:
+        console.print("Adding job(s) to the jobs file")
+        for job in jobs:
+            add_to_pickle(job)
+        console.print(f"You can run the jobs "
+                      f"non-interactively e.g. on the Toolforge "
+                      f"Kubernetes cluster using -r or --run-prepared-jobs. "
+                      f"See https://phabricator.wikimedia.org/T285944 "
+                      f"for details")
+    else:
+        run_jobs(jobs)
 
 
 def main():
@@ -144,12 +197,38 @@ def main():
                         action='store_true',
                         help='Remove prepared jobs'
                         )
+    parser.add_argument('-m', '--match-existing-main-subjects',
+                        action='store_true',
+                        help=('Match from list of 136.000 already used '
+                              'main subjects on other scientific articles')
+                        )
     args = parser.parse_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the joblist.")
         # exit(0)
+    if args.match_existing_main_subjects is True:
+        # read the data file
+        filename = "data/main_subjects.csv"
+        main_subjects = []
+        with open(filename) as file:
+            main_subjects = file.readlines()
+            main_subjects = [line.rstrip() for line in main_subjects]
+        handle_existing_pickle()
+        jobs = []
+        while True:
+            console.print(f"Picking a random main subject from a list of {len(main_subjects)}")
+            qid = random.choice(main_subjects)
+            job = process_qid_into_job(qid=qid,
+                                       # The scientific article task is hardcoded for now
+                                       task=tasks[0],
+                                       args=args)
+            jobs.append(job)
+            answer = ask_yes_no_question("Match one more?")
+            if not answer:
+                break
+        handle_preparation_or_run_directly(args=args, jobs=jobs)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
         jobs = parse_pickle()
@@ -161,27 +240,12 @@ def main():
         if args.list is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
-        if check_if_pickle_exists():
-            answer = ask_yes_no_question("A prepared list of jobs already exist, "
-                                         "do you want to overwrite it? "
-                                         "(pressing no will append to it)")
-            if answer:
-                remove_pickle()
+        handle_existing_pickle()
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
         jobs = process_user_supplied_qids_into_batch_jobs(args=args, task=task)
-        if args.prepare_jobs:
-            console.print("Adding job(s) to the jobs file")
-            for job in jobs:
-                add_to_pickle(job)
-            console.print(f"You can run the jobs "
-                          f"non-interactively e.g. on the Toolforge "
-                          f"Kubernetes cluster using -r or --run-prepared-jobs. "
-                          f"See https://phabricator.wikimedia.org/T285944 "
-                          f"for details")
-        else:
-            run_jobs(jobs)
+        handle_preparation_or_run_directly(args=args, jobs=jobs)
 
 
 if __name__ == "__main__":
