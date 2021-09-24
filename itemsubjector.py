@@ -1,5 +1,6 @@
 import argparse
 import logging
+from datetime import datetime
 
 from wikibaseintegrator import wbi_login, wbi_config
 
@@ -104,10 +105,13 @@ def run_jobs(jobs):
     login()
     print_running_jobs(jobs)
     count = 0
+    start_time = datetime.now()
     for job in jobs:
         count += 1
         job.run(jobs=jobs, job_count=count)
     print_finished()
+    end_time = datetime.now()
+    console.print(f'Duration: {end_time - start_time}')
 
 
 def main():
