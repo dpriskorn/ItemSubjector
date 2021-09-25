@@ -172,7 +172,6 @@ def main():
     # logger = logging.getLogger(__name__)
     migrate_pickle_detection()
     parser = argparse.ArgumentParser()
-    # TODO support turning off aliases
     parser.add_argument('-l', '--list',
                         nargs='+',
                         help=('List of QIDs or URLs to Q-items that '
