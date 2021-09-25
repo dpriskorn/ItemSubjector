@@ -62,15 +62,6 @@ def print_best_practice(task: Task):
         press_enter_to_start()
 
 
-def print_ngram_table(results: Dict):
-    table = Table(title="N-grams found")
-    table.add_column("N-gram")
-    table.add_column("Frequency")
-    for ngram in results:
-        table.add_row(ngram, str(results[ngram]))
-    console.print(table)
-
-
 def print_search_strings_table(search_strings: List[str]):
     table = Table(title="Search strings")
     table.add_column(f"Extracted the following {len(search_strings)} search strings:")
