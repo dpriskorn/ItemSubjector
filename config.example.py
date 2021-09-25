@@ -5,7 +5,7 @@ username = ""
 password = ""
 
 # Global settings
-version = "0.1"  # Don't touch this.
+version = "0.2-alpha0"  # Don't touch this.
 wd_prefix = "http://www.wikidata.org/entity/"
 endpoint = "https://query.wikidata.org/sparql"
 wiki_user = "User:So9q"  # Change this to your username
