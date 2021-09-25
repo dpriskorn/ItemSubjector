@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 
 # Add your botpassword and login here:
 username = ""
@@ -15,4 +16,4 @@ tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
 # This should work for all platforms except kubernetes
 pickle_file_path = f"{tempfile.gettempdir()}/pickle.dat"
-# pickle_file_path = "~/pickle.dat"  # works on kubernetes
+# pickle_file_path = f"{Path.home()}/pickle.dat"  # works on kubernetes
