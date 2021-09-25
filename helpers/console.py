@@ -74,7 +74,7 @@ def print_found_items_table(items: Items = None):
     if items is None:
         raise ValueError("items was None")
     table = Table(title="Matched items found")
-    table.add_column("Showing only the first 50 items if more are found")
+    table.add_column("Showing only a random subset of 50 items if more are found")
     for item in items.list[0:50]:
         table.add_row(item.label)
     console.print(table)
