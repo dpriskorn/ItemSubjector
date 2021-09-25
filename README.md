@@ -161,7 +161,7 @@ new jobs by running --remove-prepared-jobs*
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m] [-w]
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m] [-w] [-su]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -178,6 +178,8 @@ optional arguments:
                         Match from list of 136.000 already used main subjects on other scientific articles
   -w, --limit-to-items-without-p921
                         Limit matching to scientific articles without P921 main subject
+  -su, --show-search-urls
+                        Show an extra column in the table of search strings with links
 ```
 # License
 GPLv3+
