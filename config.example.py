@@ -1,4 +1,4 @@
-import os
+import tempfile
 
 # Add your botpassword and login here:
 username = ""
@@ -13,4 +13,5 @@ user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubject
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
-pickle_file_path = "/tmp/pickle.dat"
+# This should work for all platforms
+pickle_file_path = f"{tempfile.gettempdir()}/pickle.dat"
