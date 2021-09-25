@@ -22,6 +22,14 @@ class ScholarlyArticleItems(Items):
         self.list = []
         for search_string in suggestion.search_strings:
             search_string = strip_bad_chars(search_string)
+            # This query uses https://www.w3.org/TR/sparql11-property-paths/ to
+            # find subjects that are subclass of one another up to 3 hops away
+            # This query also uses the https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI
+            # which has a hardcoded limit of 10,000 items so you will never get more matches than that
+            # This query use regex to match beginning, middle and end of the label of matched items
+            # The replacing lines should match the similar python replacements in cleaning.py
+            # The replacing with "\\\\\\\\" becomes "\\\\" after leaving python and then it works in
+            # SPARQL where it becomes "\\" and thus match a single backslash
             results = execute_sparql_query(f"""
             SELECT DISTINCT ?item ?itemLabel 
             WHERE {{
@@ -35,7 +43,6 @@ class ScholarlyArticleItems(Items):
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
-              # This has to match the function in cleaning.py
               BIND(REPLACE(LCASE(?label), ",", "") as ?label1)
               BIND(REPLACE(?label1, ":", "") as ?label2)
               BIND(REPLACE(?label2, ";", "") as ?label3)          
@@ -43,15 +50,14 @@ class ScholarlyArticleItems(Items):
               BIND(REPLACE(?label4, "\\\\)", "") as ?label5)
               BIND(REPLACE(?label5, "\\\\[", "") as ?label6)
               BIND(REPLACE(?label6, "\\\\]", "") as ?label7)
-              # This results in //->/ after leaving python
               BIND(REPLACE(?label7, "\\\\\\\\", "") as ?label8)
               BIND(?label8 as ?cleaned_label)
-              # We try matching beginning, middle and end
               FILTER(CONTAINS(?cleaned_label, ' {search_string.lower()} '@{task.language_code.value}) || 
                      REGEX(?cleaned_label, '.* {search_string.lower()}$'@{task.language_code.value}) ||
                      REGEX(?cleaned_label, '^{search_string.lower()} .*'@{task.language_code.value}))
-              # remove more specific forms of the main subject also
-              MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
+              MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}
+              MINUS {{?item wdt:P921/wdt:P279/wdt:P279 wd:{suggestion.item.id}. }}
+              MINUS {{?item wdt:P921/wdt:P279/wdt:P279/wdt:P279 wd:{suggestion.item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
             """)
