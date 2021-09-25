@@ -102,9 +102,11 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
     print_best_practice(task)
     jobs = []
     for qid in args.list:
-        jobs.append(process_qid_into_job(qid=qid,
-                                         task=task,
-                                         args=args))
+        job = process_qid_into_job(qid=qid,
+                                   task=task,
+                                   args=args)
+        if job is not None:
+            jobs.append(job)
     return jobs
 
 
