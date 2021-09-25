@@ -77,7 +77,8 @@ def process_qid_into_job(qid: str = None,
         if len(items.list) > 0:
             # Randomize the list
             items.random_shuffle_list()
-            print_found_items_table(items=items)
+            print_found_items_table(args=args,
+                                    items=items)
             job = BatchJob(
                 items=items,
                 suggestion=suggestion
@@ -206,6 +207,10 @@ def setup_argparse_and_return_args():
     parser.add_argument('-su', '--show-search-urls',
                         action='store_true',
                         help='Show an extra column in the table of search strings with links'
+                        )
+    parser.add_argument('-iu', '--show-item-urls',
+                        action='store_true',
+                        help='Show an extra column in the table of items with links'
                         )
     return parser.parse_args()
 

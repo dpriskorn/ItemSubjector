@@ -81,13 +81,21 @@ def print_search_strings_table(args: argparse.Namespace = None,
     console.print(table)
 
 
-def print_found_items_table(items: Items = None):
+def print_found_items_table(args: argparse.Namespace = None,
+                            items: Items = None):
+    if args is None:
+        raise ValueError("args was None")
     if items is None:
         raise ValueError("items was None")
     table = Table(title="Matched items found")
     table.add_column("Showing only a random subset of 50 items if more are found")
+    if args.show_item_urls:
+        table.add_column(f"Wikidata URL")
     for item in items.list[0:50]:
-        table.add_row(item.label)
+        if args.show_item_urls:
+            table.add_row(item.label, item.url())
+        else:
+            table.add_row(item.label)
     console.print(table)
 
 

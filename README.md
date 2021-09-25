@@ -122,6 +122,13 @@ Usage example:
 `python itemsubjector.py -l Q34 --show-search-urls` 
 (the shorthand `-su` also works)
 
+### Show links column in table of search expressions 
+This is handy if you want to look them up easily.
+
+Usage example:
+`python itemsubjector.py -l Q34 --show-item-urls` 
+(the shorthand `-iu` also works)
+
 ### Limit to scholarly articles without main subject
 Usage example:
 `python itemsubjector.py -l Q34 --limit-to-items-without-p921` 
@@ -161,7 +168,7 @@ new jobs by running --remove-prepared-jobs*
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m] [-w] [-su]
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -180,6 +187,8 @@ optional arguments:
                         Limit matching to scientific articles without P921 main subject
   -su, --show-search-urls
                         Show an extra column in the table of search strings with links
+  -iu, --show-item-urls
+                        Show an extra column in the table of items with links
 ```
 # License
 GPLv3+
