@@ -59,8 +59,8 @@ def select_suggestion(suggestions: List[Suggestion] = None,
     menu.join()
     selected_index = menu.selected_option
     selected_suggestion = None
-    if selected_index == len(suggestions) +1:
-        logger.debug("The user choosed to skip")
+    if selected_index == len(suggestions) + 1:
+        logger.debug("The user choose to skip")
     else:
         selected_suggestion = tasks[selected_index]
         logger.debug(f"selected:{selected_index}="

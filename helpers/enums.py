@@ -2,8 +2,8 @@ from enum import Enum, auto
 
 
 class SupportedLanguageCode(Enum):
-    ENGLISH="en"
-    SWEDISH="sv"
+    ENGLISH = "en"
+    SWEDISH = "sv"
 
 
 class TaskIds(Enum):

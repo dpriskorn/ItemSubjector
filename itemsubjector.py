@@ -9,7 +9,8 @@ from wikibaseintegrator import wbi_login, wbi_config
 import config
 from helpers.console import console, print_scholarly_articles_best_practice_information, \
     print_riksdagen_documents_best_practice_information, \
-    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question, print_finished
+    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question, print_finished, \
+    print_keep_an_eye_on_wdqs_lag
 from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
@@ -72,12 +73,13 @@ def process_qid_into_job(qid: str = None,
         # Randomize the list
         items.random_shuffle_list()
         print_found_items_table(items=items)
-        answer = ask_add_to_job_queue(items)
+        job = BatchJob(
+            items=items,
+            suggestion=suggestion
+        )
+        answer = ask_add_to_job_queue(job)
         if answer:
-            return BatchJob(
-                items=items,
-                suggestion=suggestion
-            )
+            return job
     else:
         console.print("No matching items found")
 
@@ -86,7 +88,7 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
                                                task: Task = None) -> List[BatchJob]:
     """Given a list of QIDs, we go through
     them and return a list of jobs"""
-    logger = logging.getLogger(__name__)
+    # logger = logging.getLogger(__name__)
     if args is None:
         raise ValueError("args was None")
     if task is None:
@@ -105,19 +107,6 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
     return jobs
 
 
-def process_existing_main_subject_into_batch_job(args: argparse.Namespace = None,
-                                                 task: Task = None,
-                                                 qid: str = None) -> BatchJob:
-    """Given a list of QIDs, we go through
-    them and return a list of jobs"""
-    # logger = logging.getLogger(__name__)
-    if args is None:
-        raise ValueError("args was None")
-    if task is None:
-        raise ValueError("task was None")
-    return
-
-
 def login():
     with console.status("Logging in with WikibaseIntegrator..."):
         config.login_instance = wbi_login.Login(
@@ -131,6 +120,7 @@ def login():
 
 
 def run_jobs(jobs):
+    print_keep_an_eye_on_wdqs_lag()
     login()
     print_running_jobs(jobs)
     count = 0
@@ -206,15 +196,14 @@ def main():
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_pickle()
-        console.print("Removed the joblist.")
+        console.print("Removed the job list.")
         # exit(0)
     if args.match_existing_main_subjects is True:
         # read the data file
         filename = "data/main_subjects.csv"
-        main_subjects = []
         with open(filename) as file:
-            main_subjects = file.readlines()
-            main_subjects = [line.rstrip() for line in main_subjects]
+            lines = file.readlines()
+            main_subjects = [line.rstrip() for line in lines]
         handle_existing_pickle()
         jobs = []
         while True:
