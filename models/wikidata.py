@@ -817,7 +817,7 @@ class Item(Entity):
             self.description = description
 
     def __str__(self):
-        return f"{self.id}: {self.label}"
+        return f"{self.label}, see {self.url()}"
 
     def parse_json(self, json):
         """Parse the WDQS json"""
