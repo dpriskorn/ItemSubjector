@@ -18,7 +18,7 @@ class ScholarlyArticleItems(Items):
             raise ValueError("suggestion was None")
         if task is None:
             raise ValueError("task was None")
-        # Fetch all items maching the search strings
+        # Fetch all items matching the search strings
         self.list = []
         for search_string in suggestion.search_strings:
             search_string = strip_bad_chars(search_string)
