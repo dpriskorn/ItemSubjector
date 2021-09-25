@@ -288,7 +288,8 @@ def main():
         if args.list is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
-        handle_existing_pickle()
+        if args.prepare_jobs:
+            handle_existing_pickle()
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
