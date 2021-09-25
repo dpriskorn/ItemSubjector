@@ -207,18 +207,28 @@ def main():
             lines = file.readlines()
             main_subjects = [line.rstrip() for line in lines]
         handle_existing_pickle()
+        picked_before = []
         jobs = []
+        console.print(f"The list included with the tool currently "
+                      f"have {len(main_subjects)} main subjects that "
+                      f"appeared on scholarly articles at least once "
+                      f"2021-09-24 when it was generated.")
         while True:
-            console.print(f"Picking a random main subject from a list of {len(main_subjects)}")
+            console.print(f"Picking a random main subject")
             qid = random.choice(main_subjects)
-            job = process_qid_into_job(qid=qid,
-                                       # The scientific article task is hardcoded for now
-                                       task=tasks[0],
-                                       args=args)
-            jobs.append(job)
-            answer = ask_yes_no_question("Match one more?")
-            if not answer:
-                break
+            if qid not in picked_before:
+                job = process_qid_into_job(qid=qid,
+                                           # The scientific article task is hardcoded for now
+                                           task=tasks[0],
+                                           args=args)
+                jobs.append(job)
+                if job is not None:
+                    picked_before.append(qid)
+                answer = ask_yes_no_question("Match one more?")
+                if not answer:
+                    break
+            else:
+                console.print("Skipping already picked qid")
         handle_preparation_or_run_directly(args=args, jobs=jobs)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
