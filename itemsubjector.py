@@ -3,7 +3,6 @@ import logging
 import os
 import random
 from datetime import datetime
-from pathlib import Path
 from typing import List
 
 from wikibaseintegrator import wbi_login, wbi_config
