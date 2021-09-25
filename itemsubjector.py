@@ -221,8 +221,8 @@ def main():
                                            # The scientific article task is hardcoded for now
                                            task=tasks[0],
                                            args=args)
-                jobs.append(job)
                 if job is not None:
+                    jobs.append(job)
                     picked_before.append(qid)
                 answer = ask_yes_no_question("Match one more?")
                 if not answer:
