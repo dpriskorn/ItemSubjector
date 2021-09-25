@@ -13,5 +13,6 @@ user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubject
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
-# This should work for all platforms
+# This should work for all platforms except kubernetes
 pickle_file_path = f"{tempfile.gettempdir()}/pickle.dat"
+# pickle_file_path = "~/pickle.dat"  # works on kubernetes
