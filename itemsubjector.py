@@ -201,6 +201,10 @@ def main():
                         help=('Match from list of 136.000 already used '
                               'main subjects on other scientific articles')
                         )
+    parser.add_argument('-w', '--limit-to-items-without-p921',
+                        action='store_true',
+                        help=('Limit matching to scientific articles without P921 main subject')
+                        )
     args = parser.parse_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:

@@ -115,6 +115,11 @@ Usage example:
 `python itemsubjector.py -l Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
+### Limit to scholarly articles without main subject
+Usage example:
+`python itemsubjector.py -l Q34 --limit-to-items-without-p921` 
+(the shorthand `-w` also works)
+
 ## Matching against ~136.000 existing main subjects
 The tool can create a list of jobs by picking random subjects from a
 big list based on 2 million samples where ~136.000 distinct subjects
@@ -149,7 +154,7 @@ new jobs by running --remove-prepared-jobs*
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m]
+usage: itemsubjector.py [-h] [-l LIST [LIST ...]] [-na] [-p] [-r] [-rm] [-m] [-w]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -164,6 +169,8 @@ optional arguments:
                         Remove prepared jobs
   -m, --match-existing-main-subjects
                         Match from list of 136.000 already used main subjects on other scientific articles
+  -w, --limit-to-items-without-p921
+                        Limit matching to scientific articles without P921 main subject
 ```
 # License
 GPLv3+
