@@ -3,7 +3,7 @@ import logging
 import os
 import random
 from datetime import datetime
-from typing import List
+from typing import List, Union
 
 from wikibaseintegrator import wbi_login, wbi_config
 
@@ -33,7 +33,7 @@ logging.basicConfig(level=logging.WARNING)
 
 def process_qid_into_job(qid: str = None,
                          task: Task = None,
-                         args: argparse.Namespace = None) -> BatchJob:
+                         args: argparse.Namespace = None) -> Union[BatchJob, None]:
     logger = logging.getLogger(__name__)
     if qid is None:
         raise ValueError("qid was None")
@@ -50,38 +50,43 @@ def process_qid_into_job(qid: str = None,
         id=qid,
         task=task
     )
-    console.print(f"Working on {item}")
-    # generate suggestion with all we need
-    suggestion = Suggestion(
-        item=item,
-        task=task,
-        args=args
-    )
-    with console.status(f'Fetching items with labels that have one of '
-                        f'the search strings by running a total of '
-                        f'{len(suggestion.search_strings)} queries on WDQS...'):
-        # TODO move this into task.py
-        if task.id == TaskIds.SCHOLARLY_ARTICLES:
-            items = ScholarlyArticleItems()
-        elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-            items = RiksdagenDocumentItems()
-        else:
-            raise ValueError(f"{task.id} was not recognized")
-        items.fetch_based_on_label(suggestion=suggestion,
-                                   task=task)
-    if len(items.list) > 0:
-        # Randomize the list
-        items.random_shuffle_list()
-        print_found_items_table(items=items)
-        job = BatchJob(
-            items=items,
-            suggestion=suggestion
-        )
-        answer = ask_add_to_job_queue(job)
-        if answer:
-            return job
+    if "protein " in item.label.lower() and args.match_existing_main_subjects:
+        console.print("Skipping protein which is too hard to validate "
+                      "given the information in the label and description")
+        return None
     else:
-        console.print("No matching items found")
+        console.print(f"Working on {item}")
+        # generate suggestion with all we need
+        suggestion = Suggestion(
+            item=item,
+            task=task,
+            args=args
+        )
+        with console.status(f'Fetching items with labels that have one of '
+                            f'the search strings by running a total of '
+                            f'{len(suggestion.search_strings)} queries on WDQS...'):
+            # TODO move this into task.py
+            if task.id == TaskIds.SCHOLARLY_ARTICLES:
+                items = ScholarlyArticleItems()
+            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+                items = RiksdagenDocumentItems()
+            else:
+                raise ValueError(f"{task.id} was not recognized")
+            items.fetch_based_on_label(suggestion=suggestion,
+                                       task=task)
+        if len(items.list) > 0:
+            # Randomize the list
+            items.random_shuffle_list()
+            print_found_items_table(items=items)
+            job = BatchJob(
+                items=items,
+                suggestion=suggestion
+            )
+            answer = ask_add_to_job_queue(job)
+            if answer:
+                return job
+        else:
+            console.print("No matching items found")
 
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
@@ -238,6 +243,17 @@ def get_validated_random_subjects(args: argparse.Namespace = None,
     return jobs
 
 
+def match_existing_main_subjects(args: argparse.Namespace = None):
+    main_subjects = get_main_subjects_from_file()
+    handle_existing_pickle()
+    console.print(f"The list included with the tool currently "
+                  f"have {len(main_subjects)} main subjects that "
+                  f"appeared on scholarly articles at least once "
+                  f"2021-09-24 when it was generated.")
+    jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
+    handle_preparation_or_run_directly(args=args, jobs=jobs)
+
+
 def main():
     """This is the main function that makes everything else happen"""
     # logger = logging.getLogger(__name__)
@@ -249,14 +265,7 @@ def main():
         console.print("Removed the job list.")
         # exit(0)
     if args.match_existing_main_subjects is True:
-        main_subjects = get_main_subjects_from_file()
-        handle_existing_pickle()
-        console.print(f"The list included with the tool currently "
-                      f"have {len(main_subjects)} main subjects that "
-                      f"appeared on scholarly articles at least once "
-                      f"2021-09-24 when it was generated.")
-        jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
-        handle_preparation_or_run_directly(args=args, jobs=jobs)
+        match_existing_main_subjects(args=args)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
         jobs = parse_pickle()
