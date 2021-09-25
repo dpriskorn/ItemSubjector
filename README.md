@@ -115,6 +115,13 @@ Usage example:
 `python itemsubjector.py -l Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
+### Show links column in table of search expressions 
+This is handy if you want to look them up easily.
+
+Usage example:
+`python itemsubjector.py -l Q34 --show-search-urls` 
+(the shorthand `-su` also works)
+
 ### Limit to scholarly articles without main subject
 Usage example:
 `python itemsubjector.py -l Q34 --limit-to-items-without-p921` 

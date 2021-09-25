@@ -203,6 +203,10 @@ def setup_argparse_and_return_args():
                         action='store_true',
                         help='Limit matching to scientific articles without P921 main subject'
                         )
+    parser.add_argument('-su', '--show-search-urls',
+                        action='store_true',
+                        help='Show an extra column in the table of search strings with links'
+                        )
     return parser.parse_args()
 
 

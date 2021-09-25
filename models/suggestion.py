@@ -1,3 +1,4 @@
+import argparse
 import logging
 from typing import List
 from urllib.parse import quote
@@ -16,7 +17,7 @@ class Suggestion:
     item: Item = None
     search_strings: List[str] = None
     task: Task = None
-    args = None
+    args: argparse.Namespace = None
 
     def __init__(self,
                  item: Item = None,
@@ -106,7 +107,8 @@ class Suggestion:
                 # logger.debug(f"extracting alias:{alias}")
                 self.search_strings.append(alias)
         # logger.debug(f"search_strings:{self.search_strings}")
-        print_search_strings_table(self.search_strings)
+        print_search_strings_table(args=self.args,
+                                   search_strings=self.search_strings)
 
     def search_urls(self) -> List[str]:
         urls = []

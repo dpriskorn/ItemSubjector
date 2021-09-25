@@ -1,3 +1,4 @@
+import argparse
 from typing import List, Dict
 
 from rich.console import Console
@@ -62,11 +63,21 @@ def print_best_practice(task: Task):
         press_enter_to_start()
 
 
-def print_search_strings_table(search_strings: List[str]):
+def print_search_strings_table(args: argparse.Namespace = None,
+                               search_strings: List[str] = None):
+    if args is None:
+        raise ValueError("args was None")
+    if search_strings is None:
+        raise ValueError("search strings was None")
     table = Table(title="Search strings")
-    table.add_column(f"Extracted the following {len(search_strings)} search strings:")
+    table.add_column(f"Extracted the following {len(search_strings)} search strings")
+    if args.show_search_urls:
+        table.add_column(f"Wikidata search URL")
     for string in search_strings:
-        table.add_row(string)
+        if args.show_search_urls:
+            table.add_row(string, f"https://www.wikidata.org/w/index.php?search={string}")
+        else:
+            table.add_row(string)
     console.print(table)
 
 
