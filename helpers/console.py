@@ -105,7 +105,7 @@ def print_found_items_table(items: Items = None):
 
 def ask_add_to_job_queue(job: BatchJob = None):
     return ask_yes_no_question(f"Do you want to add this job for "
-                               f"[inverse]{job.suggestion.item.label}[/inverse] with "
+                               f"[reverse]{job.suggestion.item.label}[/reverse] with "
                                f"{len(job.items.list)} items to the queue?")
 
 
