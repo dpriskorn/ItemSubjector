@@ -21,6 +21,14 @@ def build_query(suggestion: Suggestion = None,
         raise ValueError("task was None")
     if cirrussearch_parameters is None:
         raise ValueError("cirrussearch_parameters was None")
+    # This query uses https://www.w3.org/TR/sparql11-property-paths/ to
+    # find subjects that are subclass of one another up to 3 hops away
+    # This query also uses the https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI
+    # which has a hardcoded limit of 10,000 items so you will never get more matches than that
+    # This query use regex to match beginning, middle and end of the label of matched items
+    # The replacing lines should match the similar python replacements in cleaning.py
+    # The replacing with "\\\\\\\\" becomes "\\\\" after leaving python and then it works in
+    # SPARQL where it becomes "\\" and thus match a single backslash
     return (f"""
         SELECT DISTINCT ?item ?itemLabel 
         WHERE {{
@@ -72,14 +80,6 @@ class ScholarlyArticleItems(Items):
         self.list = []
         for search_string in suggestion.search_strings:
             search_string = strip_bad_chars(search_string)
-            # This query uses https://www.w3.org/TR/sparql11-property-paths/ to
-            # find subjects that are subclass of one another up to 3 hops away
-            # This query also uses the https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI
-            # which has a hardcoded limit of 10,000 items so you will never get more matches than that
-            # This query use regex to match beginning, middle and end of the label of matched items
-            # The replacing lines should match the similar python replacements in cleaning.py
-            # The replacing with "\\\\\\\\" becomes "\\\\" after leaving python and then it works in
-            # SPARQL where it becomes "\\" and thus match a single backslash
             results = execute_sparql_query(
                 build_query(
                     cirrussearch_parameters=cirrussearch_parameters,
