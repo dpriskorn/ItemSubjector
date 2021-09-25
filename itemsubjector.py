@@ -146,14 +146,23 @@ def handle_existing_pickle():
 def handle_preparation_or_run_directly(args: argparse.Namespace = None,
                                        jobs: List[BatchJob] = None):
     if args.prepare_jobs:
-        console.print("Adding job(s) to the jobs file")
-        for job in jobs:
-            add_to_pickle(job)
-        console.print(f"You can run the jobs "
-                      f"non-interactively e.g. on the Toolforge "
-                      f"Kubernetes cluster using -r or --run-prepared-jobs. "
-                      f"See https://phabricator.wikimedia.org/T285944 "
-                      f"for details")
+        if len(jobs) > 0:
+            console.print(f"Adding {len(jobs)} job(s) to the jobs file")
+            for job in jobs:
+                add_to_pickle(job)
+        if check_if_pickle_exists():
+            jobs = parse_pickle()
+            if len(jobs) > 0:
+                console.print(f"The jobs list now contain a total of {len(jobs)} "
+                              f"jobs with a total of "
+                              f"{sum(len(job.items.list) for job in jobs)} items")
+                console.print(f"You can run the jobs "
+                              f"non-interactively e.g. on the Toolforge "
+                              f"Kubernetes cluster using -r or --run-prepared-jobs. "
+                              f"See https://phabricator.wikimedia.org/T285944 "
+                              f"for details")
+            else:
+                raise ValueError("Pickle file had no jobs")
     else:
         run_jobs(jobs)
 
