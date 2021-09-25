@@ -58,8 +58,6 @@ def press_enter_to_start():
 
 def print_best_practice(task: Task):
     if task.best_practice_information is not None:
-        print(type(task.best_practice_information))
-        exit(0)
         console.print(task.best_practice_information)
         press_enter_to_start()
 
