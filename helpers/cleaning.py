@@ -5,10 +5,10 @@ def strip_bad_chars(string):
     # https://stackoverflow.com/questions/3411771/best-way-to-replace-multiple-characters-in-a-string
     return (
         string
-        # Needed for when labels contain apostrophes
-        .replace("'", "\\'")
         # Needed for matching backslashes e.g. "Dmel\CG5330" on Q29717230
         .replace("\\", "\\\\")
+        # Needed for when labels contain apostrophe
+        .replace("'", "\\'")
         .replace(",", "")
         .replace(":", "")
         .replace(";", "")

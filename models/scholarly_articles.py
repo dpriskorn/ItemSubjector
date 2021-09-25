@@ -26,15 +26,15 @@ class ScholarlyArticleItems(Items):
             SELECT DISTINCT ?item ?itemLabel 
             WHERE {{
               hint:Query hint:optimizer "None".
+              BIND(STR('haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.item.id} \"{search_string}\"') as ?search_string)
               SERVICE wikibase:mwapi {{
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";
-                                mwapi:srsearch 'haswbstatement:P31=Q13442814 -haswbstatement:P921={suggestion.item.id} "{search_string}"' .
+                                mwapi:srsearch ?search_string.
                 ?title wikibase:apiOutput mwapi:title. 
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
-              # We lowercase and remove common symbols
               # This has to match the function in cleaning.py
               BIND(REPLACE(LCASE(?label), ",", "") as ?label1)
               BIND(REPLACE(?label1, ":", "") as ?label2)
@@ -47,11 +47,10 @@ class ScholarlyArticleItems(Items):
               BIND(REPLACE(?label7, "\\\\\\\\", "") as ?label8)
               BIND(?label8 as ?cleaned_label)
               # We try matching beginning, middle and end
-              FILTER(CONTAINS(?cleaned_label, " {search_string.lower()} "@{task.language_code.value}) || 
-                     REGEX(?cleaned_label, ".* {search_string.lower()}$"@{task.language_code.value}) ||
-                     REGEX(?cleaned_label, "^{search_string.lower()} .*"@{task.language_code.value}))
+              FILTER(CONTAINS(?cleaned_label, ' {search_string.lower()} '@{task.language_code.value}) || 
+                     REGEX(?cleaned_label, '.* {search_string.lower()}$'@{task.language_code.value}) ||
+                     REGEX(?cleaned_label, '^{search_string.lower()} .*'@{task.language_code.value}))
               # remove more specific forms of the main subject also
-              # Thanks to Jan Ainali for this improvement :)
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
