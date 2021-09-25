@@ -46,37 +46,6 @@ class Suggestion:
                 string = string + f"{url}\n"
             return string
 
-    def search_urls(self) -> List[str]:
-        urls = []
-        for search_string in self.search_strings:
-            search_term = quote(f'"{search_string}"')
-            urls.append(f"https://www.wikidata.org/w/index.php?search={search_term}")
-        return urls
-
-    def extract_search_strings(self):
-        logger = logging.getLogger(__name__)
-        if self.args is None:
-            raise ValueError("args was None")
-        else:
-            logger.debug(f"args:{self.args}")
-            if self.args.no_aliases is True:
-                console.print("Alias matching is turned off")
-                no_aliases = True
-            else:
-                no_aliases = False
-        self.search_strings: List[str] = [self.item.label]
-        # Turn off alias matching for Riksdagen documents for now
-        if (
-            self.item.aliases is not None and
-            no_aliases is False and
-            self.task.id != TaskIds.RIKSDAGEN_DOCUMENTS
-        ):
-            for alias in self.item.aliases:
-                # logger.debug(f"extracting alias:{alias}")
-                self.search_strings.append(alias)
-        # logger.debug(f"search_strings:{self.search_strings}")
-        print_search_strings_table(self.search_strings)
-
     def add_to_items(self,
                      items: Items = None,
                      jobs: List[BatchJob] = None,
@@ -116,5 +85,35 @@ class Suggestion:
             console.print(f"(job {job_count}/{len(jobs)})(item {count}/{len(items.list)}) "
                           f"Added '{self.item.label}' to {target_item.label}: {target_item.url()}")
             # input("Press enter to continue")
+
+    def extract_search_strings(self):
+        logger = logging.getLogger(__name__)
+        if self.args is None:
+            raise ValueError("args was None")
+        else:
+            logger.debug(f"args:{self.args}")
+            if self.args.no_aliases is True:
+                console.print("Alias matching is turned off")
+                no_aliases = True
+            else:
+                no_aliases = False
+        self.search_strings: List[str] = [self.item.label]
+        if (
+            self.item.aliases is not None and
+            no_aliases is False
+        ):
+            for alias in self.item.aliases:
+                # logger.debug(f"extracting alias:{alias}")
+                self.search_strings.append(alias)
+        # logger.debug(f"search_strings:{self.search_strings}")
+        print_search_strings_table(self.search_strings)
+
+    def search_urls(self) -> List[str]:
+        urls = []
+        for search_string in self.search_strings:
+            search_term = quote(f'"{search_string}"')
+            urls.append(f"https://www.wikidata.org/w/index.php?search={search_term}")
+        return urls
+
 
 
