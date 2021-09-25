@@ -4,6 +4,7 @@ from rich.console import Console
 from rich.table import Table
 
 from models.batch_job import BatchJob
+from models.task import Task
 from models.wikidata import Items
 
 console = Console()
@@ -55,25 +56,12 @@ def press_enter_to_start():
     console.input("Press Enter to start.")
 
 
-def print_scholarly_articles_best_practice_information():
-    console.print(
-        "When adding QID main subjects please try to first "
-        "educate yourself about the subarea of science a little "
-        "and find/create items as specific as possible.\n"
-        "E.g. when searching for 'cancer screening' in Wikidata "
-        "we find 'gastric cancer screening' in labels of "
-        "scientific articles but there is "
-        "perhaps no item for this yet.\n"
-        "In this case it is preferred to first create that item "
-        "(done in Q108532542 and add that as main subject and "
-        "avoid the more general 'cancer screening' until all "
-        "subforms of screening are added."
-    )
-    press_enter_to_start()
-
-
-def print_riksdagen_documents_best_practice_information():
-    press_enter_to_start()
+def print_best_practice(task: Task):
+    if task.best_practice_information is not None:
+        print(type(task.best_practice_information))
+        exit(0)
+        console.print(task.best_practice_information)
+        press_enter_to_start()
 
 
 def print_ngram_table(results: Dict):

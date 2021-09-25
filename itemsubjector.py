@@ -8,10 +8,9 @@ from typing import List
 from wikibaseintegrator import wbi_login, wbi_config
 
 import config
-from helpers.console import console, print_scholarly_articles_best_practice_information, \
-    print_riksdagen_documents_best_practice_information, \
-    print_found_items_table, ask_add_to_job_queue, print_running_jobs, ask_yes_no_question, print_finished, \
-    print_keep_an_eye_on_wdqs_lag
+from helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
+    ask_yes_no_question, print_finished, \
+    print_keep_an_eye_on_wdqs_lag, print_best_practice
 from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
@@ -94,12 +93,7 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    if task.id == TaskIds.SCHOLARLY_ARTICLES:
-        print_scholarly_articles_best_practice_information()
-    elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-        print_riksdagen_documents_best_practice_information()
-    else:
-        raise ValueError(f"taskid {task.id} not recognized")
+    print_best_practice(task)
     jobs = []
     for qid in args.list:
         jobs.append(process_qid_into_job(qid=qid,
@@ -121,6 +115,8 @@ def login():
 
 
 def run_jobs(jobs):
+    if jobs is None:
+        raise ValueError("jobs was None")
     print_keep_an_eye_on_wdqs_lag()
     login()
     print_running_jobs(jobs)
@@ -167,10 +163,7 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
         run_jobs(jobs)
 
 
-def main():
-    """Collects arguments and branches off"""
-    # logger = logging.getLogger(__name__)
-    migrate_pickle_detection()
+def setup_argparse_and_return_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', '--list',
                         nargs='+',
@@ -203,44 +196,66 @@ def main():
                         )
     parser.add_argument('-w', '--limit-to-items-without-p921',
                         action='store_true',
-                        help=('Limit matching to scientific articles without P921 main subject')
+                        help='Limit matching to scientific articles without P921 main subject'
                         )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def get_main_subjects_from_file() -> List[str]:
+    # read the data file
+    file_path = "data/main_subjects.csv"
+    main_subjects_path = f"{os.getcwd()}/{file_path}"
+    with open(main_subjects_path) as file:
+        lines = file.readlines()
+        main_subjects = [line.rstrip() for line in lines]
+    return main_subjects
+
+
+def get_validated_random_subjects(args: argparse.Namespace = None,
+                                  main_subjects: List[str] = None):
+    if args is None:
+        raise ValueError("args was None")
+    if main_subjects is None:
+        raise ValueError("main subjects was None")
+    picked_before = []
+    jobs = []
+    while True:
+        console.print(f"Picking a random main subject")
+        qid = random.choice(main_subjects)
+        if qid not in picked_before:
+            job = process_qid_into_job(qid=qid,
+                                       # The scientific article task is hardcoded for now
+                                       task=tasks[0],
+                                       args=args)
+            if job is not None:
+                jobs.append(job)
+                picked_before.append(qid)
+            answer = ask_yes_no_question("Match one more?")
+            if not answer:
+                break
+        else:
+            console.print("Skipping already picked qid")
+    return jobs
+
+
+def main():
+    """This is the main function that makes everything else happen"""
+    # logger = logging.getLogger(__name__)
+    migrate_pickle_detection()
+    args = setup_argparse_and_return_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the job list.")
         # exit(0)
     if args.match_existing_main_subjects is True:
-        # read the data file
-        file_path = "data/main_subjects.csv"
-        main_subjects_path = f"{os.getcwd()}/{file_path}"
-        with open(main_subjects_path) as file:
-            lines = file.readlines()
-            main_subjects = [line.rstrip() for line in lines]
+        main_subjects = get_main_subjects_from_file()
         handle_existing_pickle()
-        picked_before = []
-        jobs = []
         console.print(f"The list included with the tool currently "
                       f"have {len(main_subjects)} main subjects that "
                       f"appeared on scholarly articles at least once "
                       f"2021-09-24 when it was generated.")
-        while True:
-            console.print(f"Picking a random main subject")
-            qid = random.choice(main_subjects)
-            if qid not in picked_before:
-                job = process_qid_into_job(qid=qid,
-                                           # The scientific article task is hardcoded for now
-                                           task=tasks[0],
-                                           args=args)
-                if job is not None:
-                    jobs.append(job)
-                    picked_before.append(qid)
-                answer = ask_yes_no_question("Match one more?")
-                if not answer:
-                    break
-            else:
-                console.print("Skipping already picked qid")
+        jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
         handle_preparation_or_run_directly(args=args, jobs=jobs)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
