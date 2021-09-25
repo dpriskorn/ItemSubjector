@@ -105,8 +105,9 @@ def print_found_items_table(items: Items = None):
 
 def ask_add_to_job_queue(job: BatchJob = None):
     return ask_yes_no_question(f"Do you want to add this job for "
-                               f"[magenta]{job.suggestion.item.label}[/magenta] with "
-                               f"{len(job.items.list)} items to the queue?")
+                               f"[magenta]{job.suggestion.item.label}: "
+                               f"{job.suggestion.item.description}[/magenta] with "
+                               f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
 
 
 def print_running_jobs(jobs: List[BatchJob] = None):

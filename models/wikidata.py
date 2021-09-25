@@ -804,9 +804,9 @@ class Item(Entity):
         else:
             if id is not None:
                 self.id = str(EntityID(id))
-            if label is None and aliases is None:
+            if description is None and label is None and aliases is None:
                 logging.debug("here now")
-                self.fetch_label_and_aliases(task=task)
+                self.fetch_label_and_description_and_aliases(task=task)
             elif label is None or aliases is None:
                 raise ValueError("This is not supported. "
                                  "Either both state the label and "
@@ -814,7 +814,8 @@ class Item(Entity):
             else:
                 self.label = label
                 self.aliases = aliases
-            self.description = description
+                self.description = description
+
 
     def __str__(self):
         return f"{self.label}, see {self.url()}"
@@ -842,8 +843,8 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
-    def fetch_label_and_aliases(self,
-                                task: Task = None):
+    def fetch_label_and_description_and_aliases(self,
+                                                task: Task = None):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
@@ -852,6 +853,7 @@ class Item(Entity):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
             self.label = str(item.labels.get(task.language_code.value))
+            self.description = str(item.descriptions.get(task.language_code.value))
             aliases: List[Alias] = item.aliases.get(task.language_code.value)
             # logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
             if aliases is not None:
