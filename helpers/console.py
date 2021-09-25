@@ -1,5 +1,6 @@
 import argparse
 from typing import List, Dict
+from urllib.parse import quote
 
 from rich.console import Console
 from rich.table import Table
@@ -75,7 +76,7 @@ def print_search_strings_table(args: argparse.Namespace = None,
         table.add_column(f"Wikidata search URL")
     for string in search_strings:
         if args.show_search_urls:
-            table.add_row(string, f"https://www.wikidata.org/w/index.php?search={string}")
+            table.add_row(string, f"https://www.wikidata.org/w/index.php?search={quote(string)}")
         else:
             table.add_row(string)
     console.print(table)
