@@ -13,4 +13,4 @@ user_agent = f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubject
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
-pickle_file_path = 'pickle.dat'
+pickle_file_path = "/tmp/pickle.dat"

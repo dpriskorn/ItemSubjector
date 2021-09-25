@@ -1,7 +1,9 @@
 import argparse
 import logging
+import os
 import random
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
 from wikibaseintegrator import wbi_login, wbi_config
@@ -200,8 +202,9 @@ def main():
         # exit(0)
     if args.match_existing_main_subjects is True:
         # read the data file
-        filename = "data/main_subjects.csv"
-        with open(filename) as file:
+        file_path = "data/main_subjects.csv"
+        main_subjects_path = f"{os.getcwd()}/{file_path}"
+        with open(main_subjects_path) as file:
             lines = file.readlines()
             main_subjects = [line.rstrip() for line in lines]
         handle_existing_pickle()
