@@ -102,7 +102,7 @@ def print_running_jobs(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
     console.print(f"Running {len(jobs)} job(s) with a total of "
-                  f"{sum(len(job.items.list) for job in jobs)}"
+                  f"{sum(len(job.items.list) for job in jobs)} items "
                   f"non-interactively now. You can take a "
                   f"coffee break and lean back :)")
 
