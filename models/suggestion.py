@@ -30,15 +30,17 @@ class Suggestion:
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
         if self.item is not None:
-            string = (
+            aliases = None
+            if self.item.aliases is not None:
+                aliases = ', '.join(self.item.aliases)
+            return (
                 f"label: [bold]{self.item.label}[/bold]\n"
-                f"aliases: {', '.join(self.item.aliases)}\n"
+                f"aliases: {aliases}\n"
                 f"description: {self.item.description[:70]}\n"
                 f"{self.item.url()}\n"
             )
-            for url in self.search_urls():
-                string = string + f"{url}\n"
-            return string
+        else:
+            raise ValueError("self.item was None")
 
     def add_to_items(self,
                      task: Task = None,
@@ -49,18 +51,25 @@ class Suggestion:
         We calculate a new edit group hash each time this function is
         called so similar edits are grouped and easily be undone.
 
+        The task hold all the items.
+        jobs and job_count are passed here for printing progess to the UI
+
         This function is non-interactive"""
+        logger = logging.getLogger(__name__)
         if task is None:
             raise ValueError("task was None")
         if jobs is None:
             raise ValueError("jobs was None")
         if job_count is None:
             raise ValueError("job count was None")
+        if not len(task.items.list) > 0:
+            raise ValueError("list of items was 0")
         editgroups_hash: str = calculate_random_editgroups_hash()
         count = 0
         for target_item in task.items.list:
             count += 1
             with console.status(f"Uploading main subject [green]{self.item.label}[/green] to {target_item.label}"):
+                input("Press enter to continue")
                 main_subject_property = "P921"
                 reference = ItemType(
                     "Q69652283",  # inferred from title
@@ -78,7 +87,6 @@ class Suggestion:
                 )
             console.print(f"(job {job_count}/{len(jobs)})(item {count}/{len(task.items.list)}) "
                           f"Added '{self.item.label}' to {target_item.label}: {target_item.url()}")
-            # input("Press enter to continue")
 
     def extract_search_strings(self):
         logger = logging.getLogger(__name__)

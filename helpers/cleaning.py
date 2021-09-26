@@ -22,7 +22,7 @@ def strip_bad_chars(string):
     )
 
 
-def strip_prefix(qid):
+def strip_prefix(qid: str) -> str:
     logger = logging.getLogger(__name__)
     if "https://www.wikidata.org/wiki/" in qid:
         qid = qid[30:]

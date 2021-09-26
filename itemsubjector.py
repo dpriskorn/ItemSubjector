@@ -6,7 +6,7 @@ from typing import List
 from helpers.argparse_setup import setup_argparse_and_return_args
 from helpers.cleaning import strip_prefix
 from helpers.console import console, print_found_items_table, ask_add_to_job_queue, ask_yes_no_question
-from helpers.jobs import process_qid_into_job, process_user_supplied_qids_into_batch_jobs, run_jobs, \
+from helpers.jobs import process_qid_into_job, process_user_supplied_qids_into_jobs, run_jobs, \
     do_job_preparation_or_run_directly
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
@@ -18,7 +18,7 @@ from models.task import Task
 from models.wikidata import Item
 from tasks import tasks
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 # pseudo code
 # let user choose what to work on
@@ -132,6 +132,24 @@ def match_existing_main_subjects(args: argparse.Namespace = None):
     do_job_preparation_or_run_directly(args=args, jobs=jobs)
 
 
+def add_qids_to_items(args: argparse.Namespace = None):
+    logger = logging.getLogger(__name__)
+    if args is None:
+        raise ValueError("args was None")
+    if args.add is None:
+        console.print("Got no QIDs. Quitting")
+        exit(0)
+    if args.prepare_jobs:
+        handle_existing_pickle()
+    task: Task = select_task()
+    if task is None:
+        raise ValueError("Got no task")
+    jobs: List[BatchJob] = process_user_supplied_qids_into_jobs(args=args, task=task)
+    if jobs is not None:
+        logger.debug(f"got {len(jobs)} jobs with {sum(len(job.task.items.list) for job in jobs)} items")
+        do_job_preparation_or_run_directly(args=args, jobs=jobs)
+
+
 def main():
     """This is the main function that makes everything else happen"""
     # logger = logging.getLogger(__name__)
@@ -141,7 +159,6 @@ def main():
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the job list.")
-        # exit(0)
     elif args.delete is not None:
         if args.from_items_with is not None and args.delete is not None:
             delete_qid_from_items(args=args)
@@ -149,9 +166,11 @@ def main():
             console.print("Error. Need both a QID to delete "
                           "and from which items to delete it. "
                           "See the README or run 'itemsubjector.py -h'")
-            exit(0)
     elif args.match_existing_main_subjects is True:
-        match_existing_main_subjects(args=args)
+        if args.add is None:
+            match_existing_main_subjects(args=args)
+        else:
+            console.print("Please either use --add or --match-existing-main-subjects")
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
         jobs = parse_pickle()
@@ -160,16 +179,7 @@ def main():
             # Remove the pickle afterwards
             remove_pickle()
     else:
-        if args.add is None:
-            console.print("Got no QIDs. Quitting")
-            exit(0)
-        if args.prepare_jobs:
-            handle_existing_pickle()
-        task: Task = select_task()
-        if task is None:
-            raise ValueError("Got no task")
-        jobs = process_user_supplied_qids_into_batch_jobs(args=args, task=task)
-        do_job_preparation_or_run_directly(args=args, jobs=jobs)
+        add_qids_to_items(args=args)
 
 
 if __name__ == "__main__":

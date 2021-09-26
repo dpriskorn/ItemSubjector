@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import List, TYPE_CHECKING
 
@@ -17,13 +18,23 @@ class BatchJob:
     target: DeletionTarget = None
     task: Task = None
 
+    def __str__(self):
+        return (f"suggestion:{self.suggestion}\n"
+                f"target:{self.target}\n"
+                f"task:{self.task}")
+
     def run_add_job(self,
                     jobs: List[BatchJob] = None,
                     job_count: int = None):
+        logger = logging.getLogger(__name__)
         if jobs is None:
             raise ValueError("jobs was None")
         if job_count is None:
             raise ValueError("job count was None")
+        if self.task is None:
+            raise ValueError("self.task was None")
+        logger.debug(f"suggestion:{self.suggestion}")
+        logger.debug(f"self.task:{self.task}")
         self.suggestion.add_to_items(task=self.task, jobs=jobs, job_count=job_count)
 
     def run_delete_job(self,

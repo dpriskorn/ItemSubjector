@@ -85,6 +85,8 @@ def print_found_items_table(args: argparse.Namespace = None,
 
 
 def ask_add_to_job_queue(job: BatchJob = None):
+    if job is None:
+        raise ValueError("job was None")
     return ask_yes_no_question(f"Do you want to add this job for "
                                f"[magenta]{job.suggestion.item.label}: "
                                f"{job.suggestion.item.description}[/magenta] with "

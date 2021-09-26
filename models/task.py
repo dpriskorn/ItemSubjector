@@ -29,7 +29,6 @@ class Task:
             raise ValueError("Got no language_code")
         if items is None:
             raise ValueError("Got no items")
-        self.id = id
         self.label = label
         self.question = question
         self.language_code = language_code
@@ -37,5 +36,5 @@ class Task:
         self.items = items
 
     def __str__(self):
-        return f"{self.label}"
-
+        return (f"label:{self.label}\n"
+                f"number of items:{len(self.items.list)}")
