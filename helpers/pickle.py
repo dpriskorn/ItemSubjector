@@ -3,7 +3,7 @@ import pickle
 from typing import List
 
 import config
-from helpers.console import console
+from helpers.console import console, ask_yes_no_question
 from models.batch_job import BatchJob
 
 
@@ -49,3 +49,12 @@ def remove_pickle():
     if os.path.exists(config.pickle_file_path):
         os.remove(config.pickle_file_path)
         console.print("The job list was removed")
+
+
+def handle_existing_pickle():
+    if check_if_pickle_exists():
+        answer = ask_yes_no_question("A prepared list of jobs already exist, "
+                                     "do you want to overwrite it? "
+                                     "(pressing no will append to it)")
+        if answer:
+            remove_pickle()
