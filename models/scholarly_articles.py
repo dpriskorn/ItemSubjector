@@ -1,9 +1,11 @@
 import logging
+from typing import List
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 from helpers.cleaning import strip_bad_chars
 from helpers.console import console
+from models.deletion_target import DeletionTarget
 from models.suggestion import Suggestion
 from models.task import Task
 from models.wikidata import Items, Item
@@ -93,4 +95,38 @@ class ScholarlyArticleItems(Items):
                 self.list.append(item)
             logging.info(f'Got {len(results["results"]["bindings"])} items from '
                          f'WDQS using the search string {search_string}')
+        console.print(f"Got a total of {len(self.list)} items")
+
+    def fetch_based_on_main_subject(self,
+                                    main_subjects: List[Item] = None,
+                                    target: DeletionTarget = None):
+        if target is None:
+            raise ValueError("target was None")
+        if main_subjects is None:
+            raise ValueError("main subjects was None")
+        # Fetch all items matching
+        self.list = []
+        for main_subject in main_subjects:
+            # This query excludes the target item if it does not have:
+            # P887 heuristic
+            # Q69652283 inferred from title
+            # to avoid loosing data added by other contributors
+            query = (f"""
+                SELECT DISTINCT ?item ?itemLabel 
+                WHERE {{
+                  ?item wdt:P31 wd:Q13442814;
+                        wdt:P921 wd:{main_subject.id};
+                        wdt:P921 ?statement.
+                  ?statement ps:P921 wd:{target.item.id};
+                             pq:P887 wd:Q69652283.
+                  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+                }}
+                """)
+            results = execute_sparql_query(query)
+            for item_json in results["results"]["bindings"]:
+                logging.debug(f"item_json:{item_json}")
+                item = Item(json=item_json)
+                self.list.append(item)
+            logging.info(f'Got {len(results["results"]["bindings"])} items from '
+                         f'WDQS for {main_subject.label}')
         console.print(f"Got a total of {len(self.list)} items")

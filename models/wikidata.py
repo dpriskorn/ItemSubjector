@@ -10,9 +10,11 @@ from wikibaseintegrator.models import Alias
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
+
 if TYPE_CHECKING:
     from models.task import Task
     from models.suggestion import Suggestion
+    from models.deletion_target import DeletionTarget
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -849,7 +851,7 @@ class Item(Entity):
         if task is None:
             raise ValueError("task was None")
         from helpers.console import console
-        with console.status(f"Fetching {task.language_code.value} label and aliases..."):
+        with console.status(f"Fetching {task.language_code.value} label, description and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
             self.label = str(item.labels.get(task.language_code.value))
@@ -870,6 +872,11 @@ class Items:
     def fetch_based_on_label(self,
                              suggestion: Suggestion = None,
                              task: Task = None):
+        pass
+
+    def fetch_based_on_main_subject(self,
+                                    main_subjects: List[Item] = None,
+                                    target: DeletionTarget = None):
         pass
 
     def random_shuffle_list(self):

@@ -117,3 +117,5 @@ def print_running_jobs(jobs: List[BatchJob] = None):
 
 def print_finished():
     console.print("All jobs finished successfully")
+
+

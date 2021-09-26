@@ -21,14 +21,14 @@ tasks = [
             "we find 'gastric cancer screening' in labels of "
         ),
         items=ScholarlyArticleItems(),
-        label="Add main subject to scholarly articles (English)",
+        label="Work on main subject on scholarly articles (English)",
         language_code=SupportedLanguageCode.ENGLISH,
         question="Is this a valid subject for this article?",
     ),
     Task(
         best_practice_information=None,
         items=RiksdagenDocumentItems(),
-        label="Add main subject to documents from Riksdagen (Swedish)",
+        label="Work on main subject on documents from Riksdagen (Swedish)",
         language_code=SupportedLanguageCode.SWEDISH,
         question="Is this a valid subject for this dissertation?",
     ),

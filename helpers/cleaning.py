@@ -1,3 +1,6 @@
+import logging
+
+
 def strip_bad_chars(string):
     # Note this has to match the cleaning done in the sparql query
     # We lowercase and remove common symbols
@@ -17,3 +20,13 @@ def strip_bad_chars(string):
         .replace("[", "")
         .replace("]", "")
     )
+
+
+def strip_prefix(qid):
+    logger = logging.getLogger(__name__)
+    if "https://www.wikidata.org/wiki/" in qid:
+        qid = qid[30:]
+    if "http://www.wikidata.org/entity/" in qid:
+        qid = qid[31:]
+    logger.debug(f"qid:{qid}")
+    return qid
