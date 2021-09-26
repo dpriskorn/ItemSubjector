@@ -1,11 +1,6 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class SupportedLanguageCode(Enum):
     ENGLISH = "en"
     SWEDISH = "sv"
-
-
-class TaskIds(Enum):
-    SCHOLARLY_ARTICLES = auto()
-    RIKSDAGEN_DOCUMENTS = auto()

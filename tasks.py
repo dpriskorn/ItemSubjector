@@ -1,33 +1,42 @@
-from helpers.enums import SupportedLanguageCode, TaskIds
+from helpers.enums import SupportedLanguageCode
+from models.riksdagen_documents import RiksdagenDocumentItems
+from models.scholarly_articles import ScholarlyArticleItems
 from models.task import Task
 
 # When adding a new task, also add it in the enum
 
 tasks = [
     Task(
-        id=TaskIds.SCHOLARLY_ARTICLES,
-        label="Add main subject to scholarly articles",
-        question="Is this a valid subject for this article?",
-        language_code=SupportedLanguageCode.ENGLISH,
         best_practice_information=(
-            "When adding QID main subjects please try to first "
-            "educate yourself about the subarea of science a little "
-            "and find/create items as specific as possible.\n"
-            "E.g. when searching for 'cancer screening' in Wikidata "
-            "we find 'gastric cancer screening' in labels of "
-            "scientific articles but there is "
-            "perhaps no item for this yet.\n"
-            "In this case it is preferred to first create that item "
             "(done in Q108532542 and add that as main subject and "
+            "E.g. when searching for 'cancer screening' in Wikidata "
+            "In this case it is preferred to first create that item "
+            "When adding QID main subjects please try to first "
+            "and find/create items as specific as possible.\n"
             "avoid the more general 'cancer screening' until all "
+            "educate yourself about the subarea of science a little "
+            "perhaps no item for this yet.\n"
+            "scientific articles but there is "
             "sub forms of screening have been matched."
-        )
+            "we find 'gastric cancer screening' in labels of "
+        ),
+        items=ScholarlyArticleItems(),
+        label="Add main subject to scholarly articles (English)",
+        language_code=SupportedLanguageCode.ENGLISH,
+        question="Is this a valid subject for this article?",
     ),
     Task(
-        id=TaskIds.RIKSDAGEN_DOCUMENTS,
-        label="Add main subject to documents from Riksdagen",
-        question="Is this a valid subject for this document?",
+        best_practice_information=None,
+        items=RiksdagenDocumentItems(),
+        label="Add main subject to documents from Riksdagen (Swedish)",
         language_code=SupportedLanguageCode.SWEDISH,
-        best_practice_information=None
-    )
+        question="Is this a valid subject for this dissertation?",
+    ),
+    # Task(
+    #     best_practice_information=None,
+    #     items=,
+    #     label="Add main subject to academic dissertations (English)",
+    #     language_code=SupportedLanguageCode.ENGLISH,
+    #     question="Is this a valid subject for this document?",
+    # )
 ]

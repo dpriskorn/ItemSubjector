@@ -1,5 +1,5 @@
 import argparse
-from typing import List, Dict
+from typing import List
 from urllib.parse import quote
 
 from rich.console import Console
@@ -7,7 +7,6 @@ from rich.table import Table
 
 from models.batch_job import BatchJob
 from models.task import Task
-from models.wikidata import Items
 
 console = Console()
 
@@ -83,16 +82,16 @@ def print_search_strings_table(args: argparse.Namespace = None,
 
 
 def print_found_items_table(args: argparse.Namespace = None,
-                            items: Items = None):
+                            task: Task = None):
     if args is None:
         raise ValueError("args was None")
-    if items is None:
-        raise ValueError("items was None")
+    if task is None:
+        raise ValueError("task was None")
     table = Table(title="Matched items found")
     table.add_column("Showing only a random subset of 50 items if more are found")
     if args.show_item_urls:
         table.add_column(f"Wikidata URL")
-    for item in items.list[0:50]:
+    for item in task.items.list[0:50]:
         if args.show_item_urls:
             table.add_row(item.label, item.url())
         else:
@@ -104,14 +103,14 @@ def ask_add_to_job_queue(job: BatchJob = None):
     return ask_yes_no_question(f"Do you want to add this job for "
                                f"[magenta]{job.suggestion.item.label}: "
                                f"{job.suggestion.item.description}[/magenta] with "
-                               f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
+                               f"{len(job.task.items.list)} items to the queue? (see {job.suggestion.item.url()})")
 
 
 def print_running_jobs(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
     console.print(f"Running {len(jobs)} job(s) with a total of "
-                  f"{sum(len(job.items.list) for job in jobs)} items "
+                  f"{sum(len(job.task.items.list) for job in jobs)} items "
                   f"non-interactively now. You can take a "
                   f"coffee break and lean back :)")
 

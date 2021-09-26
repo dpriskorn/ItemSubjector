@@ -11,13 +11,10 @@ import config
 from helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
     ask_yes_no_question, print_finished, \
     print_keep_an_eye_on_wdqs_lag, print_best_practice
-from helpers.enums import TaskIds
 from helpers.menus import select_task
 from helpers.migration import migrate_pickle_detection
 from helpers.pickle import parse_pickle, remove_pickle, add_to_pickle, check_if_pickle_exists
 from models.batch_job import BatchJob
-from models.riksdagen_documents import RiksdagenDocumentItems
-from models.scholarly_articles import ScholarlyArticleItems
 from models.suggestion import Suggestion
 from models.task import Task
 from models.wikidata import Item
@@ -59,28 +56,20 @@ def process_qid_into_job(qid: str = None,
         # generate suggestion with all we need
         suggestion = Suggestion(
             item=item,
-            task=task,
             args=args
         )
         with console.status(f'Fetching items with labels that have one of '
                             f'the search strings by running a total of '
                             f'{len(suggestion.search_strings)} queries on WDQS...'):
-            # TODO move this into task.py
-            if task.id == TaskIds.SCHOLARLY_ARTICLES:
-                items = ScholarlyArticleItems()
-            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-                items = RiksdagenDocumentItems()
-            else:
-                raise ValueError(f"{task.id} was not recognized")
-            items.fetch_based_on_label(suggestion=suggestion,
-                                       task=task)
-        if len(items.list) > 0:
+            task.items.fetch_based_on_label(suggestion=suggestion,
+                                            task=task)
+        if len(task.items.list) > 0:
             # Randomize the list
-            items.random_shuffle_list()
+            task.items.random_shuffle_list()
             print_found_items_table(args=args,
-                                    items=items)
+                                    task=task)
             job = BatchJob(
-                items=items,
+                task=task,
                 suggestion=suggestion
             )
             answer = ask_add_to_job_queue(job)
@@ -159,7 +148,7 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
             if len(jobs) > 0:
                 console.print(f"The jobs list now contain a total of {len(jobs)} "
                               f"jobs with a total of "
-                              f"{sum(len(job.items.list) for job in jobs)} items")
+                              f"{sum(len(job.task.items.list) for job in jobs)} items")
                 console.print(f"You can run the jobs "
                               f"non-interactively e.g. on the Toolforge "
                               f"Kubernetes cluster using -r or --run-prepared-jobs. "

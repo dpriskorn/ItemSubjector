@@ -1,10 +1,8 @@
-"""
-Model from LexUtils
-"""
+from __future__ import annotations
 import logging
 import random
 from enum import Enum
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from wikibaseintegrator import wbi_config, WikibaseIntegrator
 from wikibaseintegrator.datatypes import BaseDataType
@@ -12,8 +10,9 @@ from wikibaseintegrator.models import Alias
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
-# We get the URL for the Wikibase from here
-from models.task import Task
+if TYPE_CHECKING:
+    from models.task import Task
+    from models.suggestion import Suggestion
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -168,6 +167,7 @@ class Form:
                 str(EntityID(json["category"]["value"]))
             )
         except:
+            # FIXME find out what exception this should catch
             raise ValueError(f'Could not find lexical category from '
                              f'{json["category"]["value"]}')
         try:
@@ -867,7 +867,9 @@ class Item(Entity):
 class Items:
     list: List[Item] = []
 
-    def fetch_based_on_label(self):
+    def fetch_based_on_label(self,
+                             suggestion: Suggestion = None,
+                             task: Task = None):
         pass
 
     def random_shuffle_list(self):
