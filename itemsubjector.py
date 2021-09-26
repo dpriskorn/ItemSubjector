@@ -160,7 +160,7 @@ def main():
             # Remove the pickle afterwards
             remove_pickle()
     else:
-        if args.list is None:
+        if args.add is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
         if args.prepare_jobs:
