@@ -25,21 +25,6 @@ def ask_yes_no_question(message: str):
                 return answer[0].lower() == 'y'
 
 
-def introduction():
-    print_keep_an_eye_on_wdqs_lag()
-    console.input(
-        "This tool enables you to find n-grams from labels "
-        "semi-automatically and validate the match between the n-grams "
-        "with items found by searching Wikidata.\n"
-        "E.g. the 2-gram 'breast cancer' corresponds to the item: Q128581: "
-        "Breast cancer: cancer that originates in the mammary gland.\n"
-        "The tool makes it simple to add main subject to a lot of items "
-        "(in the example above there are ~8000 matches).\n"
-        "Note: If unsure you should reject a match when validating.\n"
-        "Press Enter to start."
-    )
-
-
 def print_keep_an_eye_on_wdqs_lag():
     console.print("Please keep an eye on the lag of the WDQS cluster here and avoid "
                   "working if it is over a few minutes.\n"
