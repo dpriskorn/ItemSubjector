@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from helpers.enums import SupportedLanguageCode, TaskIds
+from src.helpers.enums import SupportedLanguageCode, TaskIds
 
 
 # console-menu does not support dataclass (yet)

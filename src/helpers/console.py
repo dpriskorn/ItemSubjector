@@ -5,9 +5,9 @@ from urllib.parse import quote
 from rich.console import Console
 from rich.table import Table
 
-from models.batch_job import BatchJob
-from models.task import Task
-from models.wikidata import Items
+from src.models.batch_job import BatchJob
+from src.models.task import Task
+from src.models.wikidata import Items
 
 console = Console()
 

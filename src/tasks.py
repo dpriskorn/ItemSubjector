@@ -1,5 +1,5 @@
-from helpers.enums import SupportedLanguageCode, TaskIds
-from models.task import Task
+from src.helpers.enums import SupportedLanguageCode, TaskIds
+from src.models.task import Task
 
 # When adding a new task, also add it in the enum
 

@@ -5,12 +5,12 @@ from urllib.parse import quote
 
 from wikibaseintegrator.datatypes import Item as ItemType
 
-from helpers.calculations import calculate_random_editgroups_hash
-from helpers.console import print_search_strings_table, console
-from helpers.enums import TaskIds
-from models.batch_job import BatchJob
-from models.task import Task
-from models.wikidata import Item, Items
+from src.helpers.calculations import calculate_random_editgroups_hash
+from src.helpers.console import print_search_strings_table, console
+from src.helpers.enums import TaskIds
+from src.models.batch_job import BatchJob
+from src.models.task import Task
+from src.models.wikidata import Item, Items
 
 
 class Suggestion:

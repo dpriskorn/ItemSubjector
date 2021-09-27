@@ -2,10 +2,10 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
-from helpers.console import console
-from models.suggestion import Suggestion
-from models.task import Task
-from models.wikidata import Items, Item
+from src.helpers.console import console
+from src.models.suggestion import Suggestion
+from src.models.task import Task
+from src.models.wikidata import Items, Item
 
 
 class RiksdagenDocumentItems(Items):

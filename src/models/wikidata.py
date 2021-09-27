@@ -13,7 +13,7 @@ from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
 # We get the URL for the Wikibase from here
-from models.task import Task
+from src.models.task import Task
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -848,7 +848,7 @@ class Item(Entity):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
-        from helpers.console import console
+        from src.helpers.console import console
         with console.status(f"Fetching {task.language_code.value} label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)

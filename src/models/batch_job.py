@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.suggestion import Suggestion
-    from models.wikidata import Items
+    from src.models.suggestion import Suggestion
+    from src.models.wikidata import Items
 
 
 @dataclass

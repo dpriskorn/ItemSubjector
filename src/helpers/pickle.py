@@ -3,8 +3,8 @@ import pickle
 from typing import List
 
 import config
-from helpers.console import console
-from models.batch_job import BatchJob
+from src.helpers.console import console
+from src.models.batch_job import BatchJob
 
 
 def add_to_pickle(job: BatchJob = None):

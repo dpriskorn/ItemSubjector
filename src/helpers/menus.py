@@ -3,8 +3,8 @@ from typing import List
 
 from consolemenu import SelectionMenu
 
-from models.suggestion import Suggestion
-from models.wikidata import WikimediaLanguageCode, Item
+from src.models.suggestion import Suggestion
+from src.models.wikidata import WikimediaLanguageCode, Item
 
 # def select_lexical_category():
 #     logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ from models.wikidata import WikimediaLanguageCode, Item
 #     logger.debug(f"selected:{selected_lexical_category_index}="
 #                  f"{selected_lexical_category}")
 #     return selected_lexical_category
-from tasks import tasks
+from src.tasks import tasks
 
 
 def select_language():
