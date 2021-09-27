@@ -35,7 +35,8 @@ logging.basicConfig(level=logging.WARNING)
 
 def process_qid_into_job(qid: str = None,
                          task: Task = None,
-                         args: argparse.Namespace = None) -> Union[BatchJob, None]:
+                         args: argparse.Namespace = None,
+                         confirmation: bool = False) -> Union[BatchJob, None]:
     logger = logging.getLogger(__name__)
     if qid is None:
         raise ValueError("qid was None")
@@ -47,44 +48,43 @@ def process_qid_into_job(qid: str = None,
         id=strip_prefix(qid),
         task=task
     )
-    if "protein " in item.label.lower() and args.match_existing_main_subjects:
-        console.print("Skipping protein which is too hard to validate "
-                      "given the information in the label and description")
-        return None
-    else:
-        console.print(f"Working on {item}")
-        # generate suggestion with all we need
-        suggestion = Suggestion(
-            item=item,
-            task=task,
-            args=args
-        )
-        with console.status(f'Fetching items with labels that have one of '
-                            f'the search strings by running a total of '
-                            f'{len(suggestion.search_strings)} queries on WDQS...'):
-            # TODO move this into task.py
-            if task.id == TaskIds.SCHOLARLY_ARTICLES:
-                items = ScholarlyArticleItems()
-            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-                items = RiksdagenDocumentItems()
-            else:
-                raise ValueError(f"{task.id} was not recognized")
-            items.fetch_based_on_label(suggestion=suggestion,
-                                       task=task)
-        if len(items.list) > 0:
-            # Randomize the list
-            items.random_shuffle_list()
-            print_found_items_table(args=args,
-                                    items=items)
-            job = BatchJob(
-                items=items,
-                suggestion=suggestion
-            )
-            answer = ask_add_to_job_queue(job)
-            if answer:
-                return job
+    console.print(f"Working on {item}")
+    # generate suggestion with all we need
+    suggestion = Suggestion(
+        item=item,
+        task=task,
+        args=args
+    )
+    if confirmation:
+        answer = ask_yes_no_question("Do you want to continue?")
+        if not answer:
+            return None
+    with console.status(f'Fetching items with labels that have one of '
+                        f'the search strings by running a total of '
+                        f'{len(suggestion.search_strings)} queries on WDQS...'):
+        # TODO move this into task.py
+        if task.id == TaskIds.SCHOLARLY_ARTICLES:
+            items = ScholarlyArticleItems()
+        elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+            items = RiksdagenDocumentItems()
         else:
-            console.print("No matching items found")
+            raise ValueError(f"{task.id} was not recognized")
+        items.fetch_based_on_label(suggestion=suggestion,
+                                   task=task)
+    if len(items.list) > 0:
+        # Randomize the list
+        items.random_shuffle_list()
+        print_found_items_table(args=args,
+                                items=items)
+        job = BatchJob(
+            items=items,
+            suggestion=suggestion
+        )
+        answer = ask_add_to_job_queue(job)
+        if answer:
+            return job
+    else:
+        console.print("No matching items found")
 
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
@@ -239,7 +239,8 @@ def get_validated_random_subjects(args: argparse.Namespace = None,
             job = process_qid_into_job(qid=qid,
                                        # The scientific article task is hardcoded for now
                                        task=tasks[0],
-                                       args=args)
+                                       args=args,
+                                       confirmation=True)
             if job is not None:
                 jobs.append(job)
                 picked_before.append(qid)
