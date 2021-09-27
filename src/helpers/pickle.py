@@ -63,7 +63,9 @@ def parse_main_subjects_pickle() -> List[str]:
             # print(f"found:{subjects}")
             return subjects
     else:
-        console.print("No main subjects pickle file found.")
+        console.print("No main subjects pickle file found. "
+                      "Create it by running 'python fetch_main_subjects.py'")
+        exit(0)
 
 
 def remove_pickle():
