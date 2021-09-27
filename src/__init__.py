@@ -252,13 +252,10 @@ def get_validated_random_subjects(args: argparse.Namespace = None,
 
 
 def match_existing_main_subjects(args: argparse.Namespace = None):
-    main_subjects = parse_main_subjects_pickle()
+    with console.status("Parsing the main subjects file"):
+        main_subjects = parse_main_subjects_pickle()
     # raise Exception("debug exit")
     handle_existing_job_pickle()
-    console.print(f"The list included with the tool currently "
-                  f"have {len(main_subjects)} main subjects that "
-                  f"appeared on scholarly articles at least once "
-                  f"2021-09-24 when it was generated.")
     jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
     handle_preparation_or_run_directly(args=args, jobs=jobs)
 
