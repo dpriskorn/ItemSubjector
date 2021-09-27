@@ -124,19 +124,26 @@ Usage example:
 `python itemsubjector.py -l Q34 --limit-to-items-without-p921` 
 (the shorthand `-w` also works)
 
-## Matching against ~136.000 existing main subjects
+## Matching against thousands of existing main subjects
 The tool can create a list of jobs by picking random subjects from a
-big list based on 2 million samples where ~136.000 distinct subjects
-were found (see `data/`).
+big list fetched from WDQS.
 
 This enables the user to quickly build up a big list of jobs to run 
 and improve the graph by improving the coverage on existing subjects.
 
+To set it up run:
+* `python fetch_main_subjects.py` by default it fetches 100,000 main 
+  subjects and saves them after removing duplicates 
+  (this usually results in about 10,000 unique subjects which should 
+  be enough to get started)
+  The script implements a random offset so running it again will yield 
+  a different set of subjects, but please don't run it too often.
+
 Usage example:
-`python itemsubjector.py -m`
+* `python itemsubjector.py -m`
 
 By using this function the author in 2 minutes created a list with 6 jobs
-improving a total of 10.000 articles. You can now make a list of jobs with
+improving a total of 10,000 items. You can now make a list of jobs with
 little effort and let them run all day/night.
 
 ## Batch job features

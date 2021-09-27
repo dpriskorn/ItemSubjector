@@ -1,17 +1,25 @@
+import logging
+import random
+
 from wikibaseintegrator import wbi_config
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 import config
 from src import console
 from src.helpers.cleaning import strip_prefix
-# Set User-Agent
 from src.helpers.pickle import add_to_main_subject_pickle
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
 console.print("Fetching 100,000 main subjects")
 console.input("Press enter to continue")
 subjects = []
-for i in range(0, 100000, 10000):
+# This offset ensures that we don't get
+# the same subset of subjects every time we run it
+randomizing_offset: int = random.randint(1, 500000)
+console.print(f"Random offset used: {randomizing_offset} for this run")
+for i in range(0+randomizing_offset, 100000+randomizing_offset, 10000):
     print(i)
     # title: Get main subjects used at least once on scholarly articles
     results = execute_sparql_query(f"""
