@@ -7,12 +7,18 @@ from src.helpers.console import console
 from src.models.batch_job import BatchJob
 
 
-def add_to_pickle(job: BatchJob = None):
+def add_to_job_pickle(job: BatchJob = None):
     if job is None:
         raise ValueError("Job was None")
     else:
-        with open(config.pickle_file_path, 'ab') as file:
+        with open(config.job_pickle_file_path, 'ab') as file:
             pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
+
+
+def add_to_main_subject_pickle(subjects: List[str] = None):
+    with open("data/main_subjects.pkl", 'wb') as file:
+        for qid in subjects:
+            pickle.dump(qid, file, pickle.HIGHEST_PROTOCOL)
 
 
 def read_from_pickle(path):
@@ -24,18 +30,18 @@ def read_from_pickle(path):
             pass
 
 
-def check_if_pickle_exists():
-    if os.path.exists(config.pickle_file_path):
+def check_if_pickle_exists(path):
+    if os.path.exists(path):
         return True
     else:
         return False
 
 
-def parse_pickle() -> List[BatchJob]:
+def parse_job_pickle() -> List[BatchJob]:
     """Reads the pickle into a list of batch jobs"""
-    if check_if_pickle_exists():
+    if check_if_pickle_exists(config.job_pickle_file_path):
         jobs: List[BatchJob] = []
-        for job in read_from_pickle(config.pickle_file_path):
+        for job in read_from_pickle(config.job_pickle_file_path):
             jobs.append(job)
         if len(jobs) == 0:
             console.print("No prepared jobs found")
@@ -45,7 +51,22 @@ def parse_pickle() -> List[BatchJob]:
         console.print("No pickle file found")
 
 
+def parse_main_subjects_pickle() -> List[str]:
+    """Reads the pickle into a list of main subjects"""
+    if check_if_pickle_exists(config.main_subjects_pickle_file_path):
+        subjects = []
+        for subject in read_from_pickle(config.main_subjects_pickle_file_path):
+            subjects.append(subject)
+        if len(subjects) == 0:
+            console.print("No qids found in the pickle.")
+        else:
+            # print(f"found:{subjects}")
+            return subjects
+    else:
+        console.print("No main subjects pickle file found.")
+
+
 def remove_pickle():
-    if os.path.exists(config.pickle_file_path):
-        os.remove(config.pickle_file_path)
+    if os.path.exists(config.job_pickle_file_path):
+        os.remove(config.job_pickle_file_path)
         console.print("The job list was removed")

@@ -17,3 +17,12 @@ def strip_bad_chars(string):
         .replace("[", "")
         .replace("]", "")
     )
+
+
+def strip_prefix(qid):
+    if "https://www.wikidata.org/wiki/" in qid:
+        qid = qid[30:]
+    if "http://www.wikidata.org/entity/" in qid:
+        qid = qid[31:]
+    # logger.debug(f"qid:{qid}")
+    return qid

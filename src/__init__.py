@@ -8,13 +8,15 @@ from typing import List, Union
 from wikibaseintegrator import wbi_login, wbi_config
 
 import config
+from src.helpers.cleaning import strip_prefix
 from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
     ask_yes_no_question, print_finished, \
     print_keep_an_eye_on_wdqs_lag, print_best_practice
 from src.helpers.enums import TaskIds
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
-from src.helpers.pickle import parse_pickle, remove_pickle, add_to_pickle, check_if_pickle_exists
+from src.helpers.pickle import parse_job_pickle, remove_pickle, add_to_job_pickle, check_if_pickle_exists, \
+    parse_main_subjects_pickle
 from src.models.batch_job import BatchJob
 from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
@@ -41,13 +43,8 @@ def process_qid_into_job(qid: str = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    if "https://www.wikidata.org/wiki/" in qid:
-        qid = qid[30:]
-    if "http://www.wikidata.org/entity/" in qid:
-        qid = qid[31:]
-    logger.debug(f"qid:{qid}")
     item = Item(
-        id=qid,
+        id=strip_prefix(qid),
         task=task
     )
     if "protein " in item.label.lower() and args.match_existing_main_subjects:
@@ -138,8 +135,8 @@ def run_jobs(jobs):
     console.print(f'Total runtime: {end_time - start_time}')
 
 
-def handle_existing_pickle():
-    if check_if_pickle_exists():
+def handle_existing_job_pickle():
+    if check_if_pickle_exists(config.job_pickle_file_path):
         answer = ask_yes_no_question("A prepared list of jobs already exist, "
                                      "do you want to overwrite it? "
                                      "(pressing no will append to it)")
@@ -153,9 +150,9 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
         if len(jobs) > 0:
             console.print(f"Adding {len(jobs)} job(s) to the jobs file")
             for job in jobs:
-                add_to_pickle(job)
-        if check_if_pickle_exists():
-            jobs = parse_pickle()
+                add_to_job_pickle(job)
+        if check_if_pickle_exists(config.job_pickle_file_path):
+            jobs = parse_job_pickle()
             if len(jobs) > 0:
                 console.print(f"The jobs list now contain a total of {len(jobs)} "
                               f"jobs with a total of "
@@ -217,14 +214,14 @@ def setup_argparse_and_return_args():
     return parser.parse_args()
 
 
-def get_main_subjects_from_file() -> List[str]:
-    # read the data file
-    file_path = "data/main_subjects.csv"
-    main_subjects_path = f"{os.getcwd()}/{file_path}"
-    with open(main_subjects_path) as file:
-        lines = file.readlines()
-        main_subjects = [line.rstrip() for line in lines]
-    return main_subjects
+# def get_main_subjects_from_file() -> List[str]:
+#     # read the data file
+#     file_path = "data/main_subjects.pkl"
+#     main_subjects_path = f"{os.getcwd()}/{file_path}"
+#     with open(main_subjects_path) as file:
+#         lines = file.readlines()
+#         main_subjects = [line.rstrip() for line in lines]
+#     return main_subjects
 
 
 def get_validated_random_subjects(args: argparse.Namespace = None,
@@ -255,8 +252,9 @@ def get_validated_random_subjects(args: argparse.Namespace = None,
 
 
 def match_existing_main_subjects(args: argparse.Namespace = None):
-    main_subjects = get_main_subjects_from_file()
-    handle_existing_pickle()
+    main_subjects = parse_main_subjects_pickle()
+    # raise Exception("debug exit")
+    handle_existing_job_pickle()
     console.print(f"The list included with the tool currently "
                   f"have {len(main_subjects)} main subjects that "
                   f"appeared on scholarly articles at least once "
@@ -279,7 +277,7 @@ def main():
         match_existing_main_subjects(args=args)
     elif args.run_prepared_jobs is True:
         # read pickle as list of BatchJobs
-        jobs = parse_pickle()
+        jobs = parse_job_pickle()
         if jobs is not None and len(jobs) > 0:
             run_jobs(jobs)
             # Remove the pickle afterwards
@@ -289,7 +287,7 @@ def main():
             console.print("Got no QIDs. Quitting")
             exit(0)
         if args.prepare_jobs:
-            handle_existing_pickle()
+            handle_existing_job_pickle()
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
