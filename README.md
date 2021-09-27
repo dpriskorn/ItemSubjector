@@ -80,23 +80,13 @@ Run the script with the -l or --list argument
 followed by one or more QIDs or URLS:
 * `python itemsubjector.py -l Q108528107` or
 * `python itemsubjector.py -l https://www.wikidata.org/wiki/Q108528107`
-  
-Here is a more advanced example:
-The first is *metastatic breast cancer* which is a 
-subclass of the second *breast cancer*
-* `python itemsubjector.py -l Q108528107 Q128581` or
 
-In this case the tool is smart enough 
-(thanks to Jan Ainali) to first add 
-*metastatic breast cancer* to items 
-and then exclude those items when adding the 
-more general subject afterwards.
+*Note since v0.2 you should not add subjects that are subclass 
+of each other in one go. 
+This is because of internal changes related to job handling*
 
-This way we avoid redundancy since we 
-want the most specific subjects on the 
-items and not 
-all the general ones above it in the 
-classification system.
+Add the narrow first and then the broader like this:
+* `python itemsubjector.py -l narrow-QID && python itemsubjector.py -l broader-QID`
 
 Please investigate before adding broad 
 subjects (with thousands of matches) 
