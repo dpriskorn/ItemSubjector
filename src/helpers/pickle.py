@@ -18,7 +18,7 @@ def add_to_job_pickle(job: BatchJob = None):
 def add_to_main_subject_pickle(subjects: List[str] = None):
     with open(config.main_subjects_pickle_file_path, 'wb') as file:
         for qid in subjects:
-            pickle.dump(qid, file, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(qid, file, pickle.DEFAULT_PROTOCOL)
 
 
 def read_from_pickle(path):
