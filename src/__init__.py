@@ -243,7 +243,7 @@ def get_validated_random_subjects(args: argparse.Namespace = None,
 
 
 def match_existing_main_subjects(args: argparse.Namespace = None):
-    with console.status("Parsing the main subjects file"):
+    with console.status("Reading the main subjects file into memory"):
         main_subjects = parse_main_subjects_pickle()
     # raise Exception("debug exit")
     handle_existing_job_pickle()
