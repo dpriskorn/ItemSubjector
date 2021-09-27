@@ -58,6 +58,6 @@ subjects_without_duplicates = set()
 for subject in subjects:
     subjects_without_duplicates.add(subject)
 console.print(f"Saving {len(subjects_without_duplicates)} "
-              f"to pickle 'data/main_subjects.pkl' (overwriting)")
+              f"to pickle '{config.main_subjects_pickle_file_path}' (overwriting)")
 add_to_main_subject_pickle(subjects)
 console.print("Done")
