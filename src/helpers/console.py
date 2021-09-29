@@ -89,10 +89,18 @@ def print_found_items_table(args: argparse.Namespace = None,
     if items is None:
         raise ValueError("items was None")
     table = Table(title="Matched items found")
-    table.add_column("Showing only a random subset of 50 items if more are found")
+    if len(items.list) < 1000:
+        list_to_show = items.list[0:50]
+    else:
+        # Show 1 sample for each 20 items in the list
+        list_to_show = items.list[0:int(len(items.list) / 20)]
+    if len(items.list) > 4000:
+        console.print("[red]Warning: This is a very large batch, please proceed with caution[/red]")
+        press_enter_to_start()
+    table.add_column(f"Showing a random subset of {len(list_to_show)} items, please review as many as possible for false positives and reject the batch if you find any.")
     if args.show_item_urls:
         table.add_column(f"Wikidata URL")
-    for item in items.list[0:50]:
+    for item in list_to_show:
         if args.show_item_urls:
             table.add_row(item.label, item.url())
         else:
