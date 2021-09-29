@@ -22,6 +22,9 @@ class RiksdagenDocumentItems(Items):
             raise ValueError("task was None")
         # Fetch all items maching the search strings
         self.list = []
+        # Include spaces around the n-gram to avoid edits like this one
+        # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
+        # Lowercase is not needed here as Elastic matches anyway
         for search_string in suggestion.search_strings:
             results = execute_sparql_query(f'''
             SELECT DISTINCT ?item ?itemLabel 
@@ -30,9 +33,6 @@ class RiksdagenDocumentItems(Items):
               SERVICE wikibase:mwapi {{
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";
-                                # Include spaces around the n-gram to avoid edits like this one
-                                # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
-                                # Lowercase is not needed here as Elastic matches anyway
                                 mwapi:srsearch 'haswbstatement:P8433 -haswbstatement:P921={suggestion.item.id} "{search_string}"' .
                 ?title wikibase:apiOutput mwapi:title. 
               }}
