@@ -9,3 +9,4 @@ class SupportedLanguageCode(Enum):
 class TaskIds(Enum):
     SCHOLARLY_ARTICLES = auto()
     RIKSDAGEN_DOCUMENTS = auto()
+    THESIS = auto()

@@ -22,6 +22,7 @@ from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
 from src.models.suggestion import Suggestion
 from src.models.task import Task
+from src.models.thesis import ThesisItems
 from src.models.wikidata import Item
 from src.tasks import tasks
 
@@ -67,6 +68,8 @@ def process_qid_into_job(qid: str = None,
             items = ScholarlyArticleItems()
         elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
             items = RiksdagenDocumentItems()
+        elif task.id == TaskIds.THESIS:
+            items = ThesisItems()
         else:
             raise ValueError(f"{task.id} was not recognized")
         items.fetch_based_on_label(suggestion=suggestion,
