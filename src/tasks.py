@@ -21,7 +21,8 @@ tasks = [
             "(done in Q108532542 and add that as main subject and "
             "avoid the more general 'cancer screening' until all "
             "sub forms of screening have been matched."
-        )
+        ),
+        number_of_queries_per_search_string=2
     ),
     Task(
         id=TaskIds.RIKSDAGEN_DOCUMENTS,

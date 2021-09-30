@@ -119,7 +119,7 @@ class ScholarlyArticleItems(Items):
                   MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}
                   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
                 }}
-                ''', debug=True)
+                ''', debug=False)
             logging.info(f'Got {len(results["results"]["bindings"])} preprint items from '
                          f'WDQS using the search string {search_string}')
             self.list.extend(process_results(results_preprint))

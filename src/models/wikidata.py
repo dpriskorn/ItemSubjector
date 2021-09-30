@@ -828,7 +828,7 @@ class Item(Entity):
         except KeyError:
             pass
         try:
-            logger.info(json["itemLabel"])
+            logger.debug(json["itemLabel"])
             self.label = (json["itemLabel"]["value"])
         except KeyError:
             pass

@@ -51,7 +51,7 @@ class ThesisItems(Items):
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
-            ''', debug=True)
+            ''', debug=False)
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
                 item = Item(json=item_json,

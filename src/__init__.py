@@ -26,7 +26,7 @@ from src.models.thesis import ThesisItems
 from src.models.wikidata import Item
 from src.tasks import tasks
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 # pseudo code
 # let user choose what to work on
@@ -62,7 +62,8 @@ def process_qid_into_job(qid: str = None,
             return None
     with console.status(f'Fetching items with labels that have one of '
                         f'the search strings by running a total of '
-                        f'{len(suggestion.search_strings)} queries on WDQS...'):
+                        f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
+                        f'queries on WDQS...'):
         # TODO move this into task.py
         if task.id == TaskIds.SCHOLARLY_ARTICLES:
             items = ScholarlyArticleItems()
