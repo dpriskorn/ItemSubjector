@@ -26,7 +26,7 @@ from src.models.thesis import ThesisItems
 from src.models.wikidata import Item
 from src.tasks import tasks
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 # pseudo code
 # let user choose what to work on
