@@ -252,7 +252,8 @@ def match_existing_main_subjects(args: argparse.Namespace = None):
     # raise Exception("debug exit")
     handle_existing_job_pickle()
     jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
-    handle_preparation_or_run_directly(args=args, jobs=jobs)
+    if len(jobs) > 0:
+        handle_preparation_or_run_directly(args=args, jobs=jobs)
 
 
 def main():
@@ -284,7 +285,8 @@ def main():
         if task is None:
             raise ValueError("Got no task")
         jobs = process_user_supplied_qids_into_batch_jobs(args=args, task=task)
-        handle_preparation_or_run_directly(args=args, jobs=jobs)
+        if len(jobs) > 0:
+            handle_preparation_or_run_directly(args=args, jobs=jobs)
 
 
 if __name__ == "__main__":
