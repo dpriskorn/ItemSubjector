@@ -62,7 +62,17 @@ def build_query(suggestion: Suggestion = None,
         """)
 
 
+def process_results(results):
+    items = []
+    for item_json in results["results"]["bindings"]:
+        logging.debug(f"item_json:{item_json}")
+        item = Item(json=item_json)
+        items.append(item)
+    return items
+
+
 class ScholarlyArticleItems(Items):
+    """This supports both published peer reviewed articles and preprints"""
     def fetch_based_on_label(self,
                              suggestion: Suggestion = None,
                              task: Task = None):
@@ -87,10 +97,30 @@ class ScholarlyArticleItems(Items):
                     search_string=search_string,
                     task=task)
             )
-            for item_json in results["results"]["bindings"]:
-                logging.debug(f"item_json:{item_json}")
-                item = Item(json=item_json)
-                self.list.append(item)
-            logging.info(f'Got {len(results["results"]["bindings"])} items from '
+            logging.info(f'Got {len(results["results"]["bindings"])} scholarly items from '
                          f'WDQS using the search string {search_string}')
+            self.list.extend(process_results(results))
+            # preprints
+            # We don't use CirrusSearch in this query because we can do it more easily in
+            # SPARQL on a small subgraph like this
+            # find all items that are ?item wdt:P31/wd:P279* wd:Q1266946
+            # minus the QID we want to add
+            results_preprint = execute_sparql_query(f'''
+                SELECT DISTINCT ?item ?itemLabel 
+                WHERE {{
+                  ?item wdt:P31/wd:P279* wd:Q580922. # preprint 
+                  MINUS {{
+                  ?item wdt:P921 wd:{suggestion.item.id};
+                  }}
+                  ?item rdfs:label ?label.
+                  FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+                         REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
+                         REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
+                  MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}
+                  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+                }}
+                ''', debug=True)
+            logging.info(f'Got {len(results["results"]["bindings"])} preprint items from '
+                         f'WDQS using the search string {search_string}')
+            self.list.extend(process_results(results_preprint))
         console.print(f"Got a total of {len(self.list)} items")

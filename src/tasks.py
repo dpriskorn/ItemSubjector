@@ -6,7 +6,7 @@ from src.models.task import Task
 tasks = [
     Task(
         id=TaskIds.SCHOLARLY_ARTICLES,
-        label="Add main subject to scholarly articles",
+        label="Add main subject to scholarly articles and preprints",
         question="Is this a valid subject for this article?",
         language_code=SupportedLanguageCode.ENGLISH,
         best_practice_information=(

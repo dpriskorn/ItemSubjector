@@ -816,7 +816,6 @@ class Item(Entity):
                 self.aliases = aliases
                 self.description = description
 
-
     def __str__(self):
         return f"{self.label}, see {self.url()}"
 
@@ -824,7 +823,7 @@ class Item(Entity):
         """Parse the WDQS json"""
         logger = logging.getLogger(__name__)
         try:
-            logger.info(json["item"])
+            logger.debug(f'item_json:{json["item"]}')
             self.id = str(EntityID(json["item"]["value"]))
         except KeyError:
             pass
