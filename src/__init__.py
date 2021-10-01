@@ -1,13 +1,14 @@
 import argparse
 import logging
-import os
 import random
 from datetime import datetime
 from typing import List, Union
 
 from wikibaseintegrator import wbi_login, wbi_config
+from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 import config
+from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
 from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
     ask_yes_no_question, print_finished, \
@@ -38,7 +39,7 @@ def process_qid_into_job(qid: str = None,
                          task: Task = None,
                          args: argparse.Namespace = None,
                          confirmation: bool = False) -> Union[BatchJob, None]:
-    logger = logging.getLogger(__name__)
+    # logger = logging.getLogger(__name__)
     if qid is None:
         raise ValueError("qid was None")
     if args is None:
@@ -172,54 +173,9 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
         run_jobs(jobs)
 
 
-def setup_argparse_and_return_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--list',
-                        nargs='+',
-                        help=('List of QIDs or URLs to Q-items that '
-                              'are to be added as '
-                              'main subjects on scientific articles. '
-                              'Always add the most specific ones first. '
-                              'See the README for examples'),
-                        required=False)
-    parser.add_argument('-na', '--no-aliases',
-                        action='store_true',
-                        help='Turn off alias matching'
-                        )
-    parser.add_argument('-p', '--prepare-jobs',
-                        action='store_true',
-                        help='Prepare a job for later execution, e.g. in a job engine'
-                        )
-    parser.add_argument('-r', '--run-prepared-jobs',
-                        action='store_true',
-                        help='Run prepared jobs non-interactively'
-                        )
-    parser.add_argument('-rm', '--remove-prepared-jobs',
-                        action='store_true',
-                        help='Remove prepared jobs'
-                        )
-    parser.add_argument('-m', '--match-existing-main-subjects',
-                        action='store_true',
-                        help=('Match from list of 136.000 already used '
-                              'main subjects on other scientific articles')
-                        )
-    parser.add_argument('-w', '--limit-to-items-without-p921',
-                        action='store_true',
-                        help='Limit matching to scientific articles without P921 main subject'
-                        )
-    parser.add_argument('-su', '--show-search-urls',
-                        action='store_true',
-                        help='Show an extra column in the table of search strings with links'
-                        )
-    parser.add_argument('-iu', '--show-item-urls',
-                        action='store_true',
-                        help='Show an extra column in the table of items with links'
-                        )
-    return parser.parse_args()
-
-
-def get_validated_random_subjects(args: argparse.Namespace = None,
-                                  main_subjects: List[str] = None):
+def get_validated_main_subjects(args: argparse.Namespace = None,
+                                main_subjects: List[str] = None):
+    """This function randomly picks a subject and present it for validation"""
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
@@ -251,7 +207,22 @@ def match_existing_main_subjects(args: argparse.Namespace = None):
         main_subjects = parse_main_subjects_pickle()
     # raise Exception("debug exit")
     handle_existing_job_pickle()
-    jobs = get_validated_random_subjects(args=args, main_subjects=main_subjects)
+    jobs = get_validated_main_subjects(args=args, main_subjects=main_subjects)
+    if len(jobs) > 0:
+        handle_preparation_or_run_directly(args=args, jobs=jobs)
+
+
+def match_main_subjects_from_sparql(args: argparse.Namespace = None):
+    with console.status("Running query on WDQS..."):
+        main_subjects = []
+        results = execute_sparql_query(args.sparql.replace("{", "{{").replace("}", "}}"),
+                                       debug=args.debug_sparql)
+        for item_json in results["results"]["bindings"]:
+            logging.debug(f"item_json:{item_json}")
+            main_subjects.append(item_json["item"]["value"])
+    console.print(f"Got {len(main_subjects)} results")
+    handle_existing_job_pickle()
+    jobs = get_validated_main_subjects(args=args, main_subjects=main_subjects)
     if len(jobs) > 0:
         handle_preparation_or_run_directly(args=args, jobs=jobs)
 
@@ -275,6 +246,8 @@ def main():
             run_jobs(jobs)
             # Remove the pickle afterwards
             remove_pickle()
+    elif args.sparql:
+        match_main_subjects_from_sparql(args=args)
     else:
         if args.list is None:
             console.print("Got no QIDs. Quitting")

@@ -48,7 +48,7 @@ class RiksdagenDocumentItems(Items):
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "sv". }}
             }}
-            ''')
+            ''', debug=suggestion.args.debug_sparql)
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
                 item = Item(json=item_json,
