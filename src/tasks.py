@@ -7,7 +7,6 @@ tasks = [
     Task(
         id=TaskIds.SCHOLARLY_ARTICLES,
         label="Add main subject to scholarly articles and preprints",
-        question="Is this a valid subject for this article?",
         language_code=SupportedLanguageCode.ENGLISH,
         best_practice_information=(
             "When adding QID main subjects please try to first "
@@ -27,14 +26,12 @@ tasks = [
     Task(
         id=TaskIds.RIKSDAGEN_DOCUMENTS,
         label="Add main subject to documents from Riksdagen",
-        question="Is this a valid subject for this document?",
         language_code=SupportedLanguageCode.SWEDISH,
         best_practice_information=None
     ),
     Task(
         id=TaskIds.THESIS,
         label="Add main subject to thesis' and technical reports",
-        question="Is this a valid subject for this thesis?",
         language_code=SupportedLanguageCode.ENGLISH,
         best_practice_information=(
             "When adding QID main subjects please try to first "

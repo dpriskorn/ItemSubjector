@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Union
 
 from src.helpers.enums import SupportedLanguageCode, TaskIds
@@ -13,7 +12,6 @@ class Task:
     id: TaskIds = None
     label: str = None
     language_code: SupportedLanguageCode = None
-    question: str = None
     number_of_queries_per_search_string = 1
 
     def __init__(self,
@@ -21,19 +19,15 @@ class Task:
                  id: TaskIds = None,
                  label: str = None,
                  language_code: SupportedLanguageCode = None,
-                 question: str = None,
                  number_of_queries_per_search_string: int = None):
         if id is None:
             raise ValueError("Got no id")
         if label is None:
             raise ValueError("Got no label")
-        if question is None:
-            raise ValueError("Got no question")
         if language_code is None:
             raise ValueError("Got no language_code")
         self.id = id
         self.label = label
-        self.question = question
         self.language_code = language_code
         self.best_practice_information = best_practice_information
         if number_of_queries_per_search_string is not None:
