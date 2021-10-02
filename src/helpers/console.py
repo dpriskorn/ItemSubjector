@@ -1,5 +1,5 @@
 import argparse
-from typing import List, Dict
+from typing import List
 from urllib.parse import quote
 
 from rich.console import Console
@@ -130,9 +130,16 @@ def print_finished():
     console.print("All jobs finished successfully")
 
 
-def print_job_statistics(jobs):
+def print_job_statistics(jobs: List[BatchJob] = None,
+                         add_pickle_jobs: bool = True):
     if jobs is None:
         raise ValueError("jobs was None")
+    # Add the jobs from the pickle to the list
+    if add_pickle_jobs is True:
+        from src import parse_job_pickle
+        pickle_jobs = parse_job_pickle()
+        if pickle_jobs is not None and len(pickle_jobs) > 0:
+            jobs.extend(pickle_jobs)
     console.print(f"The jobs list now contain a total of {len(jobs)} "
                   f"jobs with a total of "
                   f"{sum(len(job.items.list) for job in jobs)} items")

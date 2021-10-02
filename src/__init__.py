@@ -158,7 +158,8 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
         if check_if_pickle_exists(config.job_pickle_file_path):
             jobs = parse_job_pickle()
             if len(jobs) > 0:
-                print_job_statistics(jobs)
+                print_job_statistics(jobs=jobs,
+                                     add_pickle_jobs=False)
                 console.print(f"You can run the jobs "
                               f"non-interactively e.g. on the Toolforge "
                               f"Kubernetes cluster using -r or --run-prepared-jobs. "
@@ -191,7 +192,7 @@ def get_validated_main_subjects(args: argparse.Namespace = None,
             if job is not None:
                 jobs.append(job)
                 picked_before.append(qid)
-            print_job_statistics(jobs)
+            print_job_statistics(jobs=jobs)
             answer = ask_yes_no_question("Match one more?")
             if not answer:
                 break
