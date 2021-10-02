@@ -12,7 +12,7 @@ from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
 from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
     ask_yes_no_question, print_finished, \
-    print_keep_an_eye_on_wdqs_lag, print_best_practice
+    print_keep_an_eye_on_wdqs_lag, print_best_practice, print_job_statistics
 from src.helpers.enums import TaskIds
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
@@ -158,9 +158,7 @@ def handle_preparation_or_run_directly(args: argparse.Namespace = None,
         if check_if_pickle_exists(config.job_pickle_file_path):
             jobs = parse_job_pickle()
             if len(jobs) > 0:
-                console.print(f"The jobs list now contain a total of {len(jobs)} "
-                              f"jobs with a total of "
-                              f"{sum(len(job.items.list) for job in jobs)} items")
+                print_job_statistics(jobs)
                 console.print(f"You can run the jobs "
                               f"non-interactively e.g. on the Toolforge "
                               f"Kubernetes cluster using -r or --run-prepared-jobs. "
@@ -193,6 +191,7 @@ def get_validated_main_subjects(args: argparse.Namespace = None,
             if job is not None:
                 jobs.append(job)
                 picked_before.append(qid)
+            print_job_statistics(jobs)
             answer = ask_yes_no_question("Match one more?")
             if not answer:
                 break

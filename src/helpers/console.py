@@ -128,3 +128,11 @@ def print_running_jobs(jobs: List[BatchJob] = None):
 
 def print_finished():
     console.print("All jobs finished successfully")
+
+
+def print_job_statistics(jobs):
+    if jobs is None:
+        raise ValueError("jobs was None")
+    console.print(f"The jobs list now contain a total of {len(jobs)} "
+                  f"jobs with a total of "
+                  f"{sum(len(job.items.list) for job in jobs)} items")
