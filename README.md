@@ -1,5 +1,7 @@
 # ItemSubjector
-*still in BETA*
+*Note: This is alpha software, expect new features, renamed arguments 
+and it could eat you dog so check your contributions and avoid/revert batches 
+that have false positives*
 
 Tool made to add main subject statements to 
 items based on a heuristic matching the subject with the title of the item. 
