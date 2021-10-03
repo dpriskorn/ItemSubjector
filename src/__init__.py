@@ -30,12 +30,6 @@ from src.tasks import tasks
 logging.basicConfig(level=logging.WARNING)
 
 
-# pseudo code
-# let user choose what to work on
-# e.g. Swedish documents from Riksdagen
-# e.g. English scientific articles
-
-
 def process_qid_into_job(qid: str = None,
                          task: Task = None,
                          args: argparse.Namespace = None,
@@ -94,6 +88,7 @@ def process_qid_into_job(qid: str = None,
             return None
     else:
         console.print(f"Label for {task.language_code} was None on {item.url()}, skipping")
+
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
                                                task: Task = None) -> List[BatchJob]:
