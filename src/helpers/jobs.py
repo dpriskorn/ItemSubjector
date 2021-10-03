@@ -6,7 +6,8 @@ from typing import Union, List, TYPE_CHECKING
 
 from src import strip_prefix, print_best_practice, console, ask_yes_no_question, \
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
-    print_finished, print_job_statistics, tasks
+    print_finished, print_job_statistics
+from src.tasks import tasks
 
 if TYPE_CHECKING:
     from src import Task, BatchJob
