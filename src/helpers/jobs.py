@@ -1,12 +1,15 @@
+from __future__ import annotations
 import argparse
 import random
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, TYPE_CHECKING
 
-from src import Task, BatchJob, Item, strip_prefix, console, Suggestion, ask_yes_no_question, TaskIds, \
-    ScholarlyArticleItems, RiksdagenDocumentItems, ThesisItems, print_found_items_table, ask_add_to_job_queue, \
-    print_best_practice, print_keep_an_eye_on_wdqs_lag, login, print_running_jobs, print_finished, add_to_job_pickle, \
-    print_job_statistics, tasks
+from src import strip_prefix, print_best_practice, console, ask_yes_no_question, \
+    TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
+    print_finished, print_job_statistics, tasks
+
+if TYPE_CHECKING:
+    from src import Task, BatchJob
 
 
 def process_qid_into_job(qid: str = None,
@@ -20,6 +23,7 @@ def process_qid_into_job(qid: str = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
+    from src import Item
     item = Item(
         id=strip_prefix(qid),
         task=task
@@ -27,6 +31,7 @@ def process_qid_into_job(qid: str = None,
     if item.label is not None:
         console.print(f"Working on {item}")
         # generate suggestion with all we need
+        from src import Suggestion
         suggestion = Suggestion(
             item=item,
             task=task,
@@ -41,10 +46,13 @@ def process_qid_into_job(qid: str = None,
                             f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
                             f'queries on WDQS...'):
             if task.id == TaskIds.SCHOLARLY_ARTICLES:
+                from src import ScholarlyArticleItems
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+                from src import RiksdagenDocumentItems
                 items = RiksdagenDocumentItems()
             elif task.id == TaskIds.THESIS:
+                from src import ThesisItems
                 items = ThesisItems()
             else:
                 raise ValueError(f"{task.id} was not recognized")
@@ -55,6 +63,7 @@ def process_qid_into_job(qid: str = None,
             items.random_shuffle_list()
             print_found_items_table(args=args,
                                     items=items)
+            from src import BatchJob
             job = BatchJob(
                 items=items,
                 suggestion=suggestion
@@ -93,6 +102,7 @@ def run_jobs(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
     print_keep_an_eye_on_wdqs_lag()
+    from src import login
     login()
     print_running_jobs(jobs)
     count = 0
@@ -100,6 +110,7 @@ def run_jobs(jobs: List[BatchJob] = None):
     for job in jobs:
         count += 1
         job.run(jobs=jobs, job_count=count)
+        console.print(f"runtime until now: {datetime.now() - start_time}")
     print_finished()
     end_time = datetime.now()
     console.print(f'Total runtime: {end_time - start_time}')
@@ -111,6 +122,7 @@ def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace 
         if args.prepare_jobs:
             console.print(f"Adding {len(jobs)} job(s) to the jobs file")
             for job in jobs:
+                from src import add_to_job_pickle
                 add_to_job_pickle(job)
             print_job_statistics(jobs=jobs)
             console.print(f"You can run the jobs "

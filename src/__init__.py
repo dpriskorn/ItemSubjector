@@ -6,7 +6,6 @@ from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
 import config
-from src import handle_job_preparation_or_run_directly_if_any_jobs, get_validated_main_subjects_as_jobs
 from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
 from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
