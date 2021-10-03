@@ -105,7 +105,10 @@ class Suggestion:
         ):
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
-                self.search_strings.append(alias)
+                if len(alias) < 4:
+                    console.print(f"Skipping short alias '{alias}' to avoid false positives", style="#FF8000")
+                else:
+                    self.search_strings.append(alias)
         # logger.debug(f"search_strings:{self.search_strings}")
         print_search_strings_table(args=self.args,
                                    search_strings=self.search_strings)
