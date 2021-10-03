@@ -127,7 +127,7 @@ def login():
         wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
 
 
-def run_jobs(jobs):
+def run_jobs(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
     print_keep_an_eye_on_wdqs_lag()
@@ -245,6 +245,12 @@ def main():
     jobs: List[BatchJob] = []
     args = setup_argparse_and_return_args()
     # console.print(args.list)
+    if args.run_prepared_jobs is True:
+        jobs = parse_job_pickle()
+        if jobs is not None and len(jobs) > 0:
+            run_jobs(jobs)
+            # Remove the pickle afterwards
+            remove_pickle()
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the job list.")
@@ -264,11 +270,6 @@ def main():
             remove_pickle(silent=True)
     if args.match_existing_main_subjects is True:
         match_existing_main_subjects(args=args, jobs=jobs)
-    elif args.run_prepared_jobs is True:
-        if jobs is not None and len(jobs) > 0:
-            run_jobs(jobs)
-            # Remove the pickle afterwards
-            remove_pickle()
     elif args.sparql:
         match_main_subjects_from_sparql(args=args, jobs=jobs)
     else:
