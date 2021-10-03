@@ -26,21 +26,6 @@ def ask_yes_no_question(message: str):
                 return answer[0].lower() == 'y'
 
 
-def introduction():
-    print_keep_an_eye_on_wdqs_lag()
-    console.input(
-        "This tool enables you to find n-grams from labels "
-        "semi-automatically and validate the match between the n-grams "
-        "with items found by searching Wikidata.\n"
-        "E.g. the 2-gram 'breast cancer' corresponds to the item: Q128581: "
-        "Breast cancer: cancer that originates in the mammary gland.\n"
-        "The tool makes it simple to add main subject to a lot of items "
-        "(in the example above there are ~8000 matches).\n"
-        "Note: If unsure you should reject a match when validating.\n"
-        "Press Enter to start."
-    )
-
-
 def print_keep_an_eye_on_wdqs_lag():
     console.print("Please keep an eye on the lag of the WDQS cluster here and avoid "
                   "working if it is over a few minutes.\n"
@@ -54,14 +39,14 @@ def print_keep_an_eye_on_wdqs_lag():
                   "https://phabricator.wikimedia.org/T291621")
 
 
-def press_enter_to_start():
-    console.input("Press Enter to start.")
+def press_enter_to_continue():
+    console.input("Press Enter to continue.")
 
 
 def print_best_practice(task: Task):
     if task.best_practice_information is not None:
         console.print(task.best_practice_information)
-        press_enter_to_start()
+        press_enter_to_continue()
 
 
 def print_search_strings_table(args: argparse.Namespace = None,
@@ -96,7 +81,7 @@ def print_found_items_table(args: argparse.Namespace = None,
         list_to_show = items.list[0:int(len(items.list) / 20)]
     if len(items.list) > 4000:
         console.print("[red]Warning: This is a very large batch, please proceed with caution[/red]")
-        press_enter_to_start()
+        press_enter_to_continue()
     table.add_column(f"Showing a random subset of {len(list_to_show)} "
                      f"items, please review as many as possible for false "
                      f"positives and reject the batch if you find any.")
