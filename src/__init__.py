@@ -51,47 +51,49 @@ def process_qid_into_job(qid: str = None,
         id=strip_prefix(qid),
         task=task
     )
-    console.print(f"Working on {item}")
-    # generate suggestion with all we need
-    suggestion = Suggestion(
-        item=item,
-        task=task,
-        args=args
-    )
-    if confirmation:
-        answer = ask_yes_no_question("Do you want to continue?")
-        if not answer:
-            return None
-    with console.status(f'Fetching items with labels that have one of '
-                        f'the search strings by running a total of '
-                        f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
-                        f'queries on WDQS...'):
-        if task.id == TaskIds.SCHOLARLY_ARTICLES:
-            items = ScholarlyArticleItems()
-        elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-            items = RiksdagenDocumentItems()
-        elif task.id == TaskIds.THESIS:
-            items = ThesisItems()
-        else:
-            raise ValueError(f"{task.id} was not recognized")
-        items.fetch_based_on_label(suggestion=suggestion,
-                                   task=task)
-    if len(items.list) > 0:
-        # Randomize the list
-        items.random_shuffle_list()
-        print_found_items_table(args=args,
-                                items=items)
-        job = BatchJob(
-            items=items,
-            suggestion=suggestion
+    if item.label is not None:
+        console.print(f"Working on {item}")
+        # generate suggestion with all we need
+        suggestion = Suggestion(
+            item=item,
+            task=task,
+            args=args
         )
-        answer = ask_add_to_job_queue(job)
-        if answer:
-            return job
+        if confirmation:
+            answer = ask_yes_no_question("Do you want to continue?")
+            if not answer:
+                return None
+        with console.status(f'Fetching items with labels that have one of '
+                            f'the search strings by running a total of '
+                            f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
+                            f'queries on WDQS...'):
+            if task.id == TaskIds.SCHOLARLY_ARTICLES:
+                items = ScholarlyArticleItems()
+            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+                items = RiksdagenDocumentItems()
+            elif task.id == TaskIds.THESIS:
+                items = ThesisItems()
+            else:
+                raise ValueError(f"{task.id} was not recognized")
+            items.fetch_based_on_label(suggestion=suggestion,
+                                       task=task)
+        if len(items.list) > 0:
+            # Randomize the list
+            items.random_shuffle_list()
+            print_found_items_table(args=args,
+                                    items=items)
+            job = BatchJob(
+                items=items,
+                suggestion=suggestion
+            )
+            answer = ask_add_to_job_queue(job)
+            if answer:
+                return job
+        else:
+            console.print("No matching items found")
+            return None
     else:
-        console.print("No matching items found")
-        return None
-
+        console.print(f"Label for {task.language_code} was None on {item.url()}, skipping")
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
                                                task: Task = None) -> List[BatchJob]:
