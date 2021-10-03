@@ -12,7 +12,7 @@ from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
 from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
     ask_yes_no_question, print_finished, \
-    print_keep_an_eye_on_wdqs_lag, print_best_practice, print_job_statistics
+    print_keep_an_eye_on_wdqs_lag, print_best_practice, print_job_statistics, ask_discard_existing_job_pickle
 from src.helpers.enums import TaskIds
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
@@ -28,6 +28,7 @@ from src.models.wikidata import Item
 from src.tasks import tasks
 
 logging.basicConfig(level=logging.WARNING)
+
 
 # pseudo code
 # let user choose what to work on
@@ -89,6 +90,7 @@ def process_qid_into_job(qid: str = None,
             return job
     else:
         console.print("No matching items found")
+        return None
 
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
@@ -139,47 +141,38 @@ def run_jobs(jobs):
     console.print(f'Total runtime: {end_time - start_time}')
 
 
-def handle_existing_job_pickle():
-    if check_if_pickle_exists(config.job_pickle_file_path):
-        answer = ask_yes_no_question("A prepared list of jobs already exist, "
-                                     "do you want to overwrite it? "
-                                     "(pressing no will append to it)")
-        if answer:
-            remove_pickle()
-
-
-def handle_preparation_or_run_directly(args: argparse.Namespace = None,
-                                       jobs: List[BatchJob] = None):
-    if args.prepare_jobs:
-        if len(jobs) > 0:
+def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace = None,
+                                                       jobs: List[BatchJob] = None):
+    if len(jobs) > 0:
+        if args.prepare_jobs:
             console.print(f"Adding {len(jobs)} job(s) to the jobs file")
             for job in jobs:
                 add_to_job_pickle(job)
-        if check_if_pickle_exists(config.job_pickle_file_path):
-            jobs = parse_job_pickle()
-            if len(jobs) > 0:
-                print_job_statistics(jobs=jobs,
-                                     add_pickle_jobs=False)
-                console.print(f"You can run the jobs "
-                              f"non-interactively e.g. on the Toolforge "
-                              f"Kubernetes cluster using -r or --run-prepared-jobs. "
-                              f"See https://phabricator.wikimedia.org/T285944 "
-                              f"for details")
-            else:
-                raise ValueError("Pickle file had no jobs")
-    else:
-        run_jobs(jobs)
+            print_job_statistics(jobs=jobs)
+            console.print(f"You can run the jobs "
+                          f"non-interactively e.g. on the Toolforge "
+                          f"Kubernetes cluster using -r or --run-prepared-jobs. "
+                          f"See https://phabricator.wikimedia.org/T285944 "
+                          f"for details")
+        else:
+            run_jobs(jobs)
 
 
 def get_validated_main_subjects(args: argparse.Namespace = None,
-                                main_subjects: List[str] = None):
+                                main_subjects: List[str] = None,
+                                jobs: List[BatchJob] = None):
     """This function randomly picks a subject and present it for validation"""
+    # logger = logging.getLogger(__name__)
+    if jobs is None:
+        raise ValueError("jobs was None")
+    if not isinstance(jobs, List):
+        raise ValueError("jobs was not a list")
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
+    # TODO implement better check for duplicates to avoid wasting resources
     picked_before = []
-    jobs = []
     while True:
         console.print(f"Picking a random main subject")
         qid = random.choice(main_subjects)
@@ -201,17 +194,29 @@ def get_validated_main_subjects(args: argparse.Namespace = None,
     return jobs
 
 
-def match_existing_main_subjects(args: argparse.Namespace = None):
+def match_existing_main_subjects(args: argparse.Namespace = None,
+                                 jobs: List[BatchJob] = None):
+    if jobs is None:
+        raise ValueError("jobs was None")
+    if not isinstance(jobs, List):
+        raise ValueError("jobs was not a list")
     with console.status("Reading the main subjects file into memory"):
         main_subjects = parse_main_subjects_pickle()
     # raise Exception("debug exit")
-    handle_existing_job_pickle()
-    jobs = get_validated_main_subjects(args=args, main_subjects=main_subjects)
-    if len(jobs) > 0:
-        handle_preparation_or_run_directly(args=args, jobs=jobs)
+    jobs = get_validated_main_subjects(args=args,
+                                       main_subjects=main_subjects,
+                                       jobs=jobs)
+    handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
 
 
-def match_main_subjects_from_sparql(args: argparse.Namespace = None):
+def match_main_subjects_from_sparql(args: argparse.Namespace = None,
+                                    jobs: List[BatchJob] = None):
+    """Collect subjects via SPARQL and call get_validated_main_subjects()
+    If we get any validated jobs we handle them"""
+    if jobs is None:
+        raise ValueError("jobs was None")
+    if not isinstance(jobs, List):
+        raise ValueError("jobs was not a list")
     with console.status("Running query on WDQS..."):
         main_subjects = []
         results = execute_sparql_query(args.sparql.replace("{", "{{").replace("}", "}}"),
@@ -219,46 +224,60 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None):
         for item_json in results["results"]["bindings"]:
             logging.debug(f"item_json:{item_json}")
             main_subjects.append(item_json["item"]["value"])
-    console.print(f"Got {len(main_subjects)} results")
-    handle_existing_job_pickle()
-    jobs = get_validated_main_subjects(args=args, main_subjects=main_subjects)
-    if len(jobs) > 0:
-        handle_preparation_or_run_directly(args=args, jobs=jobs)
+    if len(main_subjects) > 0:
+        console.print(f"Got {len(main_subjects)} results")
+        jobs = get_validated_main_subjects(
+            args=args,
+            main_subjects=main_subjects,
+            jobs=jobs
+        )
+        handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
+    else:
+        console.print("Got 0 results. Try another query or debug it using --debug")
 
 
 def main():
     """This is the main function that makes everything else happen"""
     # logger = logging.getLogger(__name__)
     migrate_pickle_detection()
+    jobs: List[BatchJob] = []
     args = setup_argparse_and_return_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the job list.")
         # exit(0)
+    if args.prepare_jobs is True:
+        if check_if_pickle_exists(config.job_pickle_file_path):
+            if not ask_discard_existing_job_pickle():
+                # We run this if the user answered no to discarding which
+                # is the default to avoid running batches multiple times by
+                # mistake (which does not harm Wikidata, but waste computing
+                # resources which is bad.
+                jobs = parse_job_pickle(silent=True)
+                if len(jobs) > 0:
+                    console.print(f"Found and loaded {len(jobs)} "
+                                  f"jobs with a total of "
+                                  f"{sum(len(job.items.list) for job in jobs)} items")
+            remove_pickle(silent=True)
     if args.match_existing_main_subjects is True:
-        match_existing_main_subjects(args=args)
+        match_existing_main_subjects(args=args, jobs=jobs)
     elif args.run_prepared_jobs is True:
-        # read pickle as list of BatchJobs
-        jobs = parse_job_pickle()
         if jobs is not None and len(jobs) > 0:
             run_jobs(jobs)
             # Remove the pickle afterwards
             remove_pickle()
     elif args.sparql:
-        match_main_subjects_from_sparql(args=args)
+        match_main_subjects_from_sparql(args=args, jobs=jobs)
     else:
         if args.add is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
-        if args.prepare_jobs:
-            handle_existing_job_pickle()
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
-        jobs = process_user_supplied_qids_into_batch_jobs(args=args, task=task)
-        if len(jobs) > 0:
-            handle_preparation_or_run_directly(args=args, jobs=jobs)
+        jobs.extend(process_user_supplied_qids_into_batch_jobs(args=args, task=task))
+        handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
 
 
 if __name__ == "__main__":

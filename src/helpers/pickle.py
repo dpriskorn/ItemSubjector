@@ -37,18 +37,20 @@ def check_if_pickle_exists(path):
         return False
 
 
-def parse_job_pickle() -> List[BatchJob]:
+def parse_job_pickle(silent: bool = False) -> List[BatchJob]:
     """Reads the pickle into a list of batch jobs"""
     if check_if_pickle_exists(config.job_pickle_file_path):
         jobs: List[BatchJob] = []
         for job in read_from_pickle(config.job_pickle_file_path):
             jobs.append(job)
         if len(jobs) == 0:
-            console.print("No prepared jobs found")
+            if not silent:
+                console.print("No prepared jobs found")
         else:
             return jobs
     else:
-        console.print("No pickle file found")
+        if not silent:
+            console.print("No pickle file found")
 
 
 def parse_main_subjects_pickle() -> List[str]:
@@ -68,7 +70,8 @@ def parse_main_subjects_pickle() -> List[str]:
         exit(0)
 
 
-def remove_pickle():
+def remove_pickle(silent: bool = False):
     if os.path.exists(config.job_pickle_file_path):
         os.remove(config.job_pickle_file_path)
-        console.print("The job list was removed")
+        if not silent:
+            console.print("The job list was removed")
