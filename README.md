@@ -1,7 +1,5 @@
 # ItemSubjector
-*Note: This is alpha software, expect new features, renamed arguments 
-and it could eat you dog so check your contributions and avoid/revert batches 
-that have false positives*
+*This is beta software, expect new features, renamed arguments, etc.*
 
 Tool made to add main subject statements to 
 items based on a heuristic matching the subject with the title of the item. 
@@ -10,16 +8,17 @@ items based on a heuristic matching the subject with the title of the item.
 
 # Features
 This tool has the following features:
-* Adding a list of manually supplied main subjects to items 
-  (for now scholarly articles and documents 
-  from Riksdagen are supported)
-* Matching against 136.000 existing main subjects and adding them to scholarly articles
+* Adding a list of manually supplied main subjects to a few selected subgraphs 
+  (These currently include a total of 37M items with scholarly items being the biggest subgraph by far).
+* Matching against a set of items fetched via a SPARQL query.
+* Matching against a downloaded set of existing main subjects and adding them to more scholarly articles
 * Batch mode that can be used together with the above features and be run non-interactively 
-  e.g. in the Wikimedia Cloud kubernetes beta cluster
+  e.g. in the Wikimedia Cloud Services Kubernetes Beta cluster
 
 It supports 
 [Wikidata:Edit groups](https://www.wikidata.org/wiki/Wikidata:Edit_groups) 
-so that batches can easily be undone later if needed.
+so that batches can easily be undone later if needed. 
+Click "details" in the summary of edits to see more.
 
 # Thanks
 During the development of this tool the author got a 
@@ -136,7 +135,11 @@ Usage example for diseases:
 This makes it much easier to cover a range a subjects. 
 This example query returns ~5000 items to match :)
 
-## Matching against thousands of existing main subjects
+## Matching against existing main subjects
+*Warning: This often proposes too broad subjects 
+that should most probably not be added as main subjects to all matches, 
+but instead be broken down into narrower subjects*
+
 The tool can create a list of jobs by picking random subjects from a
 big list fetched from WDQS.
 
@@ -153,10 +156,6 @@ To set it up run:
 
 Usage example:
 * `python itemsubjector.py -m`
-
-By using this function the author in 2 minutes created a list with 6 jobs
-improving a total of 10,000 items. You can now make a list of jobs with
-little effort and let them run all day/night.
 
 ## Batch job features
 The tool can help prepare jobs and then run 
