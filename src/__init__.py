@@ -91,12 +91,6 @@ def main():
     jobs: List[BatchJob] = []
     args = setup_argparse_and_return_args()
     # console.print(args.list)
-    if args.run_prepared_jobs is True:
-        jobs = parse_job_pickle()
-        if jobs is not None and len(jobs) > 0:
-            run_jobs(jobs)
-            # Remove the pickle afterwards
-            remove_pickle()
     if args.remove_prepared_jobs is True:
         remove_pickle()
         console.print("Removed the job list.")
@@ -114,11 +108,18 @@ def main():
                                   f"jobs with a total of "
                                   f"{sum(len(job.items.list) for job in jobs)} items")
             remove_pickle(silent=True)
-    if args.match_existing_main_subjects is True:
+    if args.run_prepared_jobs is True:
+        jobs = parse_job_pickle()
+        if jobs is not None and len(jobs) > 0:
+            run_jobs(jobs)
+            # Remove the pickle afterwards
+            remove_pickle()
+    elif args.match_existing_main_subjects is True:
         match_existing_main_subjects(args=args, jobs=jobs)
     elif args.sparql:
         match_main_subjects_from_sparql(args=args, jobs=jobs)
     else:
+        # if not args.run_prepared_jobs:
         if args.add is None:
             console.print("Got no QIDs. Quitting")
             exit(0)
