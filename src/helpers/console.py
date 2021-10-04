@@ -89,7 +89,9 @@ def print_found_items_table(args: argparse.Namespace = None,
         table.add_column(f"Wikidata URL")
     for item in list_to_show:
         if args.show_item_urls:
-            table.add_row(item.label, item.url())
+            # Fix rich parse bug with "[/TSUP]"
+            label = item.label.replace("[/", "['/")
+            table.add_row(label, item.url())
         else:
             table.add_row(item.label)
     console.print(table)
