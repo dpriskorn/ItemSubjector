@@ -1,5 +1,5 @@
 # ItemSubjector
-*This is beta software, expect new features, renamed arguments, etc.*
+*This is beta software, expect new features, renamed arguments, bugs, etc.*
 
 Tool made to add main subject statements to 
 items based on a heuristic matching the subject with the title of the item. 
@@ -34,7 +34,10 @@ helpful people in the Wikimedia Cloud Services Support chat that
 helped with making batch jobs run successfully.
 
 # Installation
-Clone the repo and run
+Clone the repo 
+`git clone https://github.com/dpriskorn/ItemSubjector.git && cd ItemSubjector`
+
+and run
 
 `pip install -r requirements.txt`
 
@@ -45,25 +48,27 @@ The tool runs in PAWS with no known
 issues.
 * log in to PAWS
 * open a terminal
-* run `git clone https://github.com/dpriskorn/ItemSubjector.git .itemsubjector && cd .itemsubjector` 
+* run `git clone https://github.com/dpriskorn/ItemSubjector.git .itemsubjector && cd .itemsubjector && pip install -r requirements.txt` 
   <- note the dot in front of the directory name 
-  that hides it from publication.
-* run the pip-command above
+  that hides it from publication which is crucial to 
+  avoid publication of your login credentials.
+* follow the details under Setup below
 
-## Wikimedia Cloud Services kubernetes beta cluster
-See the batch commands below and 
-https://phabricator.wikimedia.org/T285944#7373913 
-for details.
+*Note: PAWS is not ideal for batch jobs unless you 
+are willing to keep your browser tab open for the 
+whole duration of the job. Consider using Kubernetes 
+instead, see below*
 
-There is a `setup_environment.sh` in the root of this repo that can help 
-you prepare the pod/container so that the tool will work.
-
+## Wikimedia Cloud Services Kubernetes Beta cluster
+See [Kubernetes_HOWTO.md](Kubernetes_HOWTO.md)
 
 # Setup
 Like my other tools, copy config.example.py -> 
 config.py and enter the botusername 
 (e.g. So9q@itemsubjector) and password
 * e.g. `cp config.example.py config.py && nano config.py`
+
+*GNU Nano is an editor, press `ctrl+x` when you are done and `y` to save your changes*
 
 # Use
 This tool helps by adding the 
