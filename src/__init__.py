@@ -16,8 +16,8 @@ from src.helpers.jobs import process_qid_into_job, process_user_supplied_qids_in
     handle_job_preparation_or_run_directly_if_any_jobs, get_validated_main_subjects_as_jobs
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
-from src.helpers.pickle import parse_job_pickle, remove_pickle, add_to_job_pickle, check_if_pickle_exists, \
-    parse_main_subjects_pickle
+from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
+    parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
 from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
@@ -86,34 +86,37 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
 
 def main():
     """This is the main function that makes everything else happen"""
-    # logger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
     migrate_pickle_detection()
     jobs: List[BatchJob] = []
     args = setup_argparse_and_return_args()
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
-        remove_pickle()
+        remove_job_pickle()
         console.print("Removed the job list.")
         # exit(0)
     if args.prepare_jobs is True:
+        logger.info("Preparing jobs")
         if check_if_pickle_exists(config.job_pickle_file_path):
             if not ask_discard_existing_job_pickle():
-                # We run this if the user answered no to discarding which
-                # is the default to avoid running batches multiple times by
-                # mistake (which does not harm Wikidata, but waste computing
-                # resources which is bad.
+                # the default is yes
+                # to avoid running batches multiple times by
+                # mistake (which does not harm Wikidata, but waste
+                # precious computing resources which we want to avoid.)
                 jobs = parse_job_pickle(silent=True)
                 if len(jobs) > 0:
                     console.print(f"Found and loaded {len(jobs)} "
                                   f"jobs with a total of "
                                   f"{sum(len(job.items.list) for job in jobs)} items")
-            remove_pickle(silent=True)
+            remove_job_pickle(silent=True)
     if args.run_prepared_jobs is True:
+        logger.info("Running prepared jobs")
         jobs = parse_job_pickle()
         if jobs is not None and len(jobs) > 0:
+            file_hash = get_hash_of_job_pickle()
             run_jobs(jobs)
             # Remove the pickle afterwards
-            remove_pickle()
+            remove_job_pickle(hash=file_hash)
     elif args.match_existing_main_subjects is True:
         match_existing_main_subjects(args=args, jobs=jobs)
     elif args.sparql:

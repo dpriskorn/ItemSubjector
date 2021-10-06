@@ -1,4 +1,5 @@
 import os
+import hashlib
 import pickle
 from typing import List
 
@@ -70,8 +71,32 @@ def parse_main_subjects_pickle() -> List[str]:
         exit(0)
 
 
-def remove_pickle(silent: bool = False):
+def remove_job_pickle(silent: bool = False,
+                      hash: str = None):
+    if hash is None:
+        if os.path.exists(config.job_pickle_file_path):
+            os.remove(config.job_pickle_file_path)
+            if not silent:
+                console.print("The job list file was removed")
     if os.path.exists(config.job_pickle_file_path):
-        os.remove(config.job_pickle_file_path)
-        if not silent:
-            console.print("The job list was removed")
+        hash_now = get_hash_of_job_pickle()
+        if hash == hash_now:
+            os.remove(config.job_pickle_file_path)
+            if not silent:
+                console.print("The job list file was removed")
+        else:
+            console.print("Job list file not deleted because the contents "
+                          "has changed since this batch of jobs was started.")
+    else:
+        console.print(f"Could not delete the job file. No file found at {config.job_pickle_file_path}")
+
+
+def get_hash_of_job_pickle():
+    # inspired by https://codezup.com/python-program-calculate-hash-of-file-hashlib/
+    block_size = 65536  # lets read stuff in 64kb chunks!
+    hasher = hashlib.md5()
+    with open(config.job_pickle_file_path, 'rb') as file:
+        buf = file.read(block_size)
+        hasher.update(buf)
+    # print(hasher.hexdigest())
+    return hasher.hexdigest()
