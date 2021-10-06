@@ -13,7 +13,7 @@ but it should be possible to run on any Kubernetes cluster.
 4) log in via PuTTY to url `dev-buster.toolforge.org` on port 22, see https://www.mediawiki.org/wiki/Toolserver:Logging_in#Logging_in_with_PuTTY. Ask for help in [Telegram](https://t.me/wmcloudirc) or IRC if you don't succeed
 
 ## Create a tool
-1) Now log in to toolserver webinterface and create a tool. E.g. "itemsubjector"
+1) Now log into the [toolserver webinterface](https://toolsadmin.wikimedia.org/tools/) and [create a tool](https://wikitech.wikimedia.org/wiki/Portal:Toolforge/Tool_Accounts#Create_tools_with_Tool_Accounts). E.g. "itemsubjector-YOUR_USERNAME"
 
 ## Become tool
 After the tool is registered log out of SSH and back in.
