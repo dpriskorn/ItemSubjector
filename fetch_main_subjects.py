@@ -27,7 +27,7 @@ SELECT ?subject
 WHERE
 {{
 {{
-SELECT * WHERE {{
+SELECT DISTINCT ?subject WHERE {{
     hint:Query hint:optimizer "None".
     ?item wdt:P31 wd:Q13442814;
           wdt:P921 ?subject.
