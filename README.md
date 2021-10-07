@@ -84,15 +84,15 @@ of the target item (e.g. scientific article).
 
 Run the script with the -l or --list argument 
 followed by one or more QIDs or URLS:
-* `python itemsubjector.py -l Q108528107` or
-* `python itemsubjector.py -l https://www.wikidata.org/wiki/Q108528107`
+* `python itemsubjector.py -a Q108528107` or
+* `python itemsubjector.py -a https://www.wikidata.org/wiki/Q108528107`
 
 *Note since v0.2 you should not add subjects that are subclass 
 of each other in one go. 
 This is because of internal changes related to job handling*
 
 Add the narrow first and then the broader like this:
-* `python itemsubjector.py -l narrow-QID && python itemsubjector.py -l broader-QID`
+* `python itemsubjector.py -a narrow-QID && python itemsubjector.py -l broader-QID`
 
 Please investigate before adding broad 
 subjects (with thousands of matches) 
@@ -108,21 +108,28 @@ it is necessary to disable alias matching to
 avoid garbage matches. 
 
 Usage example:
-`python itemsubjector.py -l Q34 --no-aliases` 
+`python itemsubjector.py -a Q34 --no-aliases` 
 (the shorthand `-na` also works)
+
+### Disable search expression confirmation
+Avoid the extra question "Do you want to continue?":
+
+Usage example:
+`python itemsubjector.py -a Q34 --no-confirmation` 
+(the shorthand `-nc` also works)
 
 ### Show links column in table of search expressions 
 This is handy if you want to look them up easily.
 
 Usage example:
-`python itemsubjector.py -l Q34 --show-search-urls` 
+`python itemsubjector.py -a Q34 --show-search-urls` 
 (the shorthand `-su` also works)
 
 ### Show links column in table of search expressions 
 This is handy if you want to look them up easily.
 
 Usage example:
-`python itemsubjector.py -l Q34 --show-item-urls` 
+`python itemsubjector.py -a Q34 --show-item-urls` 
 (the shorthand `-iu` also works)
 
 ### Limit to scholarly articles without main subject
@@ -181,7 +188,7 @@ new jobs by running --remove-prepared-jobs*
 ## List of all options
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
-usage: itemsubjector.py [-h] [-a ADD [ADD ...]] [-na] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu] [--sparql [SPARQL]] [--debug-sparql]
+usage: itemsubjector.py [-h] [-a ADD [ADD ...]] [-na] [-nc] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu] [--sparql [SPARQL]] [--debug-sparql]
 
 ItemSubjector enables working main subject statements on items based on a
 heuristic matching the subject with the title of the item.
@@ -209,6 +216,8 @@ optional arguments:
                         List of QIDs or URLs to Q-items that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the README
                         for examples
   -na, --no-aliases     Turn off alias matching
+  -nc, --no-confirmation
+                        Turn off confirmation after displaying the search expressions, before running the queries.
   -p, --prepare-jobs    Prepare a job for later execution, e.g. in a job engine
   -r, --run-prepared-jobs
                         Run prepared jobs non-interactively

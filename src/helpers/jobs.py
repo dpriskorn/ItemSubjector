@@ -157,7 +157,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                        # The scientific article task is hardcoded for now
                                        task=tasks[0],
                                        args=args,
-                                       confirmation=True)
+                                       confirmation=args.no_confirmation)
             if job is not None:
                 jobs.append(job)
                 picked_before.append(qid)

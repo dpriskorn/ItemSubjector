@@ -38,6 +38,12 @@ Example working on all diseases:
         help='Turn off alias matching'
     )
     parser.add_argument(
+        '-nc', '--no-confirmation',
+        action='store_false',
+        default=True,
+        help='Turn off confirmation after displaying the search expressions, before running the queries.'
+    )
+    parser.add_argument(
         '-p', '--prepare-jobs',
         action='store_true',
         help='Prepare a job for later execution, e.g. in a job engine'
