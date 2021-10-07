@@ -787,9 +787,9 @@ class Item(Entity):
     """This represents an item in Wikidata
     We always work on one language at a time,
     so don't bother with languages here and keep to simple strings"""
-    id: str
-    label: str
-    description: str
+    id: str =  None
+    label: str = None
+    description: str = None
     aliases: List[str] = None
 
     def __init__(self,
@@ -831,7 +831,7 @@ class Item(Entity):
             logger.debug(json["itemLabel"])
             self.label = (json["itemLabel"]["value"])
         except KeyError:
-            pass
+            logger.info(f"no label found")
 
     def parse_from_wdqs_json(self, json):
         """Parse the json into the object"""
@@ -851,8 +851,12 @@ class Item(Entity):
         with console.status(f"Fetching {task.language_code.value} label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
-            self.label = str(item.labels.get(task.language_code.value))
-            self.description = str(item.descriptions.get(task.language_code.value))
+            label = item.labels.get(task.language_code.value)
+            if label is not None:
+                self.label = str(label)
+            description = item.descriptions.get(task.language_code.value)
+            if description is not None:
+                self.description = str(description)
             aliases: List[Alias] = item.aliases.get(task.language_code.value)
             # logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
             if aliases is not None:
