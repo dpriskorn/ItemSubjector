@@ -88,6 +88,9 @@ class Suggestion:
             # input("Press enter to continue")
 
     def extract_search_strings(self):
+        def clean_special_symbols(string: str):
+            return string.replace("®", "").replace("™", "")
+
         logger = logging.getLogger(__name__)
         if self.args is None:
             raise ValueError("args was None")
@@ -98,7 +101,7 @@ class Suggestion:
                 no_aliases = True
             else:
                 no_aliases = False
-        self.search_strings: List[str] = [self.item.label]
+        self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
         if (
             self.item.aliases is not None and
             no_aliases is False
@@ -108,7 +111,7 @@ class Suggestion:
                 if len(alias) < 5:
                     console.print(f"Skipping short alias '{alias}' to avoid false positives", style="#FF8000")
                 else:
-                    self.search_strings.append(alias)
+                    self.search_strings.append(clean_special_symbols(alias))
         # logger.debug(f"search_strings:{self.search_strings}")
         print_search_strings_table(args=self.args,
                                    search_strings=self.search_strings)
