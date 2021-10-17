@@ -83,7 +83,7 @@ Example working on all diseases:
         '--sparql',
         nargs='?',
         help='Work on main subject items returned by this SPARQL query. '
-             'Note: "?item" has to be in selected for it to work.'
+             'Note: "?item" has to be selected for it to work, see the example above.'
     )
     parser.add_argument(
         '--debug-sparql',
