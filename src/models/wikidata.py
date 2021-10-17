@@ -3,23 +3,17 @@ Model from LexUtils
 """
 import logging
 import random
-import re
 from enum import Enum
-from typing import List, Dict
+from typing import List
 
-import pandas as pd
-from pandas import DataFrame
-from sklearn.feature_extraction.text import CountVectorizer
 from wikibaseintegrator import wbi_config, WikibaseIntegrator
 from wikibaseintegrator.datatypes import BaseDataType
 from wikibaseintegrator.models import Alias
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 import config
-from helpers.sparql_dataframe import query_wikidata
-
 # We get the URL for the Wikibase from here
-from models.task import Task
+from src.models.task import Task
 
 wbi_config.config['USER_AGENT'] = config.user_agent
 
@@ -793,9 +787,9 @@ class Item(Entity):
     """This represents an item in Wikidata
     We always work on one language at a time,
     so don't bother with languages here and keep to simple strings"""
-    id: str
-    label: str
-    description: str
+    id: str =  None
+    label: str = None
+    description: str = None
     aliases: List[str] = None
 
     def __init__(self,
@@ -810,9 +804,9 @@ class Item(Entity):
         else:
             if id is not None:
                 self.id = str(EntityID(id))
-            if label is None and aliases is None:
+            if description is None and label is None and aliases is None:
                 logging.debug("here now")
-                self.fetch_label_and_aliases(task=task)
+                self.fetch_label_and_description_and_aliases(task=task)
             elif label is None or aliases is None:
                 raise ValueError("This is not supported. "
                                  "Either both state the label and "
@@ -820,24 +814,24 @@ class Item(Entity):
             else:
                 self.label = label
                 self.aliases = aliases
-            self.description = description
+                self.description = description
 
     def __str__(self):
-        return f"{self.id}: {self.label}"
+        return f"{self.label}, see {self.url()}"
 
     def parse_json(self, json):
         """Parse the WDQS json"""
         logger = logging.getLogger(__name__)
         try:
-            logger.info(json["item"])
+            logger.debug(f'item_json:{json["item"]}')
             self.id = str(EntityID(json["item"]["value"]))
         except KeyError:
             pass
         try:
-            logger.info(json["itemLabel"])
+            logger.debug(json["itemLabel"])
             self.label = (json["itemLabel"]["value"])
         except KeyError:
-            pass
+            logger.info(f"no label found")
 
     def parse_from_wdqs_json(self, json):
         """Parse the json into the object"""
@@ -848,16 +842,21 @@ class Item(Entity):
             if variable == "itemLabel":
                 self.label = variable
 
-    def fetch_label_and_aliases(self,
-                                task: Task = None):
+    def fetch_label_and_description_and_aliases(self,
+                                                task: Task = None):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
-        from helpers.console import console
+        from src.helpers.console import console
         with console.status(f"Fetching {task.language_code.value} label and aliases..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
-            self.label = str(item.labels.get(task.language_code.value))
+            label = item.labels.get(task.language_code.value)
+            if label is not None:
+                self.label = str(label)
+            description = item.descriptions.get(task.language_code.value)
+            if description is not None:
+                self.description = str(description)
             aliases: List[Alias] = item.aliases.get(task.language_code.value)
             # logging.debug(f"aliases from wbi:{item.aliases.get('en')}")
             if aliases is not None:
@@ -866,114 +865,6 @@ class Item(Entity):
                     self.aliases.append(str(alias))
                     # logging.debug(f"appended:{alias.value}")
                 # logging.debug(f"aliases:{self.aliases}")
-
-
-class Labels:
-    dataframe: DataFrame = None
-    document_term_matrix: DataFrame = None
-
-    def fetch_labels_into_dataframe(self,
-                                    quantity: int = None,
-                                    query: str = None):
-        logger = logging.getLogger(__name__)
-        if query is None:
-            raise ValueError("Get no query")
-        if quantity is None:
-            raise ValueError("Get no quantity")
-        if config.random_offset is None:
-            raise ValueError("No random offset present in the config")
-        from helpers.console import console
-        with console.status(f"Fetching {quantity} labels..."):
-            dataframe = (query_wikidata(f'''
-                #author:So9q inspired a query by Azertus
-                #date:2021-09-11
-                SELECT #?item 
-                ?itemLabel 
-                WHERE {{
-                    {{ SELECT * WHERE {{
-                      SERVICE wikibase:mwapi {{
-                        bd:serviceParam wikibase:endpoint "www.wikidata.org";
-                                        wikibase:api "Search";
-                                        # scientific article without main subject
-                                        mwapi:srsearch '{query}'; 
-                                        mwapi:language "en".
-                        ?title wikibase:apiOutput mwapi:title. 
-                      }}
-                      BIND(URI(CONCAT('http://www.wikidata.org/entity/', ?title)) AS ?item)
-                    }} 
-                    OFFSET {config.random_offset}
-                    LIMIT {quantity}
-                    }}  
-                  SERVICE wikibase:label {{
-                    bd:serviceParam wikibase:language "en" .
-                    ?item rdfs:label ?itemLabel .
-                  }}
-                }}
-            ''', config.endpoint))
-            quantity = len(dataframe)
-            if quantity > 0:
-                console.print(f"Got {quantity} items with English labels")
-                # remove unwanted columns
-                dataframe = dataframe[["itemLabel.value"]]
-                # rename column
-                dataframe.rename(columns={'itemLabel.value': 'label'}, inplace=True)
-                # debug
-                logger.debug(dataframe.head())
-                self.dataframe = dataframe
-            else:
-                raise ValueError("Got no data from WDQS")
-
-    def clean_labels(self):
-        if self.dataframe is None:
-            raise Exception("No dataframe found")
-        # forked from: https://github.com/adashofdata/nlp-in-python-tutorial/blob/master/1-Data-Cleaning.ipynb
-        # Apply a first round of text cleaning techniques
-
-        def clean_text(text):
-            """Make text lowercase, remove text in square brackets,
-            remove punctuation and remove words containing numbers."""
-            # text = text.lower()
-            text = re.sub('\[.*?\]', '', text)
-            text = re.sub(',', '', text)  # remove commas
-            text = re.sub(':', '', text)  # remove colons
-            text = re.sub('\.', '', text)  # remove full stop
-            text = re.sub('\?', '', text)  # remove question mark
-            text = re.sub(' - ', '', text)  # remove lone dash
-            text = re.sub('\w*\d\w*', '', text)
-            return text
-        self.clean_section = pd.DataFrame(
-            self.dataframe.label.apply(lambda x: clean_text(x))
-        )
-
-    def create_document_term_matrix(self):
-        logger = logging.getLogger(__name__)
-        self.clean_labels()
-        # We are going to create a document-term matrix using CountVectorizer, and exclude common English stop words
-        cv = CountVectorizer(stop_words='english',
-                             min_df=3,  # minimum frequency threshold
-                             ngram_range=(2, 3))
-        data_cv = cv.fit_transform(self.dataframe.label)
-        self.document_term_matrix = pd.DataFrame(data_cv.toarray(), columns=cv.get_feature_names())
-        logger.debug(self.document_term_matrix)
-
-    def extract_most_frequent_ngrams(self, quantity: int = None) -> Dict:
-        """This extracts the most frequent n-grams from our Document Term Matrix"""
-        logger = logging.getLogger(__name__)
-        if quantity is None:
-            raise ValueError("quantity was None")
-        self.create_document_term_matrix()
-        top_dict = {}
-        # We want the dict to be structured like this:
-        # key: n-gram
-        # value: frequency
-        for column in self.document_term_matrix.columns:
-            top_dict[column] = self.document_term_matrix[column].sum()
-            # break
-        logger.info(f"top_dict size:{len(top_dict)}")
-        # Sort descending
-        sorted_list = sorted(top_dict.items(), key=lambda x: x[1], reverse=True)
-        # sorted_dict
-        return dict(sorted_list[0:quantity])
 
 
 class Items:

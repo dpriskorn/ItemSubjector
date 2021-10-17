@@ -1,0 +1,27 @@
+#%endpoint https://query.wikidata.org/sparql
+#title: Get main subjects used at least once on scholarly articles
+SELECT ?subject 
+WHERE 
+{
+    {
+        SELECT * WHERE {
+            hint:Query hint:optimizer "None".
+            ?item wdt:P31 wd:Q13442814;
+                  wdt:P921 ?subject.
+        } 
+        #offset 1000000
+        limit 100000
+    }
+  MINUS{
+      ?item wdt:P31 wd:Q8054.  # protein
+  }
+  MINUS{
+      ?item wdt:P279 wd:Q8054.  # protein
+  }
+  MINUS{
+      ?item wdt:P31 wd:Q7187.  # gene
+  }
+  MINUS{
+      ?item wdt:P279 wd:Q7187.  # gene
+  }
+}
