@@ -1,10 +1,13 @@
 # ItemSubjector
-*This is beta software, expect new features, renamed arguments, bugs, etc.*
-
-Tool made to add main subject statements to 
+The purpose of this tool is to add main subject statements to Wikidata 
 items based on a heuristic matching the subject with the title of the item. 
 ![bild](https://user-images.githubusercontent.com/68460690/133230724-40a610b7-5557-4b2b-b66e-2d80ca89e90d.png)
 *The tool running in PAWS adding manually found main subject QIDs*
+
+# Background
+As of september 2021 there were 37M scientific articles in Wikidata, but 27M of them were missing any main 
+subject statement. That makes them very hard to find for scientists which is bad for science, 
+because building on the work of others is essential in the global scientific community.
 
 # Features
 This tool has the following features:
@@ -19,19 +22,6 @@ It supports
 [Wikidata:Edit groups](https://www.wikidata.org/wiki/Wikidata:Edit_groups) 
 so that batches can easily be undone later if needed. 
 Click "details" in the summary of edits to see more.
-
-# Thanks
-During the development of this tool the author got a 
-help multiple times from **Jan Ainali** and **Jon Søby**
-with figuring out how to query the API using the 
-CirrusSearch extensions and to remove more 
-specific main subjects from the query results.
-
-A special thanks also to **Magnus Sälgö** for his valuable input 
-and ideas, e.g. to search for aliases also and to *Jean* and the 
-incredibly
-helpful people in the Wikimedia Cloud Services Support chat that
-helped with making batch jobs run successfully.
 
 # Installation
 Clone the repo 
@@ -236,3 +226,16 @@ optional arguments:
 ```
 # License
 GPLv3+
+
+# Thanks
+During the development of this tool the author got a 
+help multiple times from **Jan Ainali** and **Jon Søby**
+with figuring out how to query the API using the 
+CirrusSearch extensions and to remove more 
+specific main subjects from the query results.
+
+A special thanks also to **Magnus Sälgö** for his valuable input 
+and ideas, e.g. to search for aliases also and to *Jean* and the 
+incredibly
+helpful people in the Wikimedia Cloud Services Support chat that
+helped with making batch jobs run successfully.
