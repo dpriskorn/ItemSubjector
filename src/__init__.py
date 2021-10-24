@@ -27,7 +27,7 @@ from src.models.thesis import ThesisItems
 from src.models.wikidata import Item
 from src.tasks import tasks
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 
 def login():
@@ -61,10 +61,18 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
                                     jobs: List[BatchJob] = None):
     """Collect subjects via SPARQL and call get_validated_main_subjects()
     If we get any validated jobs we handle them"""
+    logger = logging.getLogger(__name__)
     if jobs is None:
         raise ValueError("jobs was None")
     if not isinstance(jobs, List):
         raise ValueError("jobs was not a list")
+    if "P1889" not in args.sparql:
+        console.print("Your SPARQL did not contain P1889 (different from). "
+                      "Please include 'MINUS {?item wdt:P1889 [].}' "
+                      "in your WHERE clause to avoid false positives.")
+        exit(0)
+    else:
+        logger.info("Detected P1889 in the query")
     with console.status("Running query on WDQS..."):
         main_subjects = []
         results = execute_sparql_query(args.sparql.replace("{", "{{").replace("}", "}}"),
