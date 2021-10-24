@@ -51,7 +51,6 @@ def process_qid_into_job(qid: str = None,
                             f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
                             f'queries on WDQS...'):
             if task.id == TaskIds.SCHOLARLY_ARTICLES:
-                from src import ScholarlyArticleItems
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
                 items = RiksdagenDocumentItems()
