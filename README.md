@@ -1,6 +1,4 @@
 # ItemSubjector
-*This is beta software, expect new features, renamed arguments, bugs, etc.*
-
 Tool made to add main subject statements to 
 items based on a heuristic matching the subject with the title of the item. 
 ![bild](https://user-images.githubusercontent.com/68460690/133230724-40a610b7-5557-4b2b-b66e-2d80ca89e90d.png)
@@ -33,8 +31,13 @@ incredibly
 helpful people in the Wikimedia Cloud Services Support chat that
 helped with making batch jobs run successfully.
 
+Thanks also to **jsamwrites** for help with testing and suggestions 
+for improvement.
+
 # Installation
-Clone the repo 
+Download the release tarball or clone the tool using Git.
+
+## Clone the repository 
 `git clone https://github.com/dpriskorn/ItemSubjector.git && cd ItemSubjector`
 
 and run
@@ -42,6 +45,10 @@ and run
 `pip install -r requirements.txt`
 
 to install all requirements.
+
+Then checkout the latest release. 
+
+`git checkout v0.x` where x is the latest number on the release page.
 
 ## PAWS
 The tool runs in PAWS with no known 
