@@ -10,3 +10,4 @@ class TaskIds(Enum):
     SCHOLARLY_ARTICLES = auto()
     RIKSDAGEN_DOCUMENTS = auto()
     THESIS = auto()
+    ACADEMIC_JOURNALS = auto()

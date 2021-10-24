@@ -19,15 +19,10 @@ from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
     parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
-from src.models.riksdagen_documents import RiksdagenDocumentItems
-from src.models.scholarly_articles import ScholarlyArticleItems
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.thesis import ThesisItems
 from src.models.wikidata import Item
 from src.tasks import tasks
-
-logging.basicConfig(level=logging.INFO)
 
 
 def login():

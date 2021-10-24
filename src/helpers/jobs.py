@@ -8,6 +8,10 @@ from src import strip_prefix, print_best_practice, console, ask_yes_no_question,
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
     print_finished, print_job_statistics
 from src.tasks import tasks
+from src.models.thesis import ThesisItems
+from src.models.riksdagen_documents import RiksdagenDocumentItems
+from src.models.scholarly_articles import ScholarlyArticleItems
+from src.models.academic_journals import AcademicJournalItems
 
 if TYPE_CHECKING:
     from src import Task, BatchJob
@@ -50,11 +54,11 @@ def process_qid_into_job(qid: str = None,
                 from src import ScholarlyArticleItems
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-                from src import RiksdagenDocumentItems
                 items = RiksdagenDocumentItems()
             elif task.id == TaskIds.THESIS:
-                from src import ThesisItems
                 items = ThesisItems()
+            elif task.id == TaskIds.ACADEMIC_JOURNALS:
+                items = AcademicJournalItems()
             else:
                 raise ValueError(f"{task.id} was not recognized")
             items.fetch_based_on_label(suggestion=suggestion,

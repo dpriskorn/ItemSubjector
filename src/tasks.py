@@ -46,6 +46,11 @@ tasks = [
             "avoid the more general 'cancer screening' until all "
             "sub forms of screening have been matched."
         ),
-        # items=ThesisItems()
+    ),
+    Task(
+            id=TaskIds.ACADEMIC_JOURNALS,
+            label="Add main subject to academic journals",
+            language_code=SupportedLanguageCode.ENGLISH,
+            best_practice_information=None
     ),
 ]

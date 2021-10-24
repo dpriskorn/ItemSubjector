@@ -1,3 +1,4 @@
+import logging
 import tempfile
 from pathlib import Path
 
@@ -6,6 +7,7 @@ username = ""
 password = ""
 
 # Global settings
+logging.basicConfig(level=logging.WARNING)
 version = "0.2"  # Don't touch this.
 wd_prefix = "http://www.wikidata.org/entity/"
 endpoint = "https://query.wikidata.org/sparql"
