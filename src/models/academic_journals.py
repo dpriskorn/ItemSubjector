@@ -2,6 +2,7 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
+import config
 from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
@@ -34,6 +35,7 @@ class AcademicJournalItems(Items):
         for search_string in suggestion.search_strings:
             search_string = strip_bad_chars(search_string)
             results = execute_sparql_query(f"""
+            #{config.user_agent}
             SELECT ?item ?itemLabel
             WHERE 
             {{

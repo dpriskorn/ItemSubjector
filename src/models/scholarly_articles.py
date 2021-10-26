@@ -2,6 +2,7 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
+import config
 from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
@@ -30,6 +31,7 @@ def build_query(suggestion: Suggestion = None,
     # The replacing with "\\\\\\\\" becomes "\\\\" after leaving python and then it works in
     # SPARQL where it becomes "\\" and thus match a single backslash
     return (f"""
+        #{config.user_agent}
         SELECT DISTINCT ?item ?itemLabel 
         WHERE {{
           hint:Query hint:optimizer "None".
@@ -106,6 +108,7 @@ class ScholarlyArticleItems(Items):
             # find all items that are ?item wdt:P31/wd:P279* wd:Q1266946
             # minus the QID we want to add
             results_preprint = execute_sparql_query(f'''
+                #{config.user_agent}
                 SELECT DISTINCT ?item ?itemLabel 
                 WHERE {{
                   ?item wdt:P31/wd:P279* wd:Q580922. # preprint 

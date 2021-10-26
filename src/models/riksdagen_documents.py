@@ -2,6 +2,7 @@ import logging
 
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
+import config
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
 from src.models.task import Task
@@ -27,6 +28,7 @@ class RiksdagenDocumentItems(Items):
         # Lowercase is not needed here as Elastic matches anyway
         for search_string in suggestion.search_strings:
             results = execute_sparql_query(f'''
+            #{config.user_agent}
             SELECT DISTINCT ?item ?itemLabel 
             WHERE {{
               hint:Query hint:optimizer "None".
