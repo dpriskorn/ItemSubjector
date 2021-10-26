@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import argparse
 import random
 from datetime import datetime
@@ -7,11 +8,11 @@ from typing import Union, List, TYPE_CHECKING
 from src import strip_prefix, print_best_practice, console, ask_yes_no_question, \
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
     print_finished, print_job_statistics
-from src.tasks import tasks
-from src.models.thesis import ThesisItems
+from src.models.academic_journals import AcademicJournalItems
 from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
-from src.models.academic_journals import AcademicJournalItems
+from src.models.thesis import ThesisItems
+from src.tasks import tasks
 
 if TYPE_CHECKING:
     from src import Task, BatchJob
@@ -165,9 +166,13 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                 jobs.append(job)
                 picked_before.append(qid)
             print_job_statistics(jobs=jobs)
-            answer = ask_yes_no_question("Match one more?")
-            if not answer:
-                break
+            if (
+                    args.no_ask_match_more_limit is not None and
+                    args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
+            ):
+                answer = ask_yes_no_question("Match one more?")
+                if not answer:
+                    break
         else:
             console.print("Skipping already picked qid")
     return jobs

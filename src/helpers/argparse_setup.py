@@ -91,4 +91,10 @@ Example working on all diseases:
         help='Enable debugging of SPARQL queries.',
         default=False
     )
+    parser.add_argument(
+        '--no-ask-match-more-limit', '--limit',
+        nargs='?',
+        type=int,
+        help='When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list'
+    )
     return parser.parse_args()
