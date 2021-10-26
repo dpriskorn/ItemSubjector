@@ -848,7 +848,7 @@ class Item(Entity):
         if task is None:
             raise ValueError("task was None")
         from src.helpers.console import console
-        with console.status(f"Fetching {task.language_code.value} label and aliases..."):
+        with console.status(f"Fetching {task.language_code.name.title()} label and aliases from the Wikidata API..."):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
             label = item.labels.get(task.language_code.value)
