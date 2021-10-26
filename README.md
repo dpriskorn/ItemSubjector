@@ -185,6 +185,7 @@ new jobs by running --remove-prepared-jobs*
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
 usage: itemsubjector.py [-h] [-a ADD [ADD ...]] [-na] [-nc] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu] [--sparql [SPARQL]] [--debug-sparql]
+                        [--no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT]]
 
 ItemSubjector enables working main subject statements on items based on a
 heuristic matching the subject with the title of the item.
@@ -227,8 +228,10 @@ optional arguments:
                         Show an extra column in the table of search strings with links
   -iu, --show-item-urls
                         Show an extra column in the table of items with links
-  --sparql [SPARQL]     Work on main subject items returned by this SPARQL query. Note: "?item" has to be in selected for it to work.
+  --sparql [SPARQL]     Work on main subject items returned by this SPARQL query. Note: "?item" has to be selected for it to work, see the example above.
   --debug-sparql        Enable debugging of SPARQL queries.
+  --no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT], --limit [NO_ASK_MATCH_MORE_LIMIT]
+                        When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list
 ```
 # License
 GPLv3+
