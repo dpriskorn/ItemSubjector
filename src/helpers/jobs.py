@@ -167,7 +167,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                 picked_before.append(qid)
             print_job_statistics(jobs=jobs)
             if (
-                    args.no_ask_match_more_limit is not None and
+                    args.no_ask_match_more_limit is None or
                     args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
             ):
                 answer = ask_yes_no_question("Match one more?")
