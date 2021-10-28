@@ -5,6 +5,7 @@ from urllib.parse import quote
 from rich.console import Console
 from rich.table import Table
 
+from src.helpers.cleaning import clean_rich_formatting
 from src.models.batch_job import BatchJob
 from src.models.task import Task
 from src.models.wikidata import Items
@@ -89,8 +90,7 @@ def print_found_items_table(args: argparse.Namespace = None,
         table.add_column(f"Wikidata URL")
     for item in list_to_show:
         if args.show_item_urls:
-            # Fix rich parse bug with "[/TSUP]"
-            label = item.label.replace("[/", "['/")
+            label = clean_rich_formatting(item.label)
             table.add_row(label, item.url())
         else:
             table.add_row(item.label)

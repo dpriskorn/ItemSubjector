@@ -19,6 +19,11 @@ def strip_bad_chars(string):
     )
 
 
+def clean_rich_formatting(label):
+    # Fix rich parse bug with "[/TSUP]" and "[/ITAL]"
+    return label.replace("[/", "['/")
+
+
 def strip_prefix(qid):
     if "https://www.wikidata.org/wiki/" in qid:
         qid = qid[30:]

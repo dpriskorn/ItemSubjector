@@ -6,6 +6,7 @@ from urllib.parse import quote
 from wikibaseintegrator.datatypes import Item as ItemType
 
 from src.helpers.calculations import calculate_random_editgroups_hash
+from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import print_search_strings_table, console
 from src.helpers.enums import TaskIds
 from src.models.batch_job import BatchJob
@@ -38,7 +39,7 @@ class Suggestion:
         """Return label and description, the latter cut to 50 chars"""
         if self.item is not None:
             string = (
-                f"label: [bold]{self.item.label}[/bold]\n"
+                f"label: [bold]{clean_rich_formatting(self.item.label)}[/bold]\n"
                 f"aliases: {', '.join(self.item.aliases)}\n"
                 f"description: {self.item.description[:70]}\n"
                 f"{self.item.url()}\n"
@@ -67,7 +68,9 @@ class Suggestion:
         count = 0
         for target_item in items.list:
             count += 1
-            with console.status(f"Uploading main subject [green]{self.item.label}[/green] to {target_item.label}"):
+            with console.status(f"Uploading main subject "
+                                f"[green]{clean_rich_formatting(self.item.label)}[/green] "
+                                f"to {clean_rich_formatting(target_item.label)}"):
                 main_subject_property = "P921"
                 reference = ItemType(
                     "Q69652283",  # inferred from title
@@ -84,7 +87,8 @@ class Suggestion:
                     editgroups_hash=editgroups_hash
                 )
             console.print(f"(job {job_count}/{len(jobs)})(item {count}/{len(items.list)}) "
-                          f"Added '{self.item.label}' to {target_item.label}: {target_item.url()}")
+                          f"Added '{clean_rich_formatting(self.item.label)}' to "
+                          f"{clean_rich_formatting(target_item.label)}: {target_item.url()}")
             # input("Press enter to continue")
 
     def extract_search_strings(self):
@@ -122,6 +126,3 @@ class Suggestion:
             search_term = quote(f'"{search_string}"')
             urls.append(f"https://www.wikidata.org/w/index.php?search={search_term}")
         return urls
-
-
-
