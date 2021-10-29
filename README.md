@@ -1,5 +1,5 @@
 # ItemSubjector
-The purpose of this tool is to add main subject statements to Wikidata 
+The purpose of this command-line tool is to add main subject statements to Wikidata 
 items based on a heuristic matching the subject with the title of the item. 
 ![bild](https://user-images.githubusercontent.com/68460690/133230724-40a610b7-5557-4b2b-b66e-2d80ca89e90d.png)
 *The tool running in PAWS adding manually found main subject QIDs*
