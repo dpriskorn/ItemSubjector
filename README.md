@@ -78,7 +78,7 @@ of the target item (e.g. scientific article).
 ## Adding QIDs manually
 *Always provide the most precise subjects first*
 
-Run the script with the -l or --list argument 
+Run the script with the -a or --add argument 
 followed by one or more QIDs or URLS:
 * `python itemsubjector.py -a Q108528107` or
 * `python itemsubjector.py -a https://www.wikidata.org/wiki/Q108528107`
@@ -88,7 +88,7 @@ of each other in one go.
 This is because of internal changes related to job handling*
 
 Add the narrow first and then the broader like this:
-* `python itemsubjector.py -a narrow-QID && python itemsubjector.py -l broader-QID`
+* `python itemsubjector.py -a narrow-QID && python itemsubjector.py -a broader-QID`
 
 Please investigate before adding broad 
 subjects (with thousands of matches) 
@@ -130,7 +130,7 @@ Usage example:
 
 ### Limit to scholarly articles without main subject
 Usage example:
-`python itemsubjector.py -l Q34 --limit-to-items-without-p921` 
+`python itemsubjector.py -a Q34 --limit-to-items-without-p921` 
 (the shorthand `-w` also works)
 
 ## Matching main subjects based on a SPARQL query.
