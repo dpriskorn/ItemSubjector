@@ -8,10 +8,10 @@ ItemSubjector enables working main subject statements on items based on a
 heuristic matching the subject with the title of the item. 
 
 Example adding one QID:
-'$ itemsubjector.py -l Q1234'
+'$ itemsubjector.py -a Q1234'
 
 Example adding one QID and prepare a job list to be run non-interactively later:
-'$ itemsubjector.py -l Q1234 -p'
+'$ itemsubjector.py -a Q1234 -p'
 
 Example adding random QIDs from a list of main subjects extracted from 2 million scholarly articles:
 '$ itemsubjector.py -m'
