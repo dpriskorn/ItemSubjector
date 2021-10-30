@@ -19,9 +19,10 @@ from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
     parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
+from src.models.quickstatements import QuickStatementsCommandVersion1
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata import Item
+from src.models.wikidata import Item, EntityID
 from src.tasks import tasks
 
 
@@ -86,6 +87,30 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
     else:
         console.print("Got 0 results. Try another query or debug it using --debug")
 
+def export_jobs_to_quickstatements():
+    logger = logging.getLogger(__name__)
+    logger.info("Exporting jobs to QuickStatements V1 commands. One file for each job.")
+    jobs = parse_job_pickle()
+    if jobs is not None and len(jobs) > 0:
+        for job in jobs:
+            # Convert all items
+            lines = []
+            for item in job.items.list:
+                line = QuickStatementsCommandVersion1(
+                    target=EntityID(item.id),
+                    property=EntityID("P921"),
+                    value=EntityID(job.suggestion.item.id),
+                )
+                lines.append(line)
+            logger.debug(f"Got {len(lines)} QS lines to export")
+            filename = (f"quickstatements-export-"
+                        f"{job.suggestion.item.id}-"
+                        f"{job.suggestion.item.label}.csv")
+            with open(filename, "w") as file:
+                for line in lines:
+                    file.write(f"{str(line)}\n")
+            console.print(f"Wrote to {filename} in the current directory")
+
 
 def main():
     """This is the main function that makes everything else happen"""
@@ -120,6 +145,8 @@ def main():
             run_jobs(jobs)
             # Remove the pickle afterwards
             remove_job_pickle(hash=file_hash)
+    if args.export_job_list_to_quickstatements:
+        export_jobs_to_quickstatements()
     elif args.match_existing_main_subjects is True:
         match_existing_main_subjects(args=args, jobs=jobs)
     elif args.sparql:

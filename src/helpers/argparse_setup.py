@@ -21,7 +21,7 @@ and prepare a job list:
 '$ itemsubjector.py -m -p'
 
 Example working on all diseases:
-'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136.}"'
+'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?item wdt:P1889 [].}}"'
     """)
     parser.add_argument(
         '-a', '--add', '--qid-to-add',
@@ -82,8 +82,9 @@ Example working on all diseases:
     parser.add_argument(
         '--sparql',
         nargs='?',
-        help='Work on main subject items returned by this SPARQL query. '
-             'Note: "?item" has to be selected for it to work, see the example above.'
+        help='Work on main subject items returned by this SPARQL query.\n'
+             'Note: "?item" has to be selected for it to work, see the example above.\n'
+             'Note: MINUS {?item wdt:P1889 [].} must be present in the query to avoid false positives.'
     )
     parser.add_argument(
         '--debug-sparql',
@@ -96,5 +97,11 @@ Example working on all diseases:
         nargs='?',
         type=int,
         help='When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list'
+    )
+    parser.add_argument(
+        '--export-job-list-to-quickstatements', '-qs',
+        action='store_true',
+        help='Export the prepared job list to QuickStatements.',
+        default=False
     )
     return parser.parse_args()
