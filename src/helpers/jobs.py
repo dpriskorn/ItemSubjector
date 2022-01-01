@@ -8,11 +8,12 @@ from typing import Union, List, TYPE_CHECKING
 from src import strip_prefix, print_best_practice, console, ask_yes_no_question, \
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
     print_finished, print_job_statistics
+from src.helpers.menus import select_task
 from src.models.academic_journals import AcademicJournalItems
 from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
 from src.models.thesis import ThesisItems
-from src.tasks import tasks
+from src.tasks import tasks, Task
 
 if TYPE_CHECKING:
     from src import Task, BatchJob
@@ -138,9 +139,11 @@ def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace 
             run_jobs(jobs)
 
 
-def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
-                                        main_subjects: List[str] = None,
-                                        jobs: List[BatchJob] = None):
+def get_validated_main_subjects_as_jobs(
+        args: argparse.Namespace = None,
+        main_subjects: List[str] = None,
+        jobs: List[BatchJob] = None
+) -> List[BatchJob]:
     """This function randomly picks a subject and present it for validation"""
     # logger = logging.getLogger(__name__)
     if jobs is None:
@@ -151,6 +154,11 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
+    task: Task = select_task()
+    if task is None:
+        raise ValueError("Got no task")
+    if not isinstance(task, Task):
+        raise ValueError("task was not a Task object")
     # TODO implement better check for duplicates to avoid wasting resources
     picked_before = []
     while True:
@@ -159,7 +167,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         if qid not in picked_before:
             job = process_qid_into_job(qid=qid,
                                        # The scientific article task is hardcoded for now
-                                       task=tasks[0],
+                                       task=task,
                                        args=args,
                                        confirmation=args.no_confirmation)
             if job is not None:

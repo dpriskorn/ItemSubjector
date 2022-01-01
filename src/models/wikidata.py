@@ -805,7 +805,11 @@ class Item(Entity):
             if id is not None:
                 self.id = str(EntityID(id))
             if description is None and label is None and aliases is None:
-                logging.debug("here now")
+                logging.debug("No of description, label or aliases received")
+                if task is None:
+                    raise ValueError("Got no task")
+                if not isinstance(task, Task):
+                    raise ValueError("task was not a Task object")
                 self.fetch_label_and_description_and_aliases(task=task)
             elif label is None or aliases is None:
                 raise ValueError("This is not supported. "
@@ -847,6 +851,8 @@ class Item(Entity):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
+        if not isinstance(task, Task):
+            raise ValueError("task was not a Task object")
         from src.helpers.console import console
         with console.status(f"Fetching {task.language_code.name.title()} label and aliases from the Wikidata API..."):
             wbi = WikibaseIntegrator()

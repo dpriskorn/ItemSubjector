@@ -87,6 +87,7 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
     else:
         console.print("Got 0 results. Try another query or debug it using --debug")
 
+
 def export_jobs_to_quickstatements():
     logger = logging.getLogger(__name__)
     logger.info("Exporting jobs to QuickStatements V1 commands. One file for each job.")
