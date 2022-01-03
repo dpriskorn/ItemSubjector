@@ -18,13 +18,13 @@ def select_suggestion(suggestions: List[Suggestion] = None,
     menu.join()
     selected_index = menu.selected_option
     selected_suggestion = None
-    if selected_index == len(suggestions) + 1:
+    if selected_index > (len(suggestions) - 1):
         logger.debug("The user choose to skip")
     else:
         selected_suggestion = tasks[selected_index]
         logger.debug(f"selected:{selected_index}="
                      f"{selected_suggestion}")
-    return selected_suggestion
+        return selected_suggestion
 
 
 def select_task() -> Task:
@@ -33,6 +33,9 @@ def select_task() -> Task:
     menu.show()
     menu.join()
     task_index = menu.selected_option
+    if task_index > (len(tasks) - 1):
+        logger.info("Got exit")
+        exit(0)
     selected_task = tasks[task_index]
     logger.debug(f"selected:{task_index}="
                  f"{selected_task}")
