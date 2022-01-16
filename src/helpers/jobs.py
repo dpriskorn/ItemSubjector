@@ -165,14 +165,18 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
             if job is not None:
                 jobs.append(job)
             print_job_statistics(jobs=jobs)
-            if (
-                    args.no_ask_match_more_limit is None or
-                    args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
-            ):
-                answer_was_yes = ask_yes_no_question("Match one more?")
-                if not answer_was_yes:
-                    break
+            if len(subjects_not_picked_yet) > 0:
+                if (
+                        args.no_ask_match_more_limit is None or
+                        args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
+                ):
+                    answer_was_yes = ask_yes_no_question("Match one more?")
+                    if not answer_was_yes:
+                        break
+            else:
+                console.print("No more subjects in the list.")
+                break
         else:
-            console.print("No more subjects in the list.")
+            console.print("No more subjects in the list. Exiting.")
             break
     return jobs
