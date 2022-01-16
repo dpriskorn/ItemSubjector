@@ -1,6 +1,18 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from src.models.wikidata import EntityID
+
+
+class QuickStatementsNamespaceLetters(Enum):
+    PROPERTY = "P"
+    ITEM = "Q"
+    LEXEME = "L"
+    REFERENCE = "S"
+
+
+class QuickStatementsID(EntityID):
+    letter = QuickStatementsNamespaceLetters
 
 
 @dataclass
@@ -10,9 +22,13 @@ class QuickStatementsCommandVersion1:
     For now we only support QID-values
 
     Q1\tP1\tQ1"""
-    target: EntityID = None
-    property: EntityID = None
-    value: EntityID = None
+    target: QuickStatementsID = None
+    property: QuickStatementsID = None
+    value: QuickStatementsID = None
+    last: bool = False
 
     def __str__(self):
-        return f"{self.target}\t{self.property}\t{self.value}"
+        if self.last is True:
+            return f"LAST\t{self.property}\t{self.value}"
+        else:
+            return f"{self.target}\t{self.property}\t{self.value}"

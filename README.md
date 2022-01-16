@@ -189,16 +189,16 @@ new jobs by running --remove-prepared-jobs*
 This is the output of `itemsubjector.py -h`:
 ```buildoutcfg
 usage: itemsubjector.py [-h] [-a ADD [ADD ...]] [-na] [-nc] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu] [--sparql [SPARQL]] [--debug-sparql]
-                        [--no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT]]
+                        [--no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT]] [--export-job-list-to-quickstatements]
 
 ItemSubjector enables working main subject statements on items based on a
 heuristic matching the subject with the title of the item.
 
 Example adding one QID:
-'$ itemsubjector.py -l Q1234'
+'$ itemsubjector.py -a Q1234'
 
 Example adding one QID and prepare a job list to be run non-interactively later:
-'$ itemsubjector.py -l Q1234 -p'
+'$ itemsubjector.py -a Q1234 -p'
 
 Example adding random QIDs from a list of main subjects extracted from 2 million scholarly articles:
 '$ itemsubjector.py -m'
@@ -208,7 +208,7 @@ and prepare a job list:
 '$ itemsubjector.py -m -p'
 
 Example working on all diseases:
-'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136.}"'
+'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?item wdt:P1889 [].}}"'
 
 
 optional arguments:
@@ -232,10 +232,13 @@ optional arguments:
                         Show an extra column in the table of search strings with links
   -iu, --show-item-urls
                         Show an extra column in the table of items with links
-  --sparql [SPARQL]     Work on main subject items returned by this SPARQL query. Note: "?item" has to be selected for it to work, see the example above.
+  --sparql [SPARQL]     Work on main subject items returned by this SPARQL query. Note: "?item" has to be selected for it to work, see the example above. Note: MINUS {?item
+                        wdt:P1889 [].} must be present in the query to avoid false positives.
   --debug-sparql        Enable debugging of SPARQL queries.
   --no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT], --limit [NO_ASK_MATCH_MORE_LIMIT]
                         When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list
+  --export-job-list-to-quickstatements, -qs
+                        Export the prepared job list to QuickStatements. One file is created for each job.
 ```
 # License
 GPLv3+

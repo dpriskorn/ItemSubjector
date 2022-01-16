@@ -101,7 +101,7 @@ Example working on all diseases:
     parser.add_argument(
         '--export-job-list-to-quickstatements', '-qs',
         action='store_true',
-        help='Export the prepared job list to QuickStatements.',
+        help='Export the prepared job list to QuickStatements. One file is created for each job.',
         default=False
     )
     return parser.parse_args()

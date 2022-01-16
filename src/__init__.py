@@ -19,7 +19,7 @@ from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
     parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
-from src.models.quickstatements import QuickStatementsCommandVersion1
+from src.models.quickstatements import QuickStatementsCommandVersion1, QuickStatementsID
 from src.models.suggestion import Suggestion
 from src.models.task import Task
 from src.models.wikidata import Item, EntityID
@@ -97,19 +97,27 @@ def export_jobs_to_quickstatements():
             # Convert all items
             lines = []
             for item in job.items.list:
-                line = QuickStatementsCommandVersion1(
-                    target=EntityID(item.id),
-                    property=EntityID("P921"),
-                    value=EntityID(job.suggestion.item.id),
+                item_lines = []
+                ref_line = QuickStatementsCommandVersion1(
+                    target=QuickStatementsID(item.id),
+                    property=QuickStatementsID("P921"),
+                    value=QuickStatementsID(job.suggestion.item.id),
                 )
-                lines.append(line)
+                item_lines.append(ref_line)
+                ref_line = QuickStatementsCommandVersion1(
+                    last=True,
+                    property=QuickStatementsID("S887"),
+                    value=QuickStatementsID("Q69652283"),
+                )
+                item_lines.append(ref_line)
+                lines.extend(item_lines)
             logger.debug(f"Got {len(lines)} QS lines to export")
             filename = (f"quickstatements-export-"
                         f"{job.suggestion.item.id}-"
                         f"{job.suggestion.item.label}.csv")
             with open(filename, "w") as file:
-                for line in lines:
-                    file.write(f"{str(line)}\n")
+                for ref_line in lines:
+                    file.write(f"{str(ref_line)}\n")
             console.print(f"Wrote to {filename} in the current directory")
 
 
