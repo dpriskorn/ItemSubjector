@@ -151,12 +151,12 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
-    # TODO implement better check for duplicates to avoid wasting resources
-    picked_before = []
+    subjects_not_picked_yet = main_subjects
     while True:
-        console.print(f"Picking a random main subject")
-        qid = random.choice(main_subjects)
-        if qid not in picked_before:
+        if len(subjects_not_picked_yet) > 0:
+            console.print(f"Picking a random main subject")
+            qid = random.choice(subjects_not_picked_yet)
+            subjects_not_picked_yet.remove(qid)
             job = process_qid_into_job(qid=qid,
                                        # The scientific article task is hardcoded for now
                                        task=tasks[0],
@@ -164,15 +164,15 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                        confirmation=args.no_confirmation)
             if job is not None:
                 jobs.append(job)
-                picked_before.append(qid)
             print_job_statistics(jobs=jobs)
             if (
                     args.no_ask_match_more_limit is None or
                     args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
             ):
-                answer = ask_yes_no_question("Match one more?")
-                if not answer:
+                answer_was_yes = ask_yes_no_question("Match one more?")
+                if not answer_was_yes:
                     break
         else:
-            console.print("Skipping already picked qid")
+            console.print("No more subjects in the list.")
+            break
     return jobs
