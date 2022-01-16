@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import random
 from datetime import datetime
 from typing import Union, List, TYPE_CHECKING
@@ -142,7 +143,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                         main_subjects: List[str] = None,
                                         jobs: List[BatchJob] = None):
     """This function randomly picks a subject and present it for validation"""
-    # logger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
     if jobs is None:
         raise ValueError("jobs was None")
     if not isinstance(jobs, List):
@@ -151,8 +152,10 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
+    jobs = jobs
     subjects_not_picked_yet = main_subjects
     while True:
+        # Check if we have any subjects left in the list
         if len(subjects_not_picked_yet) > 0:
             console.print(f"Picking a random main subject")
             qid = random.choice(subjects_not_picked_yet)
@@ -164,6 +167,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                        confirmation=args.no_confirmation)
             if job is not None:
                 jobs.append(job)
+                logger.debug(f"joblist now has {len(jobs)} jobs")
             print_job_statistics(jobs=jobs)
             if len(subjects_not_picked_yet) > 0:
                 if (

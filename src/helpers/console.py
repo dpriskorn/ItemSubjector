@@ -120,7 +120,7 @@ def print_finished():
 def print_job_statistics(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
-    if len(jobs) > 0:
+    if len(jobs) == 0:
         console.print("The jobs list is empty")
     else:
         console.print(f"The jobs list now contain a total of {len(jobs)} "
