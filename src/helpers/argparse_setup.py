@@ -104,4 +104,10 @@ Example working on all diseases:
         help='Export the prepared job list to QuickStatements.',
         default=False
     )
+    parser.add_argument(
+        '--export-jobs-to-dataframe',
+        action='store_true',
+        help='Export the prepared job list to a Pandas DataFrame.',
+        default=False
+    )
     return parser.parse_args()

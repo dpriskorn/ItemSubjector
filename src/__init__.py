@@ -2,6 +2,7 @@ import argparse
 import logging
 from typing import List
 
+import pandas as pd
 from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
@@ -87,6 +88,31 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
     else:
         console.print("Got 0 results. Try another query or debug it using --debug")
 
+
+def export_jobs_to_dataframe():
+    logger = logging.getLogger(__name__)
+    logger.info("Exporting jobs to DataFrame. All jobs are appended to one frame")
+    jobs = parse_job_pickle()
+    if jobs is not None and len(jobs) > 0:
+        df = pd.DataFrame()
+        for job in jobs:
+            # Convert all items
+            # lines = []
+            job_df = pd.DataFrame()
+            for item in job.items.list:
+                job_df = pd.DataFrame(data=[dict(
+                    qid=item.id,
+                    label=item.label,
+                    description=item.description
+                )])
+            df = df.append(job_df)
+            logger.debug(f"Added {len(job.items.list)} items to the dataframe")
+        logger.debug(f"Exporting {len(df)} rows to pickle")
+        pickle_filename = "dataframe.pkl"
+        df.to_pickle(pickle_filename)
+        console.print(f"Wrote to {pickle_filename} in the current directory")
+
+
 def export_jobs_to_quickstatements():
     logger = logging.getLogger(__name__)
     logger.info("Exporting jobs to QuickStatements V1 commands. One file for each job.")
@@ -147,6 +173,8 @@ def main():
             remove_job_pickle(hash=file_hash)
     if args.export_job_list_to_quickstatements:
         export_jobs_to_quickstatements()
+    elif args.export_jobs_to_dataframe:
+        export_jobs_to_dataframe()
     elif args.match_existing_main_subjects is True:
         match_existing_main_subjects(args=args, jobs=jobs)
     elif args.sparql:
