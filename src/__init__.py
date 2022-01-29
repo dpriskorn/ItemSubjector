@@ -93,22 +93,25 @@ def export_jobs_to_dataframe():
     logger = logging.getLogger(__name__)
     logger.info("Exporting jobs to DataFrame. All jobs are appended to one frame")
     jobs = parse_job_pickle()
-    if jobs is not None and len(jobs) > 0:
+    number_of_jobs = len(jobs)
+    if jobs is not None and number_of_jobs > 0:
+        logger.info(f"Found {number_of_jobs} jobs")
         df = pd.DataFrame()
+        count = 1
         for job in jobs:
-            # Convert all items
-            # lines = []
+            count += 1
+            logger.info(f"Working on job {count}/{number_of_jobs}")
             job_df = pd.DataFrame()
             for item in job.items.list:
-                job_df = pd.DataFrame(data=[dict(
+                job_df = job_df.append(pd.DataFrame(data=[dict(
                     qid=item.id,
                     label=item.label,
                     description=item.description
-                )])
+                )]))
             df = df.append(job_df)
             logger.debug(f"Added {len(job.items.list)} items to the dataframe")
         logger.debug(f"Exporting {len(df)} rows to pickle")
-        pickle_filename = "dataframe.pkl"
+        pickle_filename = "dataframe.pkl.gz"
         df.to_pickle(pickle_filename)
         console.print(f"Wrote to {pickle_filename} in the current directory")
 
