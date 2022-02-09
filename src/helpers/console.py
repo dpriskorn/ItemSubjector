@@ -120,9 +120,12 @@ def print_finished():
 def print_job_statistics(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
-    console.print(f"The jobs list now contain a total of {len(jobs)} "
-                  f"jobs with a total of "
-                  f"{sum(len(job.items.list) for job in jobs)} items")
+    if len(jobs) == 0:
+        console.print("The jobs list is empty")
+    else:
+        console.print(f"The jobs list now contain a total of {len(jobs)} "
+                      f"jobs with a total of "
+                      f"{sum(len(job.items.list) for job in jobs)} items")
 
 
 def ask_discard_existing_job_pickle():

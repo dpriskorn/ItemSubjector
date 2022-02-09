@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import random
 from datetime import datetime
 from typing import Union, List, TYPE_CHECKING
@@ -145,7 +146,7 @@ def get_validated_main_subjects_as_jobs(
         jobs: List[BatchJob] = None
 ) -> List[BatchJob]:
     """This function randomly picks a subject and present it for validation"""
-    # logger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
     if jobs is None:
         raise ValueError("jobs was None")
     if not isinstance(jobs, List):
@@ -154,17 +155,18 @@ def get_validated_main_subjects_as_jobs(
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
+    subjects_not_picked_yet = main_subjects
     task: Task = select_task()
     if task is None:
         raise ValueError("Got no task")
     if not isinstance(task, Task):
         raise ValueError("task was not a Task object")
-    # TODO implement better check for duplicates to avoid wasting resources
-    picked_before = []
     while True:
-        console.print(f"Picking a random main subject")
-        qid = random.choice(main_subjects)
-        if qid not in picked_before:
+        # Check if we have any subjects left in the list
+        if len(subjects_not_picked_yet) > 0:
+            console.print(f"Picking a random main subject")
+            qid = random.choice(subjects_not_picked_yet)
+            subjects_not_picked_yet.remove(qid)
             job = process_qid_into_job(qid=qid,
                                        # The scientific article task is hardcoded for now
                                        task=task,
@@ -172,15 +174,20 @@ def get_validated_main_subjects_as_jobs(
                                        confirmation=args.no_confirmation)
             if job is not None:
                 jobs.append(job)
-                picked_before.append(qid)
+                logger.debug(f"joblist now has {len(jobs)} jobs")
             print_job_statistics(jobs=jobs)
-            if (
-                    args.no_ask_match_more_limit is None or
-                    args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
-            ):
-                answer = ask_yes_no_question("Match one more?")
-                if not answer:
-                    break
+            if len(subjects_not_picked_yet) > 0:
+                if (
+                        args.no_ask_match_more_limit is None or
+                        args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
+                ):
+                    answer_was_yes = ask_yes_no_question("Match one more?")
+                    if not answer_was_yes:
+                        break
+            else:
+                console.print("No more subjects in the list.")
+                break
         else:
-            console.print("Skipping already picked qid")
+            console.print("No more subjects in the list. Exiting.")
+            break
     return jobs
