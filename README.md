@@ -61,7 +61,11 @@ See [Kubernetes_HOWTO.md](Kubernetes_HOWTO.md)
 # Setup
 Like my other tools, copy config.example.py -> 
 config.py and enter the botusername 
-(e.g. So9q@itemsubjector) and password
+(e.g. So9q@itemsubjector) and password 
+(first [create a botpassword](https://www.wikidata.org/wiki/Special:BotPasswords) 
+for your account 
+and make sure you give it the *edit page permission* 
+and *high volume permissions*)
 * e.g. `cp config.example.py config.py && nano config.py`
 
 *GNU Nano is an editor, press `ctrl+x` when you are done and `y` to save your changes*

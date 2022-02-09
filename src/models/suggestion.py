@@ -5,6 +5,7 @@ from urllib.parse import quote
 
 from wikibaseintegrator.datatypes import Item as ItemType
 
+import config
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import print_search_strings_table, console
@@ -112,8 +113,11 @@ class Suggestion:
         ):
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
-                if len(alias) < 5:
+                if len(alias) < 5 and alias not in config.list_of_allowed_aliases:
                     console.print(f"Skipping short alias '{alias}' to avoid false positives", style="#FF8000")
+                elif alias in config.list_of_allowed_aliases:
+                    console.print(f"Found {alias} in the allow list")
+                    self.search_strings.append(clean_special_symbols(alias))
                 else:
                     self.search_strings.append(clean_special_symbols(alias))
         # logger.debug(f"search_strings:{self.search_strings}")

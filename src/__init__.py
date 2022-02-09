@@ -2,7 +2,6 @@ import argparse
 import logging
 from typing import List
 
-import pandas as pd
 from wikibaseintegrator import wbi_login, wbi_config
 from wikibaseintegrator.wbi_helpers import execute_sparql_query
 
