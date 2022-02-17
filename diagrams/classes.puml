@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Items
+Items <|-- AcademicJournalItems
+Items <|-- RiksdagenDocumentItems
+Items <|-- ScholarlyArticleItems
+Items <|-- ThesisItems
+
+'package helpers {
+'}
+class AcademicJournalItems {
+fetch_based_on_label()
+}
+class RiksdagenDocumentItems {
++list
++fetch_based_on_label()
+}
+
+class ScholarlyArticleItems {
++list
++fetch_based_on_label()
+}
+class ThesisItems {
+list
+fetch_based_on_label()
+}
+
+class Suggestion {
+    item: Item = None
+    search_strings: List[str] = None
+    task: Task = None
+    args: argparse.Namespace = None
+    __init__()
+    __str__()
+    add_to_items()
+    extract_search_strings()
+    search_urls ())
+}
+
+class Task {
+    best_practice_information: Union[str, None] = None
+    id: TaskIds = None
+    label: str = None
+    language_code: SupportedLanguageCode = None
+    number_of_queries_per_search_string = 1
+    __init__()
+    __str__()
+}
+
+class BatchJob {
+    +suggestion: Suggestion
+    +items: Items
+    run()
+}
+class QuickStatementsCommandVersion1 {
+    +target: EntityID = None
+    +property: EntityID = None
+    +value: EntityID = None
+    -__str__()
+}
+
+enum TimeUnit {
+DAYS
+HOURS
+MINUTES
+}
+
+@enduml
