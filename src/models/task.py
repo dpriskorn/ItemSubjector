@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 from src.helpers.enums import SupportedLanguageCode, TaskIds
 
@@ -9,9 +9,9 @@ class Task:
     """This class holds the tasks presented to the
     user in the menu and related data"""
     best_practice_information: Union[str, None] = None
-    id: TaskIds = None
-    label: str = None
-    language_code: SupportedLanguageCode = None
+    id: Optional[TaskIds] = None
+    label: Optional[str] = None
+    language_code: Optional[SupportedLanguageCode] = None
     number_of_queries_per_search_string = 1
 
     def __init__(self,

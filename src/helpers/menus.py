@@ -1,10 +1,10 @@
 import logging
 from typing import List
 
-from consolemenu import SelectionMenu
+from consolemenu import SelectionMenu  # type: ignore
 
 from src.models.suggestion import Suggestion
-from src.models.wikidata import Item
+from src.models.wikidata.item import Item
 from src.tasks import tasks, Task
 
 
@@ -40,7 +40,6 @@ def select_task() -> Task:
     logger.debug(f"selected:{task_index}="
                  f"{selected_task}")
     return selected_task
-
 
 # def select_language():
 #     logger = logging.getLogger(__name__)

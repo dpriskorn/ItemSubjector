@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional
 
-from src.models.wikidata import EntityID
+from src.models.wikidata.entiyt_id import EntityID
 
 
 @dataclass
@@ -10,9 +11,9 @@ class QuickStatementsCommandVersion1:
     For now we only support QID-values
 
     Q1\tP1\tQ1"""
-    target: EntityID = None
-    property: EntityID = None
-    value: EntityID = None
+    target: Optional[EntityID] = None
+    property: Optional[EntityID] = None
+    value: Optional[EntityID] = None
 
     def __str__(self):
         return f"{self.target}\t{self.property}\t{self.value}"

@@ -14,6 +14,7 @@ from src.models.academic_journals import AcademicJournalItems
 from src.models.riksdagen_documents import RiksdagenDocumentItems
 from src.models.scholarly_articles import ScholarlyArticleItems
 from src.models.thesis import ThesisItems
+from src.models.wikidata.items import Items
 from src.tasks import tasks, Task
 
 if TYPE_CHECKING:
@@ -31,7 +32,7 @@ def process_qid_into_job(qid: str = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    from src import Item
+    from src.models.wikidata.item import Item
     item = Item(
         id=strip_prefix(qid),
         task=task
@@ -53,6 +54,7 @@ def process_qid_into_job(qid: str = None,
                             f'the search strings by running a total of '
                             f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
                             f'queries on WDQS...'):
+            items: Items = None
             if task.id == TaskIds.SCHOLARLY_ARTICLES:
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
@@ -83,6 +85,7 @@ def process_qid_into_job(qid: str = None,
             return None
     else:
         console.print(f"Label for {task.language_code} was None on {item.url()}, skipping")
+        return None
 
 
 def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,

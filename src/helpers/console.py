@@ -8,7 +8,7 @@ from rich.table import Table
 from src.helpers.cleaning import clean_rich_formatting
 from src.models.batch_job import BatchJob
 from src.models.task import Task
-from src.models.wikidata import Items
+from src.models.wikidata.items import Items
 
 console = Console()
 
@@ -98,11 +98,13 @@ def print_found_items_table(args: argparse.Namespace = None,
 
 
 def ask_add_to_job_queue(job: BatchJob = None):
-    return ask_yes_no_question(f"Do you want to add this job for "
-                               f"[magenta]{job.suggestion.item.label}: "
-                               f"{job.suggestion.item.description}[/magenta] with "
-                               f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
-
+    if job is not None:
+        return ask_yes_no_question(f"Do you want to add this job for "
+                                   f"[magenta]{job.suggestion.item.label}: "
+                                   f"{job.suggestion.item.description}[/magenta] with "
+                                   f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
+    else:
+        raise ValueError("job was None")
 
 def print_running_jobs(jobs: List[BatchJob] = None):
     if jobs is None:

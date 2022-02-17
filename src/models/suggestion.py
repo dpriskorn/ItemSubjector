@@ -1,25 +1,25 @@
 import argparse
 import logging
-from typing import List
+from typing import List, Optional
 from urllib.parse import quote
 
-from wikibaseintegrator.datatypes import Item as ItemType
+from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
 
 import config
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import print_search_strings_table, console
-from src.helpers.enums import TaskIds
 from src.models.batch_job import BatchJob
 from src.models.task import Task
-from src.models.wikidata import Item, Items
+from src.models.wikidata.item import Item
+from src.models.wikidata.items import Items
 
 
 class Suggestion:
-    item: Item = None
-    search_strings: List[str] = None
-    task: Task = None
-    args: argparse.Namespace = None
+    item: Optional[Item] = None
+    search_strings: Optional[List[str]] = None
+    task: Optional[Task] = None
+    args: Optional[argparse.Namespace] = None
 
     def __init__(self,
                  item: Item = None,
@@ -108,8 +108,8 @@ class Suggestion:
                 no_aliases = False
         self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
         if (
-            self.item.aliases is not None and
-            no_aliases is False
+                self.item.aliases is not None and
+                no_aliases is False
         ):
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")

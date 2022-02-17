@@ -1,12 +1,13 @@
 import logging
 
-from wikibaseintegrator.wbi_helpers import execute_sparql_query
+from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata import Items, Item
+from src.models.wikidata.item import Item
+from src.models.wikidata.items import Items
 
 
 class RiksdagenDocumentItems(Items):
@@ -21,6 +22,8 @@ class RiksdagenDocumentItems(Items):
                             "supported yet for this task.")
         if task is None:
             raise ValueError("task was None")
+        if task.language_code is None:
+            raise ValueError("task.language_code was None")
         # Fetch all items maching the search strings
         self.list = []
         # Include spaces around the n-gram to avoid edits like this one

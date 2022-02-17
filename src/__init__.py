@@ -2,8 +2,9 @@ import argparse
 import logging
 from typing import List
 
-from wikibaseintegrator import wbi_login, wbi_config
-from wikibaseintegrator.wbi_helpers import execute_sparql_query
+import pandas as pd  # type: ignore
+from wikibaseintegrator import wbi_login, wbi_config  # type: ignore
+from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.argparse_setup import setup_argparse_and_return_args
@@ -22,7 +23,7 @@ from src.models.batch_job import BatchJob
 from src.models.quickstatements import QuickStatementsCommandVersion1
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata import Item, EntityID
+from src.models.wikidata.entiyt_id import EntityID
 from src.tasks import tasks
 
 
@@ -62,6 +63,8 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
         raise ValueError("jobs was None")
     if not isinstance(jobs, List):
         raise ValueError("jobs was not a list")
+    if args is None or args.sparql is None:
+        raise ValueError("args.sparql was None")
     if "P1889" not in args.sparql:
         console.print("Your SPARQL did not contain P1889 (different from). "
                       "Please include 'MINUS {?item wdt:P1889 [].}' "
@@ -116,6 +119,7 @@ def export_jobs_to_dataframe():
             console.print(f"Wrote to {pickle_filename} in the current directory")
     else:
         console.print("No jobs found. Create a job list first by using '--prepare-jobs'")
+
 
 def export_jobs_to_quickstatements():
     logger = logging.getLogger(__name__)

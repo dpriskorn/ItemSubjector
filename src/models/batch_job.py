@@ -4,7 +4,7 @@ from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.models.suggestion import Suggestion
-    from src.models.wikidata import Items
+    from src.models.wikidata.items import Items
 
 
 @dataclass

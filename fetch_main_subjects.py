@@ -1,8 +1,8 @@
 import logging
 import random
 
-from wikibaseintegrator import wbi_config
-from wikibaseintegrator.wbi_helpers import execute_sparql_query
+from wikibaseintegrator import wbi_config  # type: ignore
+from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src import console
@@ -19,7 +19,7 @@ subjects = []
 # the same subset of subjects every time we run it
 randomizing_offset: int = random.randint(1, 500000)
 console.print(f"Random offset used: {randomizing_offset} for this run")
-for i in range(0+randomizing_offset, 100000+randomizing_offset, 10000):
+for i in range(0 + randomizing_offset, 100000 + randomizing_offset, 10000):
     print(i)
     # title: Get main subjects used at least once on scholarly articles
     results = execute_sparql_query(f"""

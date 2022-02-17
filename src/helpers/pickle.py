@@ -1,7 +1,7 @@
-import os
 import hashlib
+import os
 import pickle
-from typing import List
+from typing import List, Optional
 
 import config
 from src.helpers.console import console
@@ -17,6 +17,8 @@ def add_to_job_pickle(job: BatchJob = None):
 
 
 def add_to_main_subject_pickle(subjects: List[str] = None):
+    if subjects is None:
+        raise ValueError("subjects was None")
     with open(config.main_subjects_pickle_file_path, 'wb') as file:
         for qid in subjects:
             pickle.dump(qid, file, pickle.DEFAULT_PROTOCOL)
@@ -38,7 +40,7 @@ def check_if_pickle_exists(path):
         return False
 
 
-def parse_job_pickle(silent: bool = False) -> List[BatchJob]:
+def parse_job_pickle(silent: bool = False) -> Optional[List[BatchJob]]:
     """Reads the pickle into a list of batch jobs"""
     if check_if_pickle_exists(config.job_pickle_file_path):
         jobs: List[BatchJob] = []
@@ -47,11 +49,13 @@ def parse_job_pickle(silent: bool = False) -> List[BatchJob]:
         if len(jobs) == 0:
             if not silent:
                 console.print("No prepared jobs found")
+            return None
         else:
             return jobs
     else:
         if not silent:
             console.print("No pickle file found")
+        return None
 
 
 def parse_main_subjects_pickle() -> List[str]:
