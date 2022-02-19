@@ -1,10 +1,10 @@
 import logging
 
 import config
-from src.models.wikidata.enums import WikidataNamespaceLetters
+from src.models.wikimedia.wikidata.enums import WikidataNamespaceLetters
 
-
-class EntityID:
+# TODO convert this to special constr type with a validator
+class EntityId:
     letter: WikidataNamespaceLetters
     # This can be e.g. "32698-F1" in the case of a lexeme
     rest: str

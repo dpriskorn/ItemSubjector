@@ -3,6 +3,7 @@ import logging
 from typing import List, Optional
 from urllib.parse import quote
 
+from pydantic import BaseModel
 from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
 
 import config
@@ -10,31 +11,19 @@ from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import print_search_strings_table, console
 from src.models.batch_job import BatchJob
+from src.models.items import Items
 from src.models.task import Task
-from src.models.wikidata.item import Item
-from src.models.wikidata.items import Items
+from src.models.wikimedia.wikidata import Item
 
 
-class Suggestion:
-    item: Optional[Item] = None
+class Suggestion(BaseModel):
+    item: Item
+    task: Task
+    args: argparse.Namespace
     search_strings: Optional[List[str]] = None
-    task: Optional[Task] = None
-    args: Optional[argparse.Namespace] = None
 
-    def __init__(self,
-                 item: Item = None,
-                 task: Task = None,
-                 args=None):
-        if item is None:
-            raise ValueError("item was None")
-        else:
-            self.item = item
-        if task is None:
-            raise ValueError("task was None")
-        else:
-            self.task = task
-            self.args = args
-            self.extract_search_strings()
+    class Config:
+        arbitrary_types_allowed = True
 
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
@@ -125,6 +114,8 @@ class Suggestion:
                                    search_strings=self.search_strings)
 
     def search_urls(self) -> List[str]:
+        if self.search_strings is None:
+            raise ValueError("self.search_strings was None")
         urls = []
         for search_string in self.search_strings:
             search_term = quote(f'"{search_string}"')

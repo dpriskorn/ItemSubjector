@@ -1,5 +1,6 @@
+from __future__ import annotations
 import argparse
-from typing import List
+from typing import List, TYPE_CHECKING
 from urllib.parse import quote
 
 from rich.console import Console
@@ -7,8 +8,10 @@ from rich.table import Table
 
 from src.helpers.cleaning import clean_rich_formatting
 from src.models.batch_job import BatchJob
-from src.models.task import Task
-from src.models.wikidata.items import Items
+
+if TYPE_CHECKING:
+    from src.models.items import Items
+    from src.models.task import Task
 
 console = Console()
 
@@ -89,6 +92,8 @@ def print_found_items_table(args: argparse.Namespace = None,
     if args.show_item_urls:
         table.add_column(f"Wikidata URL")
     for item in list_to_show:
+        if item.label is None:
+            raise ValueError("item.label was None")
         if args.show_item_urls:
             label = clean_rich_formatting(item.label)
             table.add_row(label, item.url())
@@ -98,13 +103,21 @@ def print_found_items_table(args: argparse.Namespace = None,
 
 
 def ask_add_to_job_queue(job: BatchJob = None):
-    if job is not None:
-        return ask_yes_no_question(f"Do you want to add this job for "
+    if job is None:
+        raise ValueError("job was None")
+    if job.suggestion.item is None:
+        raise ValueError("job.suggestion.item was None")
+    if job.suggestion.item.label is None:
+        raise ValueError("job.suggestion.item.label was None")
+    if job.suggestion.item.description is None:
+        raise ValueError("job.suggestion.item.description was None")
+    if job.items.list is None:
+        raise ValueError("job.items.list was None")
+    return ask_yes_no_question(f"Do you want to add this job for "
                                    f"[magenta]{job.suggestion.item.label}: "
                                    f"{job.suggestion.item.description}[/magenta] with "
                                    f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
-    else:
-        raise ValueError("job was None")
+
 
 def print_running_jobs(jobs: List[BatchJob] = None):
     if jobs is None:

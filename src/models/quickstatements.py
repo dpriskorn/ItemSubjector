@@ -1,19 +1,20 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from src.models.wikidata.entiyt_id import EntityID
+from pydantic import BaseModel
+
+from src.models.wikimedia.wikidata.entiyt_id import EntityId
 
 
-@dataclass
-class QuickStatementsCommandVersion1:
+class QuickStatementsCommandVersion1(BaseModel):
     """This models the simple line-based QS commands
 
     For now we only support QID-values
 
     Q1\tP1\tQ1"""
-    target: Optional[EntityID] = None
-    property: Optional[EntityID] = None
-    value: Optional[EntityID] = None
+    target: Optional[EntityId] = None
+    property: Optional[EntityId] = None
+    value: Optional[EntityId] = None
 
     def __str__(self):
         return f"{self.target}\t{self.property}\t{self.value}"

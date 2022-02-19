@@ -7,8 +7,8 @@ from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata.item import Item
-from src.models.wikidata.items import Items
+from src.models.items import Items
+from src.models.wikimedia.wikidata.sparql_item import SparqlItem
 
 
 class ScholarlyArticleItems(Items):
@@ -24,6 +24,8 @@ class ScholarlyArticleItems(Items):
             # TODO refactor
             if suggestion is None:
                 raise ValueError("suggestion was None")
+            if suggestion.item is None:
+                raise ValueError("suggestion.item was None")
             if search_string is None:
                 raise ValueError("search_string was None")
             if task is None:
@@ -78,15 +80,27 @@ class ScholarlyArticleItems(Items):
             items = []
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
-                item = Item(json=item_json)
+                item = SparqlItem(**item_json)
+                item.validate_qid_and_copy_label()
                 items.append(item)
             return items
 
         # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
+        if suggestion.item is None:
+            raise ValueError("suggestion.item was None")
+        if suggestion.args is None:
+            raise ValueError("suggestion.args was None")
+        if suggestion.args.limit_to_items_without_p921:
+            raise Exception("Limiting to items without P921 is not "
+                            "supported yet for this task.")
+        if suggestion.search_strings is None:
+            raise ValueError("suggestion.search_strings was None")
         if task is None:
             raise ValueError("task was None")
+        if task.language_code is None:
+            raise ValueError("task.language_code was None")
         if suggestion.args.limit_to_items_without_p921:
             console.print("Limiting to scholarly articles without P921 main subject only")
             cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921"

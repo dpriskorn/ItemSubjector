@@ -7,6 +7,7 @@ import config
 from src.helpers.console import console
 from src.models.batch_job import BatchJob
 
+# TODO rewrite as OOP
 
 def add_to_job_pickle(job: BatchJob = None):
     if job is None:
@@ -58,7 +59,7 @@ def parse_job_pickle(silent: bool = False) -> Optional[List[BatchJob]]:
         return None
 
 
-def parse_main_subjects_pickle() -> List[str]:
+def parse_main_subjects_pickle() -> Optional[List[str]]:
     """Reads the pickle into a list of main subjects"""
     if check_if_pickle_exists(config.main_subjects_pickle_file_path):
         subjects = []
@@ -66,6 +67,7 @@ def parse_main_subjects_pickle() -> List[str]:
             subjects.append(subject)
         if len(subjects) == 0:
             console.print("No qids found in the pickle.")
+            return None
         else:
             # print(f"found:{subjects}")
             return subjects
@@ -73,7 +75,6 @@ def parse_main_subjects_pickle() -> List[str]:
         console.print("No main subjects pickle file found. "
                       "Create it by running 'python fetch_main_subjects.py'")
         exit(0)
-
 
 def remove_job_pickle(silent: bool = False,
                       hash: str = None):

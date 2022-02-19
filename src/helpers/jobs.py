@@ -4,22 +4,24 @@ import argparse
 import logging
 import random
 from datetime import datetime
-from typing import Union, List, TYPE_CHECKING
+from typing import Union, List, TYPE_CHECKING, Optional
 
 from src import strip_prefix, print_best_practice, console, ask_yes_no_question, \
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
     print_finished, print_job_statistics
 from src.helpers.menus import select_task
-from src.models.academic_journals import AcademicJournalItems
-from src.models.riksdagen_documents import RiksdagenDocumentItems
-from src.models.scholarly_articles import ScholarlyArticleItems
-from src.models.thesis import ThesisItems
-from src.models.wikidata.items import Items
-from src.tasks import tasks, Task
+from src.models.items.academic_journals import AcademicJournalItems
+from src.models.items import Items
+from src.models.items.riksdagen_documents import RiksdagenDocumentItems
+from src.models.items.scholarly_articles import ScholarlyArticleItems
+from src.models.items.thesis import ThesisItems
+from src.tasks import Task
 
 if TYPE_CHECKING:
     from src import Task, BatchJob
 
+
+# TODO rewrite as OOP
 
 def process_qid_into_job(qid: str = None,
                          task: Task = None,
@@ -32,11 +34,11 @@ def process_qid_into_job(qid: str = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    from src.models.wikidata.item import Item
+    from src.models.wikimedia.wikidata import Item
     item = Item(
         id=strip_prefix(qid),
-        task=task
     )
+    item.fetch_label_and_description_and_aliases(task=task)
     if item.label is not None:
         console.print(f"Working on {item}")
         # generate suggestion with all we need
@@ -50,11 +52,14 @@ def process_qid_into_job(qid: str = None,
             answer = ask_yes_no_question("Do you want to continue?")
             if not answer:
                 return None
+        suggestion.extract_search_strings()
+        if suggestion.search_strings is None:
+            raise ValueError("suggestion.search_strings was None")
         with console.status(f'Fetching items with labels that have one of '
                             f'the search strings by running a total of '
                             f'{len(suggestion.search_strings) * task.number_of_queries_per_search_string} '
                             f'queries on WDQS...'):
-            items: Items = None
+            items: Optional[Items] = None
             if task.id == TaskIds.SCHOLARLY_ARTICLES:
                 items = ScholarlyArticleItems()
             elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
@@ -80,6 +85,8 @@ def process_qid_into_job(qid: str = None,
             answer = ask_add_to_job_queue(job)
             if answer:
                 return job
+            else:
+                return None
         else:
             console.print("No matching items found")
             return None
@@ -128,6 +135,10 @@ def run_jobs(jobs: List[BatchJob] = None):
 
 def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace = None,
                                                        jobs: List[BatchJob] = None):
+    if jobs is None:
+        raise ValueError("jobs was None")
+    if args is None:
+        raise ValueError("args was None")
     if len(jobs) > 0:
         if args.prepare_jobs:
             console.print(f"Adding {len(jobs)} job(s) to the jobs file")

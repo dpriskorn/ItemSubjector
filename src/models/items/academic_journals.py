@@ -7,8 +7,8 @@ from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata.item import Item
-from src.models.wikidata.items import Items
+from src.models.wikimedia.wikidata.item import Item
+from src.models.items import Items
 
 
 class AcademicJournalItems(Items):
@@ -33,6 +33,14 @@ class AcademicJournalItems(Items):
             raise ValueError("task was None")
         if task.language_code is None:
             raise ValueError("task.language_code was None")
+        if suggestion.search_strings is None:
+            raise ValueError("suggestion.search_strings was None")
+        if suggestion.item is None:
+            raise ValueError("suggestion.item was None")
+        if suggestion.item.id is None:
+            raise ValueError("suggestion.item.id was None")
+        if suggestion.args is None:
+            raise ValueError("suggestion.args was None")
         # Fetch all items matching the search strings
         self.list = []
         for search_string in suggestion.search_strings:

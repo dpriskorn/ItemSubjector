@@ -4,7 +4,7 @@ from typing import List
 from consolemenu import SelectionMenu  # type: ignore
 
 from src.models.suggestion import Suggestion
-from src.models.wikidata.item import Item
+from src.models.wikimedia.wikidata import Item
 from src.tasks import tasks, Task
 
 

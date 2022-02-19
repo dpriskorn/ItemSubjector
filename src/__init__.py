@@ -23,7 +23,7 @@ from src.models.batch_job import BatchJob
 from src.models.quickstatements import QuickStatementsCommandVersion1
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata.entiyt_id import EntityID
+from src.models.wikimedia.wikidata.entiyt_id import EntityId
 from src.tasks import tasks
 
 
@@ -131,9 +131,9 @@ def export_jobs_to_quickstatements():
             lines = []
             for item in job.items.list:
                 line = QuickStatementsCommandVersion1(
-                    target=EntityID(item.id),
-                    property=EntityID("P921"),
-                    value=EntityID(job.suggestion.item.id),
+                    target=EntityId(item.id),
+                    property=EntityId("P921"),
+                    value=EntityId(job.suggestion.item.id),
                 )
                 lines.append(line)
             logger.debug(f"Got {len(lines)} QS lines to export")

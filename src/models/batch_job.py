@@ -2,13 +2,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, TYPE_CHECKING
 
+from pydantic import BaseModel
+
 if TYPE_CHECKING:
     from src.models.suggestion import Suggestion
-    from src.models.wikidata.items import Items
+    from src.models.items import Items
 
 
-@dataclass
-class BatchJob:
+class BatchJob(BaseModel):
     """Models a batch job intended to be run non-interactively"""
     suggestion: Suggestion
     items: Items

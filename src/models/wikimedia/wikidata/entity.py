@@ -1,5 +1,7 @@
 import logging
+from typing import Optional
 
+from pydantic import BaseModel
 from wikibaseintegrator import WikibaseIntegrator  # type: ignore
 from wikibaseintegrator import wbi_config
 from wikibaseintegrator.datatypes import BaseDataType  # type: ignore
@@ -10,10 +12,10 @@ import config
 wbi_config.config['USER_AGENT'] = config.user_agent
 
 
-class Entity:
+class Entity(BaseModel):
     """Base entity with code that is the same for both items and lexemes"""
-    id: str
-    label: str
+    id: Optional[str]
+    label: Optional[str]
 
     def upload_one_statement_to_wikidata(self,
                                          statement: BaseDataType = None,

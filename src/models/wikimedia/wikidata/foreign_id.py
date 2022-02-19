@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.models.wikidata.entiyt_id import EntityID
+from src.models.wikimedia.wikidata.entiyt_id import EntityId
 
 
 class ForeignID:
@@ -15,7 +15,7 @@ class ForeignID:
         self.id = id
         if property is None:
             raise ValueError("property was None")
-        self.property = str(EntityID(property))
+        self.property = str(EntityId(property))
         if source_item_id is None:
             raise ValueError("source_item_id was None")
-        self.source_item_id = str(EntityID(source_item_id))
+        self.source_item_id = str(EntityId(source_item_id))

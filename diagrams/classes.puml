@@ -1,31 +1,123 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-abstract class Items
-Items <|-- AcademicJournalItems
-Items <|-- RiksdagenDocumentItems
-Items <|-- ScholarlyArticleItems
-Items <|-- ThesisItems
+abstract class BaseModel
 
-'package helpers {
-'}
-class AcademicJournalItems {
-fetch_based_on_label()
+package wikimedia {
+    enum WikimediaLanguageCode {
+        BASQUE
+        BENGALI
+        BOKMÅL
+        CZECH
+        DANISH
+        ENGLISH
+        ESTONIAN
+        FRENCH
+        GERMAN
+        HEBREW
+        LATIN
+        MALAYALAM
+        RUSSIAN
+        SWEDISH
+    }
+    enum WikimediaLanguageQID {
+        BASQUE = "Q8752"
+        BENGALI = "Q9610"
+        BOKMÅL = "Q25167"
+        CZECH = "Q9056"
+        DANISH = "Q9035"
+        ENGLISH = "Q1860"
+        ESTONIAN = "Q9072"
+        FRENCH = "Q150"
+        GERMAN = "Q188"
+        HEBREW = "Q9288"
+        LATIN = "Q397"
+        MALAYALAM = "Q36236"
+        RUSSIAN = "Q7737"
+        SWEDISH = "Q9027"
+    }
+    package wikidata {
+        class Entity {
+        id: Optional[str]
+        label: str
+        upload_one_statement_to_wikidata()
+        url()
+        }
+        class EntityID{
+        letter: WikidataNamespaceLetters
+            rest: str
+        __init__()
+        __str__()
+        }
+        class ForeignID{
+        __init__()
+        }
+        class SparqlItem{
+            item: Value
+            itemLabel: Value
+            validate_qid_and_copy_label()
+        }
+        class Item{
+            label: Optional[str] = None
+            description: Optional[str] = None
+            aliases: Optional[List[str]] = None
+            __init__()
+            __str__()
+            parse_json()
+            parse_from_wdqs_json()
+            fetch_label_and_description_and_aliases()
+        }
+        enum WikidataGrammaticalFeature {
+            ACTIVE_VOICE
+            DEFINITE
+            GENITIVE_CASE
+            IMPERATIVE
+            INDEFINITE
+            INFINITIVE
+            NOMINATIVE_CASE
+            PASSIVE_VOICE
+            PLURAL
+            PRESENT_TENSE
+            PRETERITE
+            SIMPLE_PRESENT
+            SINGULAR
+            SUPINE
+            THIRD_PERSON_SINGULAR
+        }
+        enum WikidataLexicalCategory {
+            ADJECTIVE
+            ADVERB
+            AFFIX
+            NOUN
+            PROPER_NOUN
+            VERB
+        }
+        enum WikidataNamespaceLetters {
+            ITEM
+            LEXEME
+            PROPERTY
+        }
+    }
 }
-class RiksdagenDocumentItems {
-+list
-+fetch_based_on_label()
-}
+package items {
+    abstract class Items
+    class AcademicJournalItems {
+    fetch_based_on_label()
+    }
+    class RiksdagenDocumentItems {
+    +list
+    +fetch_based_on_label()
+    }
 
-class ScholarlyArticleItems {
-+list
-+fetch_based_on_label()
+    class ScholarlyArticleItems {
+    +list
+    +fetch_based_on_label()
+    }
+    class ThesisItems {
+    list
+    fetch_based_on_label()
+    }
 }
-class ThesisItems {
-list
-fetch_based_on_label()
-}
-
 class Suggestion {
     item: Item = None
     search_strings: List[str] = None
@@ -59,11 +151,17 @@ class QuickStatementsCommandVersion1 {
     +value: EntityID = None
     -__str__()
 }
-
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
-}
+Items <|-- AcademicJournalItems
+Items <|-- RiksdagenDocumentItems
+Items <|-- ScholarlyArticleItems
+Items <|-- ThesisItems
+BaseModel <|-- Entity
+BaseModel <|-- Task
+BaseModel <|-- Suggestion
+BaseModel <|-- BatchJob
+BaseModel <|-- QuickStatementsCommandVersion1
+BaseModel <|-- Items
+Entity <|-- Item
+Item <|-- SparqlItem
 
 @enduml
