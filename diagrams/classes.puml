@@ -153,12 +153,6 @@ class BatchJob {
     run()
 }
 
-class QuickStatementsCommandVersion1 {
-    +target: EntityID = None
-    +property: EntityID = None
-    +value: EntityID = None
-    -__str__()
-}
 Items <|-- AcademicJournalItems
 Items <|-- RiksdagenDocumentItems
 Items <|-- ScholarlyArticleItems
@@ -168,7 +162,6 @@ BaseModel <|-- Task
 BaseModel <|-- Suggestion
 BaseModel <|-- BatchJob
 BaseModel <|-- BatchJobs
-BaseModel <|-- QuickStatementsCommandVersion1
 BaseModel <|-- Items
 Entity <|-- Item
 Item <|-- SparqlItem
