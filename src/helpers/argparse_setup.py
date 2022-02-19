@@ -99,12 +99,6 @@ Example working on all diseases:
         help='When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list'
     )
     parser.add_argument(
-        '--export-job-list-to-quickstatements', '-qs',
-        action='store_true',
-        help='Export the prepared job list to QuickStatements.',
-        default=False
-    )
-    parser.add_argument(
         '--export-jobs-to-dataframe',
         action='store_true',
         help='Export the prepared job list to a Pandas DataFrame.',

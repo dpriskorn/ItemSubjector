@@ -9,9 +9,9 @@ username = ""
 password = ""
 
 # Global settings
+loglevel = logging.WARNING
 wiki_user = "User:Username"  # Change this to your username
 list_of_allowed_aliases: List[str] = []  # Add elements like this ["API"]
-logging.basicConfig(level=logging.WARNING)
 version = "0.2"  # Don't touch this.
 wd_prefix = "http://www.wikidata.org/entity/"
 endpoint = "https://query.wikidata.org/sparql"

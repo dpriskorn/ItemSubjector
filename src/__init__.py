@@ -21,11 +21,12 @@ from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_p
     parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
-from src.models.quickstatements import QuickStatementsCommandVersion1
 from src.models.suggestion import Suggestion
 from src.models.task import Task
 from src.models.wikimedia.wikidata.entiyt_id import EntityId
 from src.tasks import tasks
+
+logging.basicConfig(level=config.loglevel)
 
 
 def login():
@@ -76,7 +77,7 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None):
     if len(main_subjects) > 0:
         console.print(f"Got {len(main_subjects)} results")
         batchjobs = get_validated_main_subjects_as_jobs(args=args,
-                                                   main_subjects=main_subjects)
+                                                        main_subjects=main_subjects)
         handle_job_preparation_or_run_directly_if_any_jobs(args=args, batchjobs=batchjobs)
     else:
         console.print("Got 0 results. Try another query or debug it using --debug")
@@ -85,16 +86,15 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None):
 def export_jobs_to_dataframe():
     logger = logging.getLogger(__name__)
     logger.info("Exporting jobs to DataFrame. All jobs are appended to one frame")
-    jobs = parse_job_pickle()
-    if jobs is not None:
-        number_of_jobs = len(jobs)
-        if jobs is not None and number_of_jobs > 0:
-            logger.info(f"Found {number_of_jobs} jobs")
+    batchjobs = parse_job_pickle()
+    if batchjobs is not None:
+        if batchjobs is not None and batchjobs.job_count > 0:
+            logger.info(f"Found {batchjobs.job_count} jobs")
             df = pd.DataFrame()
             count = 1
-            for job in jobs:
+            for job in batchjobs.jobs:
                 count += 1
-                logger.info(f"Working on job {count}/{number_of_jobs}")
+                logger.info(f"Working on job {count}/{batchjobs.job_count}")
                 job_df = pd.DataFrame()
                 for item in job.items.list:
                     job_df = job_df.append(pd.DataFrame(data=[dict(
@@ -112,37 +112,11 @@ def export_jobs_to_dataframe():
         console.print("No jobs found. Create a job list first by using '--prepare-jobs'")
 
 
-def export_jobs_to_quickstatements():
-    logger = logging.getLogger(__name__)
-    logger.info("Exporting jobs to QuickStatements V1 commands. One file for each job.")
-    jobs = parse_job_pickle()
-    if jobs is not None and len(jobs) > 0:
-        for job in jobs:
-            # Convert all items
-            lines = []
-            for item in job.items.list:
-                line = QuickStatementsCommandVersion1(
-                    target=EntityId(item.id),
-                    property=EntityId("P921"),
-                    value=EntityId(job.suggestion.item.id),
-                )
-                lines.append(line)
-            logger.debug(f"Got {len(lines)} QS lines to export")
-            filename = (f"quickstatements-export-"
-                        f"{job.suggestion.item.id}-"
-                        f"{job.suggestion.item.label}.csv")
-            with open(filename, "w") as file:
-                for line in lines:
-                    file.write(f"{str(line)}\n")
-            console.print(f"Wrote to {filename} in the current directory")
-
-
 def main():
     """This is the main function that makes everything else happen"""
     logger = logging.getLogger(__name__)
     migrate_pickle_detection()
     args = setup_argparse_and_return_args()
-    batchjobs = None
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_job_pickle()
