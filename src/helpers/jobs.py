@@ -156,14 +156,9 @@ def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace 
 
 
 def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
-                                        main_subjects: List[str] = None,
-                                        batchjobs: List[BatchJob] = None) -> List[BatchJob]:
+                                        main_subjects: List[str] = None) -> BatchJobs:
     """This function randomly picks a subject and present it for validation"""
     logger = logging.getLogger(__name__)
-    if batchjobs is None:
-        raise ValueError("jobs was None")
-    if not isinstance(batchjobs, List):
-        raise ValueError("jobs was not a list")
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
@@ -174,6 +169,7 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         raise ValueError("Got no task")
     if not isinstance(task, Task):
         raise ValueError("task was not a Task object")
+    batchjobs = BatchJobs(jobs=[])
     while True:
         # Check if we have any subjects left in the list
         if len(subjects_not_picked_yet) > 0:
@@ -186,14 +182,14 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                        args=args,
                                        confirmation=args.no_confirmation)
             if job is not None:
-                batchjobs.append(job)
-                logger.debug(f"joblist now has {len(batchjobs)} jobs")
+                batchjobs.jobs.append(job)
+                logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
             print_job_statistics(batchjobs=batchjobs)
             if len(subjects_not_picked_yet) > 0:
                 if (
                         args.no_ask_match_more_limit is None or
                         args.no_ask_match_more_limit < sum(
-                    len(job.items.list) for job in batchjobs
+                    len(job.items.list) for job in batchjobs.jobs
                     if job.items.list is not None
                 )
                 ):
