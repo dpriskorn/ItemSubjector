@@ -1,14 +1,19 @@
+from __future__ import annotations
+
 import random
-from typing import List
+from typing import List, TYPE_CHECKING, Optional
 
 from pydantic import BaseModel
 
-from src import Suggestion, Task
+from src.models.task import Task
 from src.models.wikimedia.wikidata.sparql_item import SparqlItem
+
+if TYPE_CHECKING:
+    from src.models.suggestion import Suggestion
 
 
 class Items(BaseModel):
-    list: List[SparqlItem]
+    list: Optional[List[SparqlItem]]
 
     def fetch_based_on_label(self,
                              suggestion: Suggestion = None,

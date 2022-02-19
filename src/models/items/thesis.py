@@ -18,6 +18,8 @@ class ThesisItems(Items):
         # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
+        if suggestion.search_strings is None:
+            raise ValueError("suggestion.search_strings was None")
         if suggestion.args.limit_to_items_without_p921:
             raise Exception("Limiting to items without P921 is not "
                             "supported yet for this task.")

@@ -4,7 +4,7 @@ from typing import List
 from consolemenu import SelectionMenu  # type: ignore
 
 from src.models.suggestion import Suggestion
-from src.models.wikimedia.wikidata import Item
+from src.models.wikimedia.wikidata.item import Item
 from src.tasks import tasks, Task
 
 
@@ -20,6 +20,7 @@ def select_suggestion(suggestions: List[Suggestion] = None,
     selected_suggestion = None
     if selected_index > (len(suggestions) - 1):
         logger.debug("The user choose to skip")
+        return None
     else:
         selected_suggestion = tasks[selected_index]
         logger.debug(f"selected:{selected_index}="

@@ -4,10 +4,10 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.console import console
+from src.models.items import Items
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikimedia.wikidata.item import Item
-from src.models.items import Items
+from src.models.wikimedia.wikidata.sparql_item import SparqlItem
 
 
 class RiksdagenDocumentItems(Items):
@@ -62,8 +62,7 @@ class RiksdagenDocumentItems(Items):
             ''', debug=suggestion.args.debug_sparql)
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
-                item = Item(json=item_json,
-                            task=task)
+                item = SparqlItem(**item_json)
                 self.list.append(item)
             logging.info(f'Got {len(results["results"]["bindings"])} items from '
                          f'WDQS using the search string {search_string}')

@@ -10,8 +10,8 @@ from src import strip_prefix, print_best_practice, console, ask_yes_no_question,
     TaskIds, print_found_items_table, ask_add_to_job_queue, print_keep_an_eye_on_wdqs_lag, print_running_jobs, \
     print_finished, print_job_statistics
 from src.helpers.menus import select_task
-from src.models.items.academic_journals import AcademicJournalItems
 from src.models.items import Items
+from src.models.items.academic_journals import AcademicJournalItems
 from src.models.items.riksdagen_documents import RiksdagenDocumentItems
 from src.models.items.scholarly_articles import ScholarlyArticleItems
 from src.models.items.thesis import ThesisItems
@@ -34,7 +34,7 @@ def process_qid_into_job(qid: str = None,
         raise ValueError("args was None")
     if task is None:
         raise ValueError("task was None")
-    from src.models.wikimedia.wikidata import Item
+    from src.models.wikimedia.wikidata.item import Item
     item = Item(
         id=strip_prefix(qid),
     )
@@ -72,6 +72,8 @@ def process_qid_into_job(qid: str = None,
                 raise ValueError(f"{task.id} was not recognized")
             items.fetch_based_on_label(suggestion=suggestion,
                                        task=task)
+        if items.list is None:
+            raise ValueError("items.list was None")
         if len(items.list) > 0:
             # Randomize the list
             items.random_shuffle_list()
@@ -193,7 +195,10 @@ def get_validated_main_subjects_as_jobs(
             if len(subjects_not_picked_yet) > 0:
                 if (
                         args.no_ask_match_more_limit is None or
-                        args.no_ask_match_more_limit < sum(len(job.items.list) for job in jobs)
+                        args.no_ask_match_more_limit < sum(
+                            len(job.items.list) for job in jobs
+                            if job.items.list is not None
+                        )
                 ):
                     answer_was_yes = ask_yes_no_question("Match one more?")
                     if not answer_was_yes:

@@ -77,6 +77,8 @@ def print_found_items_table(args: argparse.Namespace = None,
         raise ValueError("args was None")
     if items is None:
         raise ValueError("items was None")
+    if items.list is None:
+        raise ValueError("items.list was None")
     table = Table(title="Matched items found")
     if len(items.list) < 1000:
         list_to_show = items.list[0:50]
@@ -122,8 +124,10 @@ def ask_add_to_job_queue(job: BatchJob = None):
 def print_running_jobs(jobs: List[BatchJob] = None):
     if jobs is None:
         raise ValueError("jobs was None")
+    if not isinstance(jobs, list):
+        raise ValueError("jobs is not a list")
     console.print(f"Running {len(jobs)} job(s) with a total of "
-                  f"{sum(len(job.items.list) for job in jobs)} items "
+                  f"{sum(len(job.items.list) for job in jobs if job.items.list is not None)} items "
                   f"non-interactively now. You can take a "
                   f"coffee break and lean back :)")
 

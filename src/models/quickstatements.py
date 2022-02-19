@@ -16,5 +16,8 @@ class QuickStatementsCommandVersion1(BaseModel):
     property: Optional[EntityId] = None
     value: Optional[EntityId] = None
 
+    class Config:
+        arbitrary_types_allowed = True
+
     def __str__(self):
         return f"{self.target}\t{self.property}\t{self.value}"

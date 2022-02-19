@@ -13,7 +13,7 @@ from src.helpers.console import print_search_strings_table, console
 from src.models.batch_job import BatchJob
 from src.models.items import Items
 from src.models.task import Task
-from src.models.wikimedia.wikidata import Item
+from src.models.wikimedia.wikidata.item import Item
 
 
 class Suggestion(BaseModel):
@@ -50,6 +50,8 @@ class Suggestion(BaseModel):
         This function is non-interactive"""
         if items is None:
             raise ValueError("Items was None")
+        if items.list is None:
+            raise ValueError("items.list was None")
         if jobs is None:
             raise ValueError("jobs was None")
         if job_count is None:
