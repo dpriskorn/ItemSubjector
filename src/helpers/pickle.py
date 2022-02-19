@@ -19,14 +19,6 @@ def add_to_job_pickle(job: BatchJob = None):
             pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
 
 
-def add_to_main_subject_pickle(subjects: List[str] = None):
-    if subjects is None:
-        raise ValueError("subjects was None")
-    with open(config.main_subjects_pickle_file_path, 'wb') as file:
-        for qid in subjects:
-            pickle.dump(qid, file, pickle.DEFAULT_PROTOCOL)
-
-
 def read_from_pickle(path):
     with open(path, 'rb') as file:
         try:
@@ -60,23 +52,6 @@ def parse_job_pickle(silent: bool = False) -> Optional[BatchJobs]:
             console.print("No pickle file found")
         return None
 
-
-def parse_main_subjects_pickle() -> Optional[List[str]]:
-    """Reads the pickle into a list of main subjects"""
-    if check_if_pickle_exists(config.main_subjects_pickle_file_path):
-        subjects = []
-        for subject in read_from_pickle(config.main_subjects_pickle_file_path):
-            subjects.append(subject)
-        if len(subjects) == 0:
-            console.print("No qids found in the pickle.")
-            return None
-        else:
-            # print(f"found:{subjects}")
-            return subjects
-    else:
-        console.print("No main subjects pickle file found. "
-                      "Create it by running 'python fetch_main_subjects.py'")
-        exit(0)
 
 def remove_job_pickle(silent: bool = False,
                       hash: str = None):

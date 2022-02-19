@@ -123,8 +123,6 @@ def ask_add_to_job_queue(job: BatchJob = None):
                                f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
 
 
-
-
 def print_finished():
     console.print("All jobs finished successfully")
 
@@ -141,10 +139,9 @@ def print_job_statistics(batchjobs: BatchJobs = None):
     else:
         console.print(f"The jobs list now contain a total of {len(batchjobs.jobs)} "
                       f"jobs with a total of "
-                      f"{sum(len(job.items.list) for job in batchjobs.jobs)} items")
+                      f"{sum(len(job.items.list) for job in batchjobs.jobs if batchjobs.jobs is not None and job is not None)} items")
 
 
 def ask_discard_existing_job_pickle():
     return ask_yes_no_question("A prepared list of jobs already exist, "
-                               "do you want to overwrite it? "
-                               "(pressing no will append to it)")
+                               "do you want to delete it?")

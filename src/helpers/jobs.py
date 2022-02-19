@@ -118,20 +118,6 @@ def process_user_supplied_qids_into_batch_jobs(args: argparse.Namespace = None,
     return jobs
 
 
-def run_jobs(batchjobs: BatchJobs = None):
-    if batchjobs is None:
-        raise ValueError("batchjobs was None")
-    if not isinstance(batchjobs, BatchJobs):
-        raise ValueError("batchjobs was not a BatchJobs object")
-    print_keep_an_eye_on_wdqs_lag()
-    from src import login
-    login()
-    batchjobs.print_running_jobs()
-    start_time = datetime.now()
-    batchjobs.run_jobs()
-    print_finished()
-    end_time = datetime.now()
-    console.print(f'Total runtime: {end_time - start_time}')
 
 
 def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace = None,
@@ -152,7 +138,7 @@ def handle_job_preparation_or_run_directly_if_any_jobs(args: argparse.Namespace 
                           f"Kubernetes cluster using -r or --run-prepared-jobs. "
                           f"See Kubernetes_HOWTO.md for details.")
         else:
-            run_jobs(batchjobs=batchjobs)
+            batchjobs.run_jobs()
 
 
 def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,

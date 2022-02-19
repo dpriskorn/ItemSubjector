@@ -1,6 +1,5 @@
 import argparse
 import logging
-from typing import List
 
 import pandas as pd  # type: ignore
 from wikibaseintegrator import wbi_login, wbi_config  # type: ignore
@@ -13,12 +12,12 @@ from src.helpers.console import console, print_found_items_table, ask_add_to_job
     ask_yes_no_question, print_finished, \
     print_keep_an_eye_on_wdqs_lag, print_best_practice, print_job_statistics, ask_discard_existing_job_pickle
 from src.helpers.enums import TaskIds
-from src.helpers.jobs import process_qid_into_job, process_user_supplied_qids_into_batch_jobs, run_jobs, \
+from src.helpers.jobs import process_qid_into_job, process_user_supplied_qids_into_batch_jobs, \
     handle_job_preparation_or_run_directly_if_any_jobs, get_validated_main_subjects_as_jobs
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
-    parse_main_subjects_pickle, get_hash_of_job_pickle
+    get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
 from src.models.suggestion import Suggestion
@@ -39,19 +38,6 @@ def login():
         )
         # Set User-Agent
         wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
-
-
-def match_existing_main_subjects(args: argparse.Namespace = None,
-                                 jobs: List[BatchJob] = None):
-    if jobs is None:
-        raise ValueError("jobs was None")
-    if not isinstance(jobs, List):
-        raise ValueError("jobs was not a list")
-    with console.status("Reading the main subjects file into memory"):
-        main_subjects = parse_main_subjects_pickle()
-    # raise Exception("debug exit")
-    jobs = get_validated_main_subjects_as_jobs(args=args, main_subjects=main_subjects, batchjobs=jobs)
-    handle_job_preparation_or_run_directly_if_any_jobs(args=args, batchjobs=jobs)
 
 
 def match_main_subjects_from_sparql(args: argparse.Namespace = None):
@@ -125,23 +111,16 @@ def main():
     if args.prepare_jobs is True:
         logger.info("Preparing jobs")
         if check_if_pickle_exists(config.job_pickle_file_path):
-            if not ask_discard_existing_job_pickle():
-                # the default is yes
-                # to avoid running batches multiple times by
-                # mistake (which does not harm Wikidata, but waste
-                # precious computing resources which we want to avoid.)
-                batchjobs = parse_job_pickle(silent=True)
-                if len(batchjobs.jobs) > 0:
-                    console.print(f"Found and loaded {len(batchjobs.jobs)} "
-                                  f"jobs with a total of "
-                                  f"{sum(len(job.items.list) for job in batchjobs.jobs)} items")
-            remove_job_pickle(silent=True)
+            if ask_discard_existing_job_pickle():
+                remove_job_pickle(silent=True)
+            else:
+                console.print("Quitting.")
     if args.run_prepared_jobs is True:
         logger.info("Running prepared jobs")
         batchjobs = parse_job_pickle()
         if batchjobs is not None and len(batchjobs.jobs) > 0:
             file_hash = get_hash_of_job_pickle()
-            run_jobs(batchjobs=batchjobs)
+            batchjobs.run_jobs()
             # Remove the pickle afterwards
             remove_job_pickle(hash=file_hash)
     elif args.export_jobs_to_dataframe:
