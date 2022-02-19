@@ -5,7 +5,7 @@ from consolemenu import SelectionMenu  # type: ignore
 
 from src.models.suggestion import Suggestion
 from src.models.wikimedia.wikidata.item import Item
-from src.tasks import tasks, Task
+from src.tasks import Task
 
 
 def select_suggestion(suggestions: List[Suggestion] = None,
@@ -22,6 +22,7 @@ def select_suggestion(suggestions: List[Suggestion] = None,
         logger.debug("The user choose to skip")
         return None
     else:
+        from src.tasks import tasks
         selected_suggestion = tasks[selected_index]
         logger.debug(f"selected:{selected_index}="
                      f"{selected_suggestion}")
@@ -30,7 +31,10 @@ def select_suggestion(suggestions: List[Suggestion] = None,
 
 def select_task() -> Task:
     logger = logging.getLogger(__name__)
-    menu = SelectionMenu(tasks, "Select a task")
+    from src.tasks import tasks
+    labels = list([task.label for task in tasks])
+    # console.print(labels)
+    menu = SelectionMenu(labels, "Select a task")
     menu.show()
     menu.join()
     task_index = menu.selected_option

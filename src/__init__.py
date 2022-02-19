@@ -9,7 +9,7 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 import config
 from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
-from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, print_running_jobs, \
+from src.helpers.console import console, print_found_items_table, ask_add_to_job_queue, \
     ask_yes_no_question, print_finished, \
     print_keep_an_eye_on_wdqs_lag, print_best_practice, print_job_statistics, ask_discard_existing_job_pickle
 from src.helpers.enums import TaskIds
@@ -20,6 +20,7 @@ from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import parse_job_pickle, remove_job_pickle, add_to_job_pickle, check_if_pickle_exists, \
     parse_main_subjects_pickle, get_hash_of_job_pickle
 from src.models.batch_job import BatchJob
+from src.models.batch_jobs import BatchJobs
 from src.models.quickstatements import QuickStatementsCommandVersion1
 from src.models.suggestion import Suggestion
 from src.models.task import Task
@@ -48,21 +49,14 @@ def match_existing_main_subjects(args: argparse.Namespace = None,
     with console.status("Reading the main subjects file into memory"):
         main_subjects = parse_main_subjects_pickle()
     # raise Exception("debug exit")
-    jobs = get_validated_main_subjects_as_jobs(args=args,
-                                               main_subjects=main_subjects,
-                                               jobs=jobs)
-    handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
+    jobs = get_validated_main_subjects_as_jobs(args=args, main_subjects=main_subjects, batchjobs=jobs)
+    handle_job_preparation_or_run_directly_if_any_jobs(args=args, batchjobs=jobs)
 
 
-def match_main_subjects_from_sparql(args: argparse.Namespace = None,
-                                    jobs: List[BatchJob] = None):
+def match_main_subjects_from_sparql(args: argparse.Namespace = None):
     """Collect subjects via SPARQL and call get_validated_main_subjects()
     If we get any validated jobs we handle them"""
     logger = logging.getLogger(__name__)
-    if jobs is None:
-        raise ValueError("jobs was None")
-    if not isinstance(jobs, List):
-        raise ValueError("jobs was not a list")
     if args is None or args.sparql is None:
         raise ValueError("args.sparql was None")
     if "P1889" not in args.sparql:
@@ -81,12 +75,9 @@ def match_main_subjects_from_sparql(args: argparse.Namespace = None,
             main_subjects.append(item_json["item"]["value"])
     if len(main_subjects) > 0:
         console.print(f"Got {len(main_subjects)} results")
-        jobs = get_validated_main_subjects_as_jobs(
-            args=args,
-            main_subjects=main_subjects,
-            jobs=jobs
-        )
-        handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
+        batchjobs = get_validated_main_subjects_as_jobs(args=args,
+                                                   main_subjects=main_subjects)
+        handle_job_preparation_or_run_directly_if_any_jobs(args=args, batchjobs=batchjobs)
     else:
         console.print("Got 0 results. Try another query or debug it using --debug")
 
@@ -150,8 +141,8 @@ def main():
     """This is the main function that makes everything else happen"""
     logger = logging.getLogger(__name__)
     migrate_pickle_detection()
-    jobs: List[BatchJob] = []
     args = setup_argparse_and_return_args()
+    batchjobs = None
     # console.print(args.list)
     if args.remove_prepared_jobs is True:
         remove_job_pickle()
@@ -165,28 +156,24 @@ def main():
                 # to avoid running batches multiple times by
                 # mistake (which does not harm Wikidata, but waste
                 # precious computing resources which we want to avoid.)
-                jobs = parse_job_pickle(silent=True)
-                if len(jobs) > 0:
-                    console.print(f"Found and loaded {len(jobs)} "
+                batchjobs = parse_job_pickle(silent=True)
+                if len(batchjobs.jobs) > 0:
+                    console.print(f"Found and loaded {len(batchjobs.jobs)} "
                                   f"jobs with a total of "
-                                  f"{sum(len(job.items.list) for job in jobs)} items")
+                                  f"{sum(len(job.items.list) for job in batchjobs.jobs)} items")
             remove_job_pickle(silent=True)
     if args.run_prepared_jobs is True:
         logger.info("Running prepared jobs")
-        jobs = parse_job_pickle()
-        if jobs is not None and len(jobs) > 0:
+        batchjobs = parse_job_pickle()
+        if batchjobs is not None and len(batchjobs.jobs) > 0:
             file_hash = get_hash_of_job_pickle()
-            run_jobs(jobs)
+            run_jobs(batchjobs=batchjobs)
             # Remove the pickle afterwards
             remove_job_pickle(hash=file_hash)
-    if args.export_job_list_to_quickstatements:
-        export_jobs_to_quickstatements()
     elif args.export_jobs_to_dataframe:
         export_jobs_to_dataframe()
-    elif args.match_existing_main_subjects is True:
-        match_existing_main_subjects(args=args, jobs=jobs)
     elif args.sparql:
-        match_main_subjects_from_sparql(args=args, jobs=jobs)
+        match_main_subjects_from_sparql(args=args)
     else:
         # if not args.run_prepared_jobs:
         if args.add is None:
@@ -195,8 +182,10 @@ def main():
         task: Task = select_task()
         if task is None:
             raise ValueError("Got no task")
+        jobs = []
         jobs.extend(process_user_supplied_qids_into_batch_jobs(args=args, task=task))
-        handle_job_preparation_or_run_directly_if_any_jobs(args=args, jobs=jobs)
+        batchjobs = BatchJobs(jobs=jobs)
+        handle_job_preparation_or_run_directly_if_any_jobs(args=args, batchjobs=batchjobs)
 
 
 if __name__ == "__main__":

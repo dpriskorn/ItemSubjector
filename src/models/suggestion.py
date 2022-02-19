@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import argparse
 import logging
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from urllib.parse import quote
 
 from pydantic import BaseModel
@@ -9,11 +11,12 @@ from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
 import config
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
-from src.helpers.console import print_search_strings_table, console
-from src.models.batch_job import BatchJob
 from src.models.items import Items
 from src.models.task import Task
 from src.models.wikimedia.wikidata.item import Item
+
+if TYPE_CHECKING:
+    from src.models.batch_job import BatchJob
 
 
 class Suggestion(BaseModel):
@@ -60,6 +63,7 @@ class Suggestion(BaseModel):
         count = 0
         for target_item in items.list:
             count += 1
+            from src import console
             with console.status(f"Uploading main subject "
                                 f"[green]{clean_rich_formatting(self.item.label)}[/green] "
                                 f"to {clean_rich_formatting(target_item.label)}"):
@@ -87,12 +91,14 @@ class Suggestion(BaseModel):
         def clean_special_symbols(string: str):
             return string.replace("®", "").replace("™", "")
 
+        from src.helpers.console import console
         logger = logging.getLogger(__name__)
         if self.args is None:
             raise ValueError("args was None")
         else:
             logger.debug(f"args:{self.args}")
             if self.args.no_aliases is True:
+                from src import console
                 console.print("Alias matching is turned off")
                 no_aliases = True
             else:
@@ -112,6 +118,7 @@ class Suggestion(BaseModel):
                 else:
                     self.search_strings.append(clean_special_symbols(alias))
         # logger.debug(f"search_strings:{self.search_strings}")
+        from src.helpers.console import print_search_strings_table
         print_search_strings_table(args=self.args,
                                    search_strings=self.search_strings)
 

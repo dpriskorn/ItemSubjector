@@ -8,6 +8,8 @@ from src.helpers.console import console
 from src.models.batch_job import BatchJob
 
 # TODO rewrite as OOP
+from src.models.batch_jobs import BatchJobs
+
 
 def add_to_job_pickle(job: BatchJob = None):
     if job is None:
@@ -41,7 +43,7 @@ def check_if_pickle_exists(path):
         return False
 
 
-def parse_job_pickle(silent: bool = False) -> Optional[List[BatchJob]]:
+def parse_job_pickle(silent: bool = False) -> Optional[BatchJobs]:
     """Reads the pickle into a list of batch jobs"""
     if check_if_pickle_exists(config.job_pickle_file_path):
         jobs: List[BatchJob] = []
@@ -52,7 +54,7 @@ def parse_job_pickle(silent: bool = False) -> Optional[List[BatchJob]]:
                 console.print("No prepared jobs found")
             return None
         else:
-            return jobs
+            return BatchJobs(jobs=jobs)
     else:
         if not silent:
             console.print("No pickle file found")

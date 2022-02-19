@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import argparse
 from typing import List, TYPE_CHECKING
 from urllib.parse import quote
@@ -8,6 +9,7 @@ from rich.table import Table
 
 from src.helpers.cleaning import clean_rich_formatting
 from src.models.batch_job import BatchJob
+from src.models.batch_jobs import BatchJobs
 
 if TYPE_CHECKING:
     from src.models.items import Items
@@ -116,35 +118,30 @@ def ask_add_to_job_queue(job: BatchJob = None):
     if job.items.list is None:
         raise ValueError("job.items.list was None")
     return ask_yes_no_question(f"Do you want to add this job for "
-                                   f"[magenta]{job.suggestion.item.label}: "
-                                   f"{job.suggestion.item.description}[/magenta] with "
-                                   f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
+                               f"[magenta]{job.suggestion.item.label}: "
+                               f"{job.suggestion.item.description}[/magenta] with "
+                               f"{len(job.items.list)} items to the queue? (see {job.suggestion.item.url()})")
 
 
-def print_running_jobs(jobs: List[BatchJob] = None):
-    if jobs is None:
-        raise ValueError("jobs was None")
-    if not isinstance(jobs, list):
-        raise ValueError("jobs is not a list")
-    console.print(f"Running {len(jobs)} job(s) with a total of "
-                  f"{sum(len(job.items.list) for job in jobs if job.items.list is not None)} items "
-                  f"non-interactively now. You can take a "
-                  f"coffee break and lean back :)")
 
 
 def print_finished():
     console.print("All jobs finished successfully")
 
 
-def print_job_statistics(jobs: List[BatchJob] = None):
-    if jobs is None:
+def print_job_statistics(batchjobs: BatchJobs = None):
+    if batchjobs is None:
         raise ValueError("jobs was None")
-    if len(jobs) == 0:
+    if batchjobs.jobs is None:
+        raise ValueError("batchjobs.jobs was None")
+    if not isinstance(batchjobs.jobs, list):
+        raise ValueError("jobs was not a list")
+    if len(batchjobs.jobs) == 0:
         console.print("The jobs list is empty")
     else:
-        console.print(f"The jobs list now contain a total of {len(jobs)} "
+        console.print(f"The jobs list now contain a total of {len(batchjobs.jobs)} "
                       f"jobs with a total of "
-                      f"{sum(len(job.items.list) for job in jobs)} items")
+                      f"{sum(len(job.items.list) for job in batchjobs.jobs)} items")
 
 
 def ask_discard_existing_job_pickle():

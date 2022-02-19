@@ -140,11 +140,19 @@ class Task {
     __str__()
 }
 
+class BatchJobs {
+job_count
+jobs: List[BatchJob]
+print_running_jobs()
+run_jobs()
+}
+
 class BatchJob {
     +suggestion: Suggestion
     +items: Items
     run()
 }
+
 class QuickStatementsCommandVersion1 {
     +target: EntityID = None
     +property: EntityID = None
@@ -159,6 +167,7 @@ BaseModel <|-- Entity
 BaseModel <|-- Task
 BaseModel <|-- Suggestion
 BaseModel <|-- BatchJob
+BaseModel <|-- BatchJobs
 BaseModel <|-- QuickStatementsCommandVersion1
 BaseModel <|-- Items
 Entity <|-- Item
