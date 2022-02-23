@@ -76,6 +76,10 @@ def process_qid_into_job(qid: str = None,
         if items.list is None:
             raise ValueError("items.list was None")
         if len(items.list) > 0:
+            # Remove duplicates
+            logger.info(f"{len(items.list)} before duplicate removal")
+            items.list = list(set(items.list))
+            logger.info(f"{len(items.list)} after duplicate removal")
             # Randomize the list
             items.random_shuffle_list()
             print_found_items_table(args=args,
