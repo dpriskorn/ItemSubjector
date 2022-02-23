@@ -17,6 +17,12 @@ class Entity(BaseModel):
     id: Optional[str]
     label: Optional[str]
 
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(('id', self.id))
+
     def upload_one_statement_to_wikidata(self,
                                          statement: BaseDataType = None,
                                          summary: str = None,
