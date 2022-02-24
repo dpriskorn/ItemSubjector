@@ -11,9 +11,7 @@ from src.models.wikimedia.wikidata.sparql_item import SparqlItem
 
 
 class RiksdagenDocumentItems(Items):
-    def fetch_based_on_label(self,
-                             suggestion: Suggestion = None,
-                             task: Task = None):
+    def fetch_based_on_label(self, suggestion: Suggestion = None, task: Task = None):
         # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
@@ -22,8 +20,9 @@ class RiksdagenDocumentItems(Items):
         if suggestion.args is None:
             raise ValueError("suggestion.args was None")
         if suggestion.args.limit_to_items_without_p921:
-            raise Exception("Limiting to items without P921 is not "
-                            "supported yet for this task.")
+            raise Exception(
+                "Limiting to items without P921 is not " "supported yet for this task."
+            )
         if suggestion.search_strings is None:
             raise ValueError("suggestion.search_strings was None")
         if task is None:
@@ -36,7 +35,8 @@ class RiksdagenDocumentItems(Items):
         # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
         # Lowercase is not needed here as Elastic matches anyway
         for search_string in suggestion.search_strings:
-            results = execute_sparql_query(f'''
+            results = execute_sparql_query(
+                f"""
             #{config.user_agent}
             SELECT DISTINCT ?item ?itemLabel 
             WHERE {{
@@ -59,11 +59,15 @@ class RiksdagenDocumentItems(Items):
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "sv". }}
             }}
-            ''', debug=suggestion.args.debug_sparql)
+            """,
+                debug=suggestion.args.debug_sparql,
+            )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
                 item = SparqlItem(**item_json)
                 self.list.append(item)
-            logging.info(f'Got {len(results["results"]["bindings"])} items from '
-                         f'WDQS using the search string {search_string}')
+            logging.info(
+                f'Got {len(results["results"]["bindings"])} items from '
+                f"WDQS using the search string {search_string}"
+            )
         console.print(f"Got a total of {len(self.list)} items")

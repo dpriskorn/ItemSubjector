@@ -10,6 +10,7 @@ class Value(BaseModel):
 
 class SparqlItem(Item):
     """This class models the data we get from SPARQL"""
+
     item: Value
     itemLabel: Value
 

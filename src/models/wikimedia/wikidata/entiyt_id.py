@@ -3,14 +3,14 @@ import logging
 import config
 from src.models.wikimedia.wikidata.enums import WikidataNamespaceLetters
 
+
 # TODO convert this to special constr type with a validator
 class EntityId:
     letter: WikidataNamespaceLetters
     # This can be e.g. "32698-F1" in the case of a lexeme
     rest: str
 
-    def __init__(self,
-                 entity_id: str):
+    def __init__(self, entity_id: str):
         logger = logging.getLogger(__name__)
         if entity_id is not None:
             # Remove prefix if found

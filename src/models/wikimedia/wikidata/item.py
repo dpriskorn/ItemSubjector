@@ -8,21 +8,21 @@ import config
 from src.models.task import Task
 from src.models.wikimedia.wikidata.entity import Entity
 
-wbi_config.config['USER_AGENT'] = config.user_agent
+wbi_config.config["USER_AGENT"] = config.user_agent
 
 
 class Item(Entity):
     """This represents an item in Wikidata
     We always work on one language at a time,
     so we don't bother with languages here and keep to simple strings"""
+
     description: Optional[str] = None
     aliases: Optional[List[str]] = None
 
     def __str__(self):
         return f"{self.label}, see {self.url()}"
 
-    def fetch_label_and_description_and_aliases(self,
-                                                task: Task = None):
+    def fetch_label_and_description_and_aliases(self, task: Task = None):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if task is None:
             raise ValueError("task was None")
@@ -31,7 +31,10 @@ class Item(Entity):
         if task.language_code is None:
             raise ValueError("task.language_code was None")
         from src.helpers.console import console
-        with console.status(f"Fetching {task.language_code.name.title()} label and aliases from the Wikidata API..."):
+
+        with console.status(
+            f"Fetching {task.language_code.name.title()} label and aliases from the Wikidata API..."
+        ):
             wbi = WikibaseIntegrator()
             item = wbi.item.get(self.id)
             label = item.labels.get(task.language_code.value)

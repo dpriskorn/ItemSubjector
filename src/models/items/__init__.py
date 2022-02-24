@@ -15,11 +15,8 @@ if TYPE_CHECKING:
 class Items(BaseModel):
     list: Optional[List[SparqlItem]]
 
-    def fetch_based_on_label(self,
-                             suggestion: Suggestion = None,
-                             task: Task = None):
+    def fetch_based_on_label(self, suggestion: Suggestion = None, task: Task = None):
         pass
 
     def random_shuffle_list(self):
         random.shuffle(self.list)
-

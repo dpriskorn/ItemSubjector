@@ -8,10 +8,12 @@ class ForeignID:
     property: Optional[str]  # This is the property with type ExternalId
     source_item_id: Optional[str]  # This is the Q-item for the source
 
-    def __init__(self,
-                 id: Optional[str] = None,
-                 property: Optional[str] = None,
-                 source_item_id: Optional[str] = None):
+    def __init__(
+        self,
+        id: Optional[str] = None,
+        property: Optional[str] = None,
+        source_item_id: Optional[str] = None,
+    ):
         self.id = id
         if property is None:
             raise ValueError("property was None")

@@ -5,18 +5,16 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 import config
 from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
+from src.models.items import Items
 from src.models.suggestion import Suggestion
 from src.models.task import Task
 from src.models.wikimedia.wikidata.item import Item
-from src.models.items import Items
 
 
 class AcademicJournalItems(Items):
     """This supports both published peer reviewed articles and preprints"""
 
-    def fetch_based_on_label(self,
-                             suggestion: Suggestion = None,
-                             task: Task = None):
+    def fetch_based_on_label(self, suggestion: Suggestion = None, task: Task = None):
         def process_results(results):
             # TODO refactor into private method
             items = []
@@ -45,7 +43,8 @@ class AcademicJournalItems(Items):
         self.list = []
         for search_string in suggestion.search_strings:
             search_string = strip_bad_chars(search_string)
-            results = execute_sparql_query(f"""
+            results = execute_sparql_query(
+                f"""
             #{config.user_agent}
             SELECT ?item ?itemLabel
             WHERE 
@@ -64,8 +63,11 @@ class AcademicJournalItems(Items):
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
             """,
-                                           debug=suggestion.args.debug_sparql)
-            logging.info(f'Got {len(results["results"]["bindings"])} academic journal items from '
-                         f'WDQS using the search string {search_string}')
+                debug=suggestion.args.debug_sparql,
+            )
+            logging.info(
+                f'Got {len(results["results"]["bindings"])} academic journal items from '
+                f"WDQS using the search string {search_string}"
+            )
             self.list.extend(process_results(results))
         console.print(f"Got a total of {len(self.list)} items")
