@@ -1,6 +1,5 @@
 import logging
 import tempfile
-from pathlib import Path
 
 # Add your botpassword and login here:
 from typing import List
