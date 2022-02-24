@@ -77,9 +77,9 @@ def process_qid_into_job(qid: str = None,
             raise ValueError("items.list was None")
         if len(items.list) > 0:
             # Remove duplicates
-            logger.info(f"{len(items.list)} before duplicate removal")
+            logger.warning(f"{len(items.list)} before duplicate removal")
             items.list = list(set(items.list))
-            logger.info(f"{len(items.list)} after duplicate removal")
+            logger.warning(f"{len(items.list)} after duplicate removal")
             # Randomize the list
             items.random_shuffle_list()
             print_found_items_table(args=args,
@@ -89,11 +89,7 @@ def process_qid_into_job(qid: str = None,
                 items=items,
                 suggestion=suggestion
             )
-            answer = ask_add_to_job_queue(job)
-            if answer:
-                return job
-            else:
-                return None
+            return job
         else:
             console.print("No matching items found")
             return None
@@ -172,7 +168,12 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
                                        args=args,
                                        confirmation=args.no_confirmation)
             if job is not None:
-                batchjobs.jobs.append(job)
+                if args.no_ask_match_more_limit is None:
+                    answer = ask_add_to_job_queue(job)
+                    if answer:
+                        batchjobs.jobs.append(job)
+                else:
+                    batchjobs.jobs.append(job)
                 logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
             print_job_statistics(batchjobs=batchjobs)
             if len(subjects_not_picked_yet) > 0:
@@ -192,4 +193,11 @@ def get_validated_main_subjects_as_jobs(args: argparse.Namespace = None,
         else:
             console.print("No more subjects in the list. Exiting.")
             break
+    if args.no_ask_match_more_limit is not None:
+        batchjobs_limit = BatchJobs(jobs=[])
+        for job in batchjobs.jobs:
+            answer = ask_add_to_job_queue(job)
+            if answer:
+                batchjobs_limit.jobs.append(job)
+        return batchjobs_limit
     return batchjobs
