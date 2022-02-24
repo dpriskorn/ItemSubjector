@@ -4,7 +4,7 @@ from src.models.task import Task
 # When adding a new task, also add it in the enum
 
 tasks = [
-    Task(
+    Task(**dict(
         id=TaskIds.SCHOLARLY_ARTICLES,
         label="Add main subject to scholarly articles and preprints",
         language_code=SupportedLanguageCode.ENGLISH,
@@ -22,14 +22,14 @@ tasks = [
             "sub forms of screening have been matched."
         ),
         number_of_queries_per_search_string=2
-    ),
-    Task(
+    )),
+    Task(**dict(
         id=TaskIds.RIKSDAGEN_DOCUMENTS,
         label="Add main subject to documents from Riksdagen",
         language_code=SupportedLanguageCode.SWEDISH,
         best_practice_information=None
-    ),
-    Task(
+    )),
+    Task(**dict(
         id=TaskIds.THESIS,
         label="Add main subject to thesis' and technical reports",
         language_code=SupportedLanguageCode.ENGLISH,
@@ -46,11 +46,11 @@ tasks = [
             "avoid the more general 'cancer screening' until all "
             "sub forms of screening have been matched."
         ),
-    ),
-    Task(
+    )),
+    Task(**dict(
             id=TaskIds.ACADEMIC_JOURNALS,
             label="Add main subject to academic journals",
             language_code=SupportedLanguageCode.ENGLISH,
             best_practice_information=None
-    ),
+    )),
 ]

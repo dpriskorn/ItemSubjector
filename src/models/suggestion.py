@@ -1,40 +1,32 @@
+from __future__ import annotations
+
 import argparse
 import logging
-from typing import List
+from typing import List, Optional, TYPE_CHECKING
 from urllib.parse import quote
 
-from wikibaseintegrator.datatypes import Item as ItemType
+from pydantic import BaseModel
+from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
 
 import config
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
-from src.helpers.console import print_search_strings_table, console
-from src.helpers.enums import TaskIds
-from src.models.batch_job import BatchJob
+from src.models.items import Items
 from src.models.task import Task
-from src.models.wikidata import Item, Items
+from src.models.wikimedia.wikidata.item import Item
+
+if TYPE_CHECKING:
+    from src.models.batch_job import BatchJob
 
 
-class Suggestion:
-    item: Item = None
-    search_strings: List[str] = None
-    task: Task = None
-    args: argparse.Namespace = None
+class Suggestion(BaseModel):
+    item: Item
+    task: Task
+    args: argparse.Namespace
+    search_strings: Optional[List[str]] = None
 
-    def __init__(self,
-                 item: Item = None,
-                 task: Task = None,
-                 args=None):
-        if item is None:
-            raise ValueError("item was None")
-        else:
-            self.item = item
-        if task is None:
-            raise ValueError("task was None")
-        else:
-            self.task = task
-            self.args = args
-            self.extract_search_strings()
+    class Config:
+        arbitrary_types_allowed = True
 
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
@@ -61,6 +53,8 @@ class Suggestion:
         This function is non-interactive"""
         if items is None:
             raise ValueError("Items was None")
+        if items.list is None:
+            raise ValueError("items.list was None")
         if jobs is None:
             raise ValueError("jobs was None")
         if job_count is None:
@@ -69,6 +63,7 @@ class Suggestion:
         count = 0
         for target_item in items.list:
             count += 1
+            from src import console
             with console.status(f"Uploading main subject "
                                 f"[green]{clean_rich_formatting(self.item.label)}[/green] "
                                 f"to {clean_rich_formatting(target_item.label)}"):
@@ -96,20 +91,22 @@ class Suggestion:
         def clean_special_symbols(string: str):
             return string.replace("®", "").replace("™", "")
 
+        from src.helpers.console import console
         logger = logging.getLogger(__name__)
         if self.args is None:
             raise ValueError("args was None")
         else:
             logger.debug(f"args:{self.args}")
             if self.args.no_aliases is True:
+                from src import console
                 console.print("Alias matching is turned off")
                 no_aliases = True
             else:
                 no_aliases = False
         self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
         if (
-            self.item.aliases is not None and
-            no_aliases is False
+                self.item.aliases is not None and
+                no_aliases is False
         ):
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
@@ -121,10 +118,13 @@ class Suggestion:
                 else:
                     self.search_strings.append(clean_special_symbols(alias))
         # logger.debug(f"search_strings:{self.search_strings}")
+        from src.helpers.console import print_search_strings_table
         print_search_strings_table(args=self.args,
                                    search_strings=self.search_strings)
 
     def search_urls(self) -> List[str]:
+        if self.search_strings is None:
+            raise ValueError("self.search_strings was None")
         urls = []
         for search_string in self.search_strings:
             search_term = quote(f'"{search_string}"')

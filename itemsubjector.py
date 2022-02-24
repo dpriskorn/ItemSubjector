@@ -1,6 +1,6 @@
 import logging
 
-from src import *
+import src
 
 logging.basicConfig(level=logging.DEBUG)
-main()
+src.main()

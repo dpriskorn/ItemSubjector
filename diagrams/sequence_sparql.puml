@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor User
+'cloud Wikidata
+User -> ItemSubjector : start script
+alt "arguments: sparql && limit"
+    ItemSubjector -> Wikidata : fetch subjects
+    Wikidata -> ItemSubjector : response
+    loop "for each item in list"
+        alt "below limit"
+            ItemSubjector -> Wikidata : fetch details about the item
+            Wikidata -> ItemSubjector : response
+            ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
+            Wikidata -> ItemSubjector : response
+            ItemSubjector -> User : present max 50 items
+            ItemSubjector -> User : ask for approval of batch
+            ItemSubjector -> User : show count of batches and matches in the job list in memory
+        end
+        alt "above limit"
+            ItemSubjector -> User : ask before continuing
+        end
+    end
+    alt "user choose not to continue"
+        ItemSubjector -> Wikidata : Upload main subjects to all matches
+    end
+end
+alt "arguments: sparql && limit && prepare-jobs"
+    ItemSubjector -> Wikidata : fetch subjects
+    Wikidata -> ItemSubjector : response
+    loop "for each item in list"
+        alt "below limit"
+            ItemSubjector -> Wikidata : fetch details about the item
+            Wikidata -> ItemSubjector : response
+            ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
+            Wikidata -> ItemSubjector : response
+            ItemSubjector -> User : present max 50 items
+            ItemSubjector -> User : ask for approval of batch
+            ItemSubjector -> User : show count of batches and matches in the job list in memory
+        end
+        alt "above limit"
+            ItemSubjector -> User : ask before continuing
+        end
+    end
+    alt "user choose not to continue"
+        ItemSubjector -> Wikidata : save to job list on disk
+    end
+end
+@enduml

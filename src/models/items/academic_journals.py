@@ -1,22 +1,14 @@
 import logging
 
-from wikibaseintegrator.wbi_helpers import execute_sparql_query
+from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.cleaning import strip_bad_chars
 from src.helpers.console import console
 from src.models.suggestion import Suggestion
 from src.models.task import Task
-from src.models.wikidata import Items, Item
-
-
-def process_results(results):
-    items = []
-    for item_json in results["results"]["bindings"]:
-        logging.debug(f"item_json:{item_json}")
-        item = Item(json=item_json)
-        items.append(item)
-    return items
+from src.models.wikimedia.wikidata.item import Item
+from src.models.items import Items
 
 
 class AcademicJournalItems(Items):
@@ -25,11 +17,30 @@ class AcademicJournalItems(Items):
     def fetch_based_on_label(self,
                              suggestion: Suggestion = None,
                              task: Task = None):
+        def process_results(results):
+            # TODO refactor into private method
+            items = []
+            for item_json in results["results"]["bindings"]:
+                logging.debug(f"item_json:{item_json}")
+                item = Item(json=item_json)
+                items.append(item)
+            return items
+
         # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
         if task is None:
             raise ValueError("task was None")
+        if task.language_code is None:
+            raise ValueError("task.language_code was None")
+        if suggestion.search_strings is None:
+            raise ValueError("suggestion.search_strings was None")
+        if suggestion.item is None:
+            raise ValueError("suggestion.item was None")
+        if suggestion.item.id is None:
+            raise ValueError("suggestion.item.id was None")
+        if suggestion.args is None:
+            raise ValueError("suggestion.args was None")
         # Fetch all items matching the search strings
         self.list = []
         for search_string in suggestion.search_strings:
