@@ -114,7 +114,7 @@ def ask_add_to_job_queue(job: BatchJob = None):
     if job.suggestion.item.label is None:
         raise ValueError("job.suggestion.item.label was None")
     if job.suggestion.item.description is None:
-        raise ValueError("job.suggestion.item.description was None")
+        job.suggestion.item.description = ""
     if job.items.list is None:
         raise ValueError("job.items.list was None")
     return ask_yes_no_question(f"Do you want to add this job for "
