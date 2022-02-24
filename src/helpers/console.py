@@ -148,7 +148,7 @@ def print_job_statistics(batchjobs: BatchJobs = None):
         console.print("The jobs list is empty")
     else:
         console.print(
-            f"The jobs list now contain a total of {len(batchjobs.jobs)} "
+            f"The jobs list now contain a total of {len(batchjobs.jobs)} "  # type: ignore
             f"jobs with a total of "
             f"{sum(len(job.items.list) for job in batchjobs.jobs if batchjobs.jobs is not None and job is not None)} items"
         )

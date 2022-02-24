@@ -18,7 +18,7 @@ def select_suggestion(suggestions: List[Suggestion] = None, item: Item = None):
     menu.show()
     menu.join()
     selected_index = menu.selected_option
-    selected_suggestion = None
+    # selected_suggestion = None
     if selected_index > (len(suggestions) - 1):
         logger.debug("The user choose to skip")
         return None
