@@ -22,3 +22,4 @@ class Items(BaseModel):
 
     def random_shuffle_list(self):
         random.shuffle(self.list)
+
