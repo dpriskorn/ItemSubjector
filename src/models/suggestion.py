@@ -112,6 +112,8 @@ class Suggestion(BaseModel):
                 no_aliases = True
             else:
                 no_aliases = False
+        if self.item.label is None:
+            raise ValueError("self.item.label was None")
         self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
         if self.item.aliases is not None and no_aliases is False:
             for alias in self.item.aliases:
@@ -126,6 +128,8 @@ class Suggestion(BaseModel):
                     self.search_strings.append(clean_special_symbols(alias))
                 else:
                     self.search_strings.append(clean_special_symbols(alias))
+
+    def print_search_strings(self):
         # logger.debug(f"search_strings:{self.search_strings}")
         from src.helpers.console import print_search_strings_table
 

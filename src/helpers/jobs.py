@@ -11,7 +11,6 @@ from src import (
     console,
     ask_yes_no_question,
     TaskIds,
-    print_found_items_table,
     ask_add_to_job_queue,
     print_job_statistics,
 )
@@ -60,6 +59,7 @@ def process_qid_into_job(
             if not answer:
                 return None
         suggestion.extract_search_strings()
+        suggestion.print_search_strings()
         if suggestion.search_strings is None:
             raise ValueError("suggestion.search_strings was None")
         with console.status(
@@ -89,7 +89,6 @@ def process_qid_into_job(
             logger.warning(f"{len(items.list)} after duplicate removal")
             # Randomize the list
             items.random_shuffle_list()
-            print_found_items_table(args=args, items=items)
             from src import BatchJob
 
             job = BatchJob(items=items, suggestion=suggestion)
@@ -152,7 +151,6 @@ def get_validated_main_subjects_as_jobs(
     args: argparse.Namespace = None, main_subjects: List[str] = None
 ) -> BatchJobs:
     """This function randomly picks a subject and present it for validation"""
-    logger = logging.getLogger(__name__)
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
@@ -172,13 +170,14 @@ def get_validated_main_subjects_as_jobs(
             subjects_not_picked_yet.remove(qid)
             job = process_qid_into_job(
                 qid=qid,
-                # The scientific article task is hardcoded for now
                 task=task,
                 args=args,
                 confirmation=args.no_confirmation,
             )
             if job is not None:
                 if args.no_ask_match_more_limit is None:
+                    job.items.print_items_list(args=args)
+                    job.suggestion.print_search_strings()
                     answer = ask_add_to_job_queue(job)
                     if answer:
                         batchjobs.jobs.append(job)
@@ -208,6 +207,8 @@ def get_validated_main_subjects_as_jobs(
     if args.no_ask_match_more_limit is not None:
         batchjobs_limit = BatchJobs(jobs=[])
         for job in batchjobs.jobs:
+            job.items.print_items_list(args=args)
+            job.suggestion.print_search_strings()
             answer = ask_add_to_job_queue(job)
             if answer:
                 batchjobs_limit.jobs.append(job)
