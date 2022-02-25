@@ -9,11 +9,12 @@ from wikibaseintegrator.wbi_enums import ActionIfExists  # type: ignore
 
 import config
 
-wbi_config.config['USER_AGENT'] = config.user_agent
+wbi_config.config["USER_AGENT"] = config.user_agent
 
 
 class Entity(BaseModel):
     """Base entity with code that is the same for both items and lexemes"""
+
     id: Optional[str]
     label: Optional[str]
 
@@ -23,12 +24,14 @@ class Entity(BaseModel):
         return self.id == other.id
 
     def __hash__(self):
-        return hash(('id', self.id))
+        return hash(("id", self.id))
 
-    def upload_one_statement_to_wikidata(self,
-                                         statement: BaseDataType = None,
-                                         summary: str = None,
-                                         editgroups_hash: str = None):
+    def upload_one_statement_to_wikidata(
+        self,
+        statement: BaseDataType = None,
+        summary: str = None,
+        editgroups_hash: str = None,
+    ):
         """Upload one statement and always append
         This mandates an editgroups hash to be supplied"""
         logger = logging.getLogger(__name__)
@@ -44,12 +47,10 @@ class Entity(BaseModel):
             raise ValueError("No login instance in config.login_instance")
         wbi = WikibaseIntegrator(login=config.login_instance)
         item = wbi.item.get(self.id)
-        item.add_claims(
-            [statement],
-            action_if_exists=ActionIfExists.APPEND)
+        item.add_claims([statement], action_if_exists=ActionIfExists.APPEND)
         result = item.write(
             summary=f"Added {summary} with [[{config.tool_wikipage}]] "
-                    f"([[:toolforge:editgroups/b/CB/{editgroups_hash}|details]])"
+            f"([[:toolforge:editgroups/b/CB/{editgroups_hash}|details]])"
         )
         logger.debug(f"result from WBI:{result}")
 

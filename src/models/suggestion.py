@@ -41,10 +41,9 @@ class Suggestion(BaseModel):
                 string = string + f"{url}\n"
             return string
 
-    def add_to_items(self,
-                     items: Items = None,
-                     jobs: List[BatchJob] = None,
-                     job_count: int = None):
+    def add_to_items(
+        self, items: Items = None, jobs: List[BatchJob] = None, job_count: int = None
+    ):
         """Add a suggested QID as main subject on all items that
         have a label that matches one of the search strings for this QID
         We calculate a new edit group hash each time this function is
@@ -64,27 +63,30 @@ class Suggestion(BaseModel):
         for target_item in items.list:
             count += 1
             from src import console
-            with console.status(f"Uploading main subject "
-                                f"[green]{clean_rich_formatting(self.item.label)}[/green] "
-                                f"to {clean_rich_formatting(target_item.label)}"):
+
+            with console.status(
+                f"Uploading main subject "
+                f"[green]{clean_rich_formatting(self.item.label)}[/green] "
+                f"to {clean_rich_formatting(target_item.label)}"
+            ):
                 main_subject_property = "P921"
                 reference = ItemType(
                     "Q69652283",  # inferred from title
-                    prop_nr="P887"  # based on heuristic
+                    prop_nr="P887",  # based on heuristic
                 )
                 statement = ItemType(
-                    self.item.id,
-                    prop_nr=main_subject_property,
-                    references=[reference]
+                    self.item.id, prop_nr=main_subject_property, references=[reference]
                 )
                 target_item.upload_one_statement_to_wikidata(
                     statement=statement,
                     summary=f"[[Property:{main_subject_property}]]: [[{self.item.id}]]",
-                    editgroups_hash=editgroups_hash
+                    editgroups_hash=editgroups_hash,
                 )
-            console.print(f"(job {job_count}/{len(jobs)})(item {count}/{len(items.list)}) "
-                          f"Added '{clean_rich_formatting(self.item.label)}' to "
-                          f"{clean_rich_formatting(target_item.label)}: {target_item.url()}")
+            console.print(
+                f"(job {job_count}/{len(jobs)})(item {count}/{len(items.list)}) "
+                f"Added '{clean_rich_formatting(self.item.label)}' to "
+                f"{clean_rich_formatting(target_item.label)}: {target_item.url()}"
+            )
             # input("Press enter to continue")
 
     def extract_search_strings(self):
@@ -92,6 +94,7 @@ class Suggestion(BaseModel):
             return string.replace("®", "").replace("™", "")
 
         from src.helpers.console import console
+
         logger = logging.getLogger(__name__)
         if self.args is None:
             raise ValueError("args was None")
@@ -99,19 +102,25 @@ class Suggestion(BaseModel):
             logger.debug(f"args:{self.args}")
             if self.args.no_aliases is True:
                 from src import console
+
                 console.print("Alias matching is turned off")
+                no_aliases = True
+            elif self.item.id in config.no_alias_for_scholarly_items:
+                logger.info(
+                    f"Alias matching is turned off for this item: {self.item.label}"
+                )
                 no_aliases = True
             else:
                 no_aliases = False
         self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
-        if (
-                self.item.aliases is not None and
-                no_aliases is False
-        ):
+        if self.item.aliases is not None and no_aliases is False:
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
                 if len(alias) < 5 and alias not in config.list_of_allowed_aliases:
-                    console.print(f"Skipping short alias '{alias}' to avoid false positives", style="#FF8000")
+                    console.print(
+                        f"Skipping short alias '{alias}' to avoid false positives",
+                        style="#FF8000",
+                    )
                 elif alias in config.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow list")
                     self.search_strings.append(clean_special_symbols(alias))
@@ -119,8 +128,8 @@ class Suggestion(BaseModel):
                     self.search_strings.append(clean_special_symbols(alias))
         # logger.debug(f"search_strings:{self.search_strings}")
         from src.helpers.console import print_search_strings_table
-        print_search_strings_table(args=self.args,
-                                   search_strings=self.search_strings)
+
+        print_search_strings_table(args=self.args, search_strings=self.search_strings)
 
     def search_urls(self) -> List[str]:
         if self.search_strings is None:

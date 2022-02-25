@@ -8,6 +8,7 @@ from src.helpers.enums import SupportedLanguageCode, TaskIds
 class Task(BaseModel):
     """This class holds the tasks presented to the
     user in the menu and related data"""
+
     best_practice_information: Union[str, None]
     id: TaskIds
     label: str

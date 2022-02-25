@@ -15,12 +15,12 @@ def add_to_job_pickle(job: BatchJob = None):
     if job is None:
         raise ValueError("Job was None")
     else:
-        with open(config.job_pickle_file_path, 'ab') as file:
+        with open(config.job_pickle_file_path, "ab") as file:
             pickle.dump(job, file, pickle.DEFAULT_PROTOCOL)
 
 
 def read_from_pickle(path):
-    with open(path, 'rb') as file:
+    with open(path, "rb") as file:
         try:
             while True:
                 yield pickle.load(file)
@@ -53,8 +53,7 @@ def parse_job_pickle(silent: bool = False) -> Optional[BatchJobs]:
         return None
 
 
-def remove_job_pickle(silent: bool = False,
-                      hash: str = None):
+def remove_job_pickle(silent: bool = False, hash: str = None):
     if hash is None:
         if os.path.exists(config.job_pickle_file_path):
             os.remove(config.job_pickle_file_path)
@@ -67,17 +66,21 @@ def remove_job_pickle(silent: bool = False,
             if not silent:
                 console.print("The job list file was removed")
         else:
-            console.print("Job list file not deleted because the contents "
-                          "has changed since this batch of jobs was started.")
+            console.print(
+                "Job list file not deleted because the contents "
+                "has changed since this batch of jobs was started."
+            )
     else:
-        console.print(f"Could not delete the job file. No file found at {config.job_pickle_file_path}")
+        console.print(
+            f"Could not delete the job file. No file found at {config.job_pickle_file_path}"
+        )
 
 
 def get_hash_of_job_pickle():
     # inspired by https://codezup.com/python-program-calculate-hash-of-file-hashlib/
     block_size = 65536  # lets read stuff in 64kb chunks!
     hasher = hashlib.md5()
-    with open(config.job_pickle_file_path, 'rb') as file:
+    with open(config.job_pickle_file_path, "rb") as file:
         buf = file.read(block_size)
         hasher.update(buf)
     # print(hasher.hexdigest())
