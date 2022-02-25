@@ -1,2 +1,2 @@
-config.py
+config/__init__.py
 pickle.dat

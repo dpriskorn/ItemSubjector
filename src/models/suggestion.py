@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
 
 import config
+import config.items
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.models.items import Items
@@ -105,7 +106,7 @@ class Suggestion(BaseModel):
 
                 console.print("Alias matching is turned off")
                 no_aliases = True
-            elif self.item.id in config.no_alias_for_scholarly_items:
+            elif self.item.id in config.items.no_alias_for_scholarly_items:
                 logger.info(
                     f"Alias matching is turned off for this item: {self.item.label}"
                 )
