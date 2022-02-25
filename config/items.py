@@ -9,6 +9,4 @@ list_of_allowed_aliases: List[str] = []  # Add elements like this ["API"]
 blocklist_for_scholarly_items: List[str] = [
     "Q28196260",  # alcohol
 ]
-no_alias_for_scholarly_items: List[str] = [
-    "Q407541",  # fentanyl
-]
+no_alias_for_scholarly_items: List[str] = ["Q407541", "Q423930"]
