@@ -3,6 +3,8 @@ import logging
 import config
 from src.models.wikimedia.wikidata.enums import WikidataNamespaceLetters
 
+logger = logging.getLogger(__name__)
+
 
 # TODO convert this to special constr type with a validator
 class EntityId:
@@ -11,14 +13,13 @@ class EntityId:
     rest: str
 
     def __init__(self, entity_id: str):
-        logger = logging.getLogger(__name__)
         if entity_id is not None:
             # Remove prefix if found
             if config.wd_prefix in entity_id:
                 logger.debug("Removing prefix")
                 entity_id = entity_id.replace(config.wd_prefix, "")
             if len(entity_id) > 1:
-                logger.info(f"entity_id:{entity_id}")
+                logger.debug(f"entity_id:{entity_id}")
                 self.letter = WikidataNamespaceLetters(entity_id[0])
                 self.rest = entity_id[1:]
             else:
