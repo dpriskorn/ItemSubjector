@@ -105,6 +105,11 @@ class Suggestion(BaseModel):
 
                 console.print("Alias matching is turned off")
                 no_aliases = True
+            elif self.item.id in config.no_alias_for_scholarly_items:
+                logger.info(
+                    f"Alias matching is turned off for this item: {self.item.label}"
+                )
+                no_aliases = True
             else:
                 no_aliases = False
         self.search_strings: List[str] = [clean_special_symbols(self.item.label)]

@@ -10,6 +10,8 @@ from src.models.suggestion import Suggestion
 from src.models.task import Task
 from src.models.wikimedia.wikidata.sparql_item import SparqlItem
 
+logger = logging.getLogger(__name__)
+
 
 class ScholarlyArticleItems(Items):
     """This supports both published peer reviewed articles and preprints"""
@@ -82,10 +84,12 @@ class ScholarlyArticleItems(Items):
                 logging.debug(f"item_json:{item_json}")
                 item = SparqlItem(**item_json)
                 item.validate_qid_and_copy_label()
-                items.append(item)
+                if not item.is_in_blocklist():
+                    items.append(item)
+                else:
+                    logger.info(f"{item.label} found in blocklist, skipping")
             return items
 
-        # logger = logging.getLogger(__name__)
         if suggestion is None:
             raise ValueError("suggestion was None")
         if suggestion.item is None:
