@@ -4,7 +4,7 @@ from enum import Enum
 class WikimediaLanguageCode(Enum):
     BASQUE = "eu"
     BENGALI = "bn"
-    BOKMÅL = "nb"
+    BOKMAL = "nb"
     CZECH = "cs"
     DANISH = "da"
     ENGLISH = "en"
