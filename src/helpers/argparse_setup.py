@@ -14,13 +14,6 @@ Example adding one QID:
 Example adding one QID and prepare a job list to be run non-interactively later:
 '$ itemsubjector.py -a Q1234 -p'
 
-Example adding random QIDs from a list of main subjects extracted from 2 million scholarly articles:
-'$ itemsubjector.py -m'
-
-Example adding random QIDs from a list of main subjects extracted from 2 million scholarly articles 
-and prepare a job list:
-'$ itemsubjector.py -m -p'
-
 Example working on all diseases:
 '$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?item wdt:P1889 [].}}"'
     """,
