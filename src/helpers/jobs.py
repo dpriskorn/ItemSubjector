@@ -5,6 +5,7 @@ import logging
 import random
 from typing import Union, List, TYPE_CHECKING, Optional
 
+import config
 from src import (
     strip_prefix,
     print_best_practice,
@@ -59,7 +60,8 @@ def process_qid_into_job(
             if not answer:
                 return None
         suggestion.extract_search_strings()
-        suggestion.print_search_strings()
+        if config.loglevel == logging.INFO:
+            suggestion.print_search_strings()
         if suggestion.search_strings is None:
             raise ValueError("suggestion.search_strings was None")
         with console.status(
