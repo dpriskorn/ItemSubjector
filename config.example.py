@@ -13,9 +13,7 @@ wiki_user = "User:Username"  # Change this to your username
 list_of_allowed_aliases: List[str] = []  # Add elements like this ["API"]
 wd_prefix = "http://www.wikidata.org/entity/"
 endpoint = "https://query.wikidata.org/sparql"
-user_agent = (
-    f"ItemSubjector/{version} (https://github.com/dpriskorn/ItemSubjector), {wiki_user}"
-)
+user_agent = f"ItemSubjector (https://github.com/dpriskorn/ItemSubjector), {wiki_user}"
 tool_url = "https://github.com/dpriskorn/ItemSubjector"
 tool_wikipage = "Wikidata:Tools/ItemSubjector"
 login_instance = None
