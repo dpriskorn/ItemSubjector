@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import random
 from typing import List, TYPE_CHECKING, Optional
 
@@ -20,3 +21,8 @@ class Items(BaseModel):
 
     def random_shuffle_list(self):
         random.shuffle(self.list)
+
+    def print_items_list(self, args: argparse.Namespace):
+        from src import print_found_items_table
+
+        print_found_items_table(args=args, items=self)
