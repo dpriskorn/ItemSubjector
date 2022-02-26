@@ -86,9 +86,9 @@ def process_qid_into_job(
             raise ValueError("items.list was None")
         if len(items.list) > 0:
             # Remove duplicates
-            logger.warning(f"{len(items.list)} before duplicate removal")
+            logger.debug(f"{len(items.list)} before duplicate removal")
             items.list = list(set(items.list))
-            logger.warning(f"{len(items.list)} after duplicate removal")
+            logger.debug(f"{len(items.list)} after duplicate removal")
             # Randomize the list
             items.random_shuffle_list()
             from src import BatchJob
