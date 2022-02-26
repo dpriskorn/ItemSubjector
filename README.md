@@ -14,7 +14,9 @@ This tool has the following features:
 * Adding a list of manually supplied main subjects to a few selected subgraphs 
   (These currently include a total of 37M items with scholarly items being the biggest subgraph by far).
 * Matching against a set of items fetched via a SPARQL query.
-* Matching against a downloaded set of existing main subjects and adding them to more scholarly articles
+* Matching up to a limit of items which together with Kubernetes makes it possible to start a query which 
+collects jobs with items until the limit is reached and then ask for approval/decline of each job. This 
+enables the user to create large batches of jobs with 100k+ items in total in a matter of minutes.
 * Batch mode that can be used together with the above features and be run non-interactively 
   e.g. in the Wikimedia Cloud Services Kubernetes Beta cluster
 
@@ -40,6 +42,11 @@ Then checkout the latest release.
 `git checkout v0.x` where x is the latest number on the release page.
 
 ## PAWS
+*Note: PAWS is not ideal for batch jobs unless you 
+are willing to keep your browser tab open for the 
+whole duration of the job. Consider using Kubernetes 
+instead, see below*
+
 The tool runs in PAWS with no known 
 issues.
 * log in to PAWS
@@ -50,17 +57,13 @@ issues.
   avoid publication of your login credentials.
 * follow the details under Setup below
 
-*Note: PAWS is not ideal for batch jobs unless you 
-are willing to keep your browser tab open for the 
-whole duration of the job. Consider using Kubernetes 
-instead, see below*
 
 ## Wikimedia Cloud Services Kubernetes Beta cluster
 See [Kubernetes_HOWTO.md](Kubernetes_HOWTO.md)
 
 # Setup
-Like my other tools, copy config.example.py -> 
-config.py and enter the botusername 
+Setup the config by copying config/config.example.py -> 
+config/__init__.py and enter the botusername 
 (e.g. So9q@itemsubjector) and password 
 (first [create a botpassword](https://www.wikidata.org/wiki/Special:BotPasswords) 
 for your account 
@@ -146,28 +149,6 @@ Usage example for diseases:
 
 This makes it much easier to cover a range a subjects. 
 This example query returns ~5000 items to match :)
-
-## Matching against existing main subjects
-*Warning: This often proposes too broad subjects 
-that should most probably not be added as main subjects to all matches, 
-but instead be broken down into narrower subjects*
-
-The tool can create a list of jobs by picking random subjects from a
-big list fetched from WDQS.
-
-This enables the user to quickly build up a big list of jobs to run 
-and improve the graph by improving the coverage on existing subjects.
-
-To set it up run:
-* `python fetch_main_subjects.py` by default it fetches 100,000 main 
-  subjects and saves them after removing duplicates 
-  (this usually results in about 10,000 unique subjects which should 
-  be enough to get started)
-  The script implements a random offset so running it again will yield 
-  a different set of subjects, but please don't run it too often.
-
-Usage example:
-* `python itemsubjector.py -m`
 
 ## Batch job features
 The tool can help prepare jobs and then run 
