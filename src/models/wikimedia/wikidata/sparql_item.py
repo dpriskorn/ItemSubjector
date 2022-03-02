@@ -21,6 +21,8 @@ class SparqlItem(Item):
         self.label = self.itemLabel.value
 
     def is_in_blocklist(self) -> bool:
+        if self.id is None:
+            raise ValueError("did not get an id")
         if config.items.blocklist_for_scholarly_items is None:
             raise ValueError(
                 "config.blocklist_for_scholarly_items was None, please fix"
