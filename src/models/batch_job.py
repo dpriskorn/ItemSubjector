@@ -9,3 +9,4 @@ class BatchJob(BaseModel):
 
     suggestion: Suggestion
     items: Items
+    number_of_queries: int
