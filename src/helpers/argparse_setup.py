@@ -8,10 +8,10 @@ def setup_argparse_and_return_args():
 ItemSubjector enables working main subject statements on items based on a 
 heuristic matching the subject with the title of the item. 
 
-Example adding one QID:
+Example adding one Qid:
 '$ itemsubjector.py -a Q1234'
 
-Example adding one QID and prepare a job list to be run non-interactively later:
+Example adding one Qid and prepare a job list to be run non-interactively later:
 '$ itemsubjector.py -a Q1234 -p'
 
 Example working on all diseases:

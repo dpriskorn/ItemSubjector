@@ -10,7 +10,7 @@ alt "arguments: sparql && limit"
     Wikidata -> ItemSubjector : response
     loop "for each item in list"
         alt "below limit"
-            ItemSubjector -> Wikidata : fetch details about the item
+            ItemSubjector -> Wikidata : fetch details about the item and lookup all aliases
             Wikidata -> ItemSubjector : response
             ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
             Wikidata -> ItemSubjector : response
@@ -31,7 +31,7 @@ alt "arguments: sparql && limit && prepare-jobs"
     Wikidata -> ItemSubjector : response
     loop "for each item in list"
         alt "below limit"
-            ItemSubjector -> Wikidata : fetch details about the item
+            ItemSubjector -> Wikidata : fetch details about the item and lookup all aliases
             Wikidata -> ItemSubjector : response
             ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
             Wikidata -> ItemSubjector : response
