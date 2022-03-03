@@ -64,10 +64,13 @@ def process_qid_into_job(
             suggestion.print_search_strings()
         if suggestion.search_strings is None:
             raise ValueError("suggestion.search_strings was None")
+        number_of_queries = (
+            len(suggestion.search_strings) * task.number_of_queries_per_search_string
+        )
         with console.status(
             f"Fetching items with labels that have one of "
             f"the search strings by running a total of "
-            f"{len(suggestion.search_strings) * task.number_of_queries_per_search_string} "
+            f"{number_of_queries} "
             f"queries on WDQS..."
         ):
             items: Optional[Items] = None
@@ -93,7 +96,9 @@ def process_qid_into_job(
             items.random_shuffle_list()
             from src import BatchJob
 
-            job = BatchJob(items=items, suggestion=suggestion)
+            job = BatchJob(
+                items=items, number_of_queries=number_of_queries, suggestion=suggestion
+            )
             return job
         else:
             console.print("No matching items found")
@@ -133,7 +138,7 @@ def handle_job_preparation_or_run_directly_if_any_jobs(
         raise ValueError("args was None")
     if len(batchjobs.jobs) > 0:
         if args.prepare_jobs:
-            console.print(f"Adding {len(batchjobs.jobs)} job(s) to the jobs file")
+            console.print(f"Adding {len(batchjobs.jobs)} job(s) " f"to the jobs file")
             for job in batchjobs.jobs:
                 from src import add_to_job_pickle
 

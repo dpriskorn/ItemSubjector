@@ -147,10 +147,20 @@ def print_job_statistics(batchjobs: BatchJobs = None):
     if len(batchjobs.jobs) == 0:
         console.print("The jobs list is empty")
     else:
+        total_number_of_queries = sum([job.number_of_queries for job in batchjobs.jobs])
+        total_number_of_items = sum(
+            len(job.items.list)
+            for job in batchjobs.jobs
+            if batchjobs.jobs is not None
+            and job is not None
+            and job.items is not None
+            and job.items.list is not None
+        )
         console.print(
             f"The jobs list now contain a total of {len(batchjobs.jobs)} "  # type: ignore
             f"jobs with a total of "
-            f"{sum(len(job.items.list) for job in batchjobs.jobs if batchjobs.jobs is not None and job is not None)} items"
+            f"{total_number_of_items} items found from "
+            f"{total_number_of_queries} queries"
         )
 
 
