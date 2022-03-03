@@ -10,7 +10,7 @@ tasks = [
             label="Add main subject to scholarly articles and preprints",
             language_code=SupportedLanguageCode.ENGLISH,
             best_practice_information=(
-                "When adding QID main subjects please try to first "
+                "When adding Qid main subjects please try to first "
                 "educate yourself about the subarea of science a little "
                 "and find/create items as specific as possible.\n"
                 "E.g. when searching for 'cancer screening' in Wikidata "
@@ -39,7 +39,7 @@ tasks = [
             label="Add main subject to thesis' and technical reports",
             language_code=SupportedLanguageCode.ENGLISH,
             best_practice_information=(
-                "When adding QID main subjects please try to first "
+                "When adding Qid main subjects please try to first "
                 "educate yourself about the subarea of science a little "
                 "and find/create items as specific as possible.\n"
                 "E.g. when searching for 'cancer screening' in Wikidata "

@@ -6,7 +6,10 @@ from typing import List, Optional, TYPE_CHECKING
 from urllib.parse import quote
 
 from pydantic import BaseModel
+from wikibaseintegrator import WikibaseIntegrator
 from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
+from wikibaseintegrator.models import Claim
+from wikibaseintegrator.wbi_helpers import search_entities
 
 import config
 import config.items
@@ -14,10 +17,13 @@ from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.models.items import Items
 from src.models.task import Task
+from src.models.wikimedia.wikidata.enums import Property, Qid
 from src.models.wikimedia.wikidata.item import Item
 
 if TYPE_CHECKING:
     from src.models.batch_job import BatchJob
+
+logger = logging.getLogger(__name__)
 
 
 class Suggestion(BaseModel):
@@ -28,6 +34,40 @@ class Suggestion(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+    def __alias_appears_in_label_of_a_qid__(self, alias: str) -> bool:
+        if alias is None:
+            raise ValueError("alias was none")
+        results = search_entities(alias, dict_result=True)
+        for result in results:
+            if result["label"] == alias:
+                qid = result["id"]
+                logger.info(f"Found {alias} as label in {qid}")
+                # verify that it is not a scientific article
+                return self.__is_not_scientific_article__(qid=qid)
+        return False
+
+    @staticmethod
+    def __is_not_scientific_article__(qid: str):
+        """Looks up the QID in Wikidata to chech whether it is a scholarly article or not.
+        We negate the result"""
+        if qid is None:
+            raise ValueError("qid was None")
+        wbi = WikibaseIntegrator()
+        item = wbi.item.get(qid)
+        claims: List[Claim] = item.claims
+        for claim in claims:
+            if claim.mainsnak.property_number == Property.INSTANCE_OF.value:
+                qid = claim.mainsnak.datavalue["value"]["id"]
+                logger.info(f"Found P31 with value {qid}")
+                from src.helpers.console import console
+
+                # console.print(claim.mainsnak)
+                if qid == Qid.SCHOLARLY_ARTICLE.value:
+                    logger.debug("__is_not_scientific_article__:returning false now")
+                    return False
+                else:
+                    return True
 
     def __str__(self):
         """Return label and description, the latter cut to 50 chars"""
@@ -45,8 +85,8 @@ class Suggestion(BaseModel):
     def add_to_items(
         self, items: Items = None, jobs: List[BatchJob] = None, job_count: int = None
     ):
-        """Add a suggested QID as main subject on all items that
-        have a label that matches one of the search strings for this QID
+        """Add a suggested Qid as main subject on all items that
+        have a label that matches one of the search strings for this Qid
         We calculate a new edit group hash each time this function is
         called so similar edits are grouped and easily be undone.
 
@@ -127,6 +167,12 @@ class Suggestion(BaseModel):
                 elif alias in config.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow list")
                     self.search_strings.append(clean_special_symbols(alias))
+                elif self.__alias_appears_in_label_of_a_qid__(alias=alias):
+                    logger.info(
+                        f"Skipped '{alias}' because it appears "
+                        f"in a label of at least one Qid that is not a scholarly article"
+                    )
+                    continue
                 else:
                     self.search_strings.append(clean_special_symbols(alias))
 

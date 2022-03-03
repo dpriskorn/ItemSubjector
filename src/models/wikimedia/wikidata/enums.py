@@ -34,3 +34,11 @@ class WikidataNamespaceLetters(Enum):
     PROPERTY = "P"
     # FORM = "F"
     # SENSE = "S"
+
+
+class Property(Enum):
+    INSTANCE_OF = "P31"
+
+
+class Qid(Enum):
+    SCHOLARLY_ARTICLE = "Q13442814"

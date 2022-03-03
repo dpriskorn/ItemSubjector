@@ -237,8 +237,8 @@ with figuring out how to query the API using the
 CirrusSearch extensions and to remove more 
 specific main subjects from the query results.
 
-A special thanks also to **Magnus Sälgö** for his valuable input 
-and ideas, e.g. to search for aliases also and to *Jean* and the 
+A special thanks also to **Magnus Sälgö** and **Arthur Smith** for their
+valuable input and ideas, e.g. to search for aliases also and to *Jean* and the 
 incredibly
 helpful people in the Wikimedia Cloud Services Support chat that
 helped with making batch jobs run successfully.

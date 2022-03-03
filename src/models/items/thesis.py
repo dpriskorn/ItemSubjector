@@ -32,7 +32,7 @@ class ThesisItems(Items):
             # We don't use CirrusSearch in this query because we can do it more easily in
             # SPARQL on a small subgraph like this
             # find all items that are ?item wdt:P31/wd:P279* wd:Q1266946
-            # minus the QID we want to add
+            # minus the Qid we want to add
             results = execute_sparql_query(
                 f"""
             SELECT DISTINCT ?item ?itemLabel 
