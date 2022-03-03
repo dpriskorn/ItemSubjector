@@ -217,8 +217,18 @@ optional arguments:
   --export-jobs-to-dataframe
                         Export the prepared job list to a Pandas DataFrame.
 ```
-# License
-GPLv3+
+# What I learned
+* I used the black code-formatter for the first time in this project and 
+it is a pleasure to not have to sit and manually format the code anymore.
+  
+* I used argparse for the first time in this project and how to type it 
+  properly.
+  
+* This was one of the first of my projects that had scope creep. I have 
+removed the QuickStatements export to simplify the program.
+  
+* This project has been used in a scientific paper I wrote together with 
+[Houcemeddine Turki](https://scholia.toolforge.org/author/Q53505397)
 
 # Thanks
 During the development of this tool the author got a 
@@ -235,3 +245,7 @@ helped with making batch jobs run successfully.
 
 Thanks also to **jsamwrites** for help with testing and suggestions 
 for improvement.
+
+# License
+GPLv3+
+
