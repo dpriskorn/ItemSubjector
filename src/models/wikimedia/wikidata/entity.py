@@ -6,6 +6,7 @@ from wikibaseintegrator import WikibaseIntegrator  # type: ignore
 from wikibaseintegrator import wbi_config
 from wikibaseintegrator.datatypes import BaseDataType  # type: ignore
 from wikibaseintegrator.wbi_enums import ActionIfExists  # type: ignore
+from wikibaseintegrator.wbi_exceptions import MWApiError
 
 import config
 
@@ -48,11 +49,14 @@ class Entity(BaseModel):
         wbi = WikibaseIntegrator(login=config.login_instance)
         item = wbi.item.get(self.id)
         item.add_claims([statement], action_if_exists=ActionIfExists.APPEND)
-        result = item.write(
-            summary=f"Added {summary} with [[{config.tool_wikipage}]] "
-            f"([[:toolforge:editgroups/b/CB/{editgroups_hash}|details]])"
-        )
-        logger.debug(f"result from WBI:{result}")
+        try:
+            result = item.write(
+                summary=f"Added {summary} with [[{config.tool_wikipage}]] "
+                f"([[:toolforge:editgroups/b/CB/{editgroups_hash}|details]])"
+            )
+        except MWApiError as e:
+            logger.error(f"Got error from the API: {e}")
+        # logger.debug(f"result from WBI:{result}")
 
     def url(self):
         return f"http://www.wikidata.org/entity/{self.id}"
