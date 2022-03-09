@@ -14,4 +14,10 @@ blocklist_for_scholarly_items: List[str] = [
     "Q28196266",
     "Q28196260",
 ]
-no_alias_for_scholarly_items: List[str] = ["Q407541", "Q423930", "Q502327", "Q416950"]
+no_alias_for_scholarly_items: List[str] = [
+    "Q407541",
+    "Q423930",
+    "Q502327",
+    "Q416950",
+    "Q95566669",  # hypertension
+]
