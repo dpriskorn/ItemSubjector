@@ -13,6 +13,7 @@ blocklist_for_scholarly_items: List[str] = [
     "Q27863114",  # testosterone
     "Q28196266",
     "Q28196260",
+    "Q109270553",  # dieback
 ]
 no_alias_for_scholarly_items: List[str] = [
     "Q407541",
