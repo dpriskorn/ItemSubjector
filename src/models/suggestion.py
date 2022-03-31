@@ -164,6 +164,12 @@ class Suggestion(BaseModel):
                         f"Skipping short alias '{alias}' to avoid false positives",
                         style="#FF8000",
                     )
+                elif self.__alias_appears_in_label_of_a_qid__(alias=alias):
+                    console.print(
+                        f"Skipped '{alias}' because it appears "
+                        f"in a label of at least one Qid that is not a scholarly article",
+                        style="#FF8000",
+                    )
                 elif alias in config.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow list")
                     self.search_strings.append(clean_special_symbols(alias))
