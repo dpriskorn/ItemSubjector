@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Set
 from urllib.parse import quote
 
 from rich.console import Console
@@ -58,7 +58,7 @@ def print_best_practice(task: Task):
 
 
 def print_search_strings_table(
-    args: argparse.Namespace = None, search_strings: List[str] = None
+    args: argparse.Namespace = None, search_strings: Set[str] = None
 ):
     if args is None:
         raise ValueError("args was None")

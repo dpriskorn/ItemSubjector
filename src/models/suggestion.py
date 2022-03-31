@@ -6,10 +6,10 @@ from typing import List, Optional, TYPE_CHECKING, Set
 from urllib.parse import quote
 
 from pydantic import BaseModel
-from wikibaseintegrator import WikibaseIntegrator
+from wikibaseintegrator import WikibaseIntegrator  # type: ignore
 from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
-from wikibaseintegrator.models import Claim
-from wikibaseintegrator.wbi_helpers import search_entities
+from wikibaseintegrator.models import Claim  # type: ignore
+from wikibaseintegrator.wbi_helpers import search_entities  # type: ignore
 
 import config
 import config.items
