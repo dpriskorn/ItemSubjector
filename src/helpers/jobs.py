@@ -185,9 +185,16 @@ def get_validated_main_subjects_as_jobs(
                 if args.no_ask_match_more_limit is None:
                     job.items.print_items_list(args=args)
                     job.suggestion.print_search_strings()
-                    answer = ask_add_to_job_queue(job)
-                    if answer:
+                    if (
+                        config.automatically_approve_jobs_with_less_than_fifty_matches
+                        and len(job.items) < 50
+                    ):
+                        console.print("The job was automatically approved")
                         batchjobs.jobs.append(job)
+                    else:
+                        answer = ask_add_to_job_queue(job)
+                        if answer:
+                            batchjobs.jobs.append(job)
                 else:
                     batchjobs.jobs.append(job)
                 logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")

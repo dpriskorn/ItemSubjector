@@ -9,6 +9,7 @@ username = ""
 password = ""
 
 # Settings
+automatically_approve_jobs_with_less_than_fifty_matches = False
 loglevel = logging.WARNING
 wiki_user = "User:Username"  # Change this to your username
 wd_prefix = "http://www.wikidata.org/entity/"
