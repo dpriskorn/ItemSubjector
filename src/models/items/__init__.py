@@ -16,6 +16,10 @@ if TYPE_CHECKING:
 class Items(BaseModel):
     list: Optional[List[SparqlItem]]
 
+    @property
+    def number_of_items(self):
+        return len(self.list)
+
     def fetch_based_on_label(self, suggestion: Suggestion = None, task: Task = None):
         pass
 
