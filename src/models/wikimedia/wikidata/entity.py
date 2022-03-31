@@ -6,7 +6,7 @@ from wikibaseintegrator import WikibaseIntegrator  # type: ignore
 from wikibaseintegrator import wbi_config
 from wikibaseintegrator.datatypes import BaseDataType  # type: ignore
 from wikibaseintegrator.wbi_enums import ActionIfExists  # type: ignore
-from wikibaseintegrator.wbi_exceptions import MWApiError
+from wikibaseintegrator.wbi_exceptions import MWApiError  # type: ignore
 
 import config
 
@@ -50,7 +50,7 @@ class Entity(BaseModel):
         item = wbi.item.get(self.id)
         item.add_claims([statement], action_if_exists=ActionIfExists.APPEND)
         try:
-            result = item.write(
+            item.write(
                 summary=f"Added {summary} with [[{config.tool_wikipage}]] "
                 f"([[:toolforge:editgroups/b/CB/{editgroups_hash}|details]])"
             )

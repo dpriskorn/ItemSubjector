@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import argparse
 import logging
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING, Set
 from urllib.parse import quote
 
 from pydantic import BaseModel
-from wikibaseintegrator import WikibaseIntegrator
+from wikibaseintegrator import WikibaseIntegrator  # type: ignore
 from wikibaseintegrator.datatypes import Item as ItemType  # type: ignore
-from wikibaseintegrator.models import Claim
-from wikibaseintegrator.wbi_helpers import search_entities
+from wikibaseintegrator.models import Claim  # type: ignore
+from wikibaseintegrator.wbi_helpers import search_entities  # type: ignore
 
 import config
 import config.items
@@ -30,7 +30,7 @@ class Suggestion(BaseModel):
     item: Item
     task: Task
     args: argparse.Namespace
-    search_strings: Optional[List[str]] = None
+    search_strings: Optional[Set[str]] = None
 
     class Config:
         arbitrary_types_allowed = True
@@ -155,7 +155,8 @@ class Suggestion(BaseModel):
                 no_aliases = False
         if self.item.label is None:
             raise ValueError("self.item.label was None")
-        self.search_strings: List[str] = [clean_special_symbols(self.item.label)]
+        self.search_strings: Set[str] = set()
+        self.search_strings.add(clean_special_symbols(self.item.label))
         if self.item.aliases is not None and no_aliases is False:
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
@@ -164,17 +165,17 @@ class Suggestion(BaseModel):
                         f"Skipping short alias '{alias}' to avoid false positives",
                         style="#FF8000",
                     )
+                elif self.__alias_appears_in_label_of_a_qid__(alias=alias):
+                    console.print(
+                        f"Skipped '{alias}' because it appears "
+                        f"in a label of at least one Qid that is not a scholarly article",
+                        style="#FF8000",
+                    )
                 elif alias in config.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow list")
-                    self.search_strings.append(clean_special_symbols(alias))
-                elif self.__alias_appears_in_label_of_a_qid__(alias=alias):
-                    logger.info(
-                        f"Skipped '{alias}' because it appears "
-                        f"in a label of at least one Qid that is not a scholarly article"
-                    )
-                    continue
+                    self.search_strings.add(clean_special_symbols(alias))
                 else:
-                    self.search_strings.append(clean_special_symbols(alias))
+                    self.search_strings.add(clean_special_symbols(alias))
 
     def print_search_strings(self):
         # logger.debug(f"search_strings:{self.search_strings}")
