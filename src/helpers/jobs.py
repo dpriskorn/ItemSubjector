@@ -182,24 +182,27 @@ def get_validated_main_subjects_as_jobs(
                 confirmation=args.no_confirmation,
             )
             if job is not None:
-                if args.no_ask_match_more_limit is None:
-                    job.items.print_items_list(args=args)
-                    job.suggestion.print_search_strings()
-                    if (
-                        config.automatically_approve_jobs_with_less_than_fifty_matches
-                        and len(job.items.number_of_items) < 50
-                    ):
-                        console.print(
-                            f"This job with {job.items.number_of_items} matching items was automatically approved",
-                            style="green",
-                        )
-                        batchjobs.jobs.append(job)
-                    else:
+                # We first check if the job can be approved automatically
+                if (
+                    config.automatically_approve_jobs_with_less_than_fifty_matches
+                    and len(job.items.number_of_items) < 50
+                ):
+                    console.print(
+                        f"This job with {job.items.number_of_items} matching items was automatically approved",
+                        style="green",
+                    )
+                    batchjobs.jobs.append(job)
+                else:
+                    # Here we check if the user has enabled no ask more limit.
+                    if args.no_ask_match_more_limit is None:
+                        logger.debug("No ask more was None")
+                        job.items.print_items_list(args=args)
+                        job.suggestion.print_search_strings()
                         answer = ask_add_to_job_queue(job)
                         if answer:
                             batchjobs.jobs.append(job)
-                else:
-                    batchjobs.jobs.append(job)
+                    else:
+                        batchjobs.jobs.append(job)
                 logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
             print_job_statistics(batchjobs=batchjobs)
             if len(subjects_not_picked_yet) > 0:
