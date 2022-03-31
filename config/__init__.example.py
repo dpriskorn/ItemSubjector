@@ -1,6 +1,8 @@
 import logging
 import tempfile
 
+# Rename this file to __init__.py
+
 # Add your botpassword and login here:
 
 username = ""

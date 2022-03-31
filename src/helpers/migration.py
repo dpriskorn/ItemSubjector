@@ -11,6 +11,6 @@ def migrate_pickle_detection():
     except AttributeError:
         raise ValueError(
             "You need to migrate the new pickle variables"
-            "in config.example.py to your __init__.py before "
+            "in __init__.example.py to your __init__.py before "
             "you can continue"
         )
