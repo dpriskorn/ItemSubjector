@@ -1,6 +1,8 @@
 import logging
 
-import src
+import config
+from src import ItemSubjector
 
-logging.basicConfig(level=logging.DEBUG)
-src.main()
+logging.basicConfig(level=config.loglevel)
+itemsubjector = ItemSubjector()
+itemsubjector.run()

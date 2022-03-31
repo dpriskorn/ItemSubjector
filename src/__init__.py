@@ -177,8 +177,3 @@ class ItemSubjector(BaseModel):
             handle_job_preparation_or_run_directly_if_any_jobs(
                 args=args, batchjobs=batchjobs
             )
-
-
-if __name__ == "__main__":
-    itemsubjector = ItemSubjector()
-    itemsubjector.run()
