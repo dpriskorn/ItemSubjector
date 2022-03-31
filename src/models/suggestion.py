@@ -132,7 +132,7 @@ class Suggestion(BaseModel):
 
     def extract_search_strings(self):
         def clean_special_symbols(string: str):
-            return string.replace("®", "").replace("™", "")
+            return string.replace("®", "").replace("™", "").replace('"', "")
 
         from src.helpers.console import console
 
