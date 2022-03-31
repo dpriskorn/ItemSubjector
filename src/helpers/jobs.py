@@ -157,7 +157,8 @@ def handle_job_preparation_or_run_directly_if_any_jobs(
 def get_validated_main_subjects_as_jobs(
     args: argparse.Namespace = None, main_subjects: List[str] = None
 ) -> BatchJobs:
-    """This function randomly picks a subject and present it for validation"""
+    """This function randomly picks a subject and add it to the
+    list of jobs if it had any matches and the user approved it"""
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
@@ -182,28 +183,17 @@ def get_validated_main_subjects_as_jobs(
                 confirmation=args.no_confirmation,
             )
             if job is not None:
-                # We first check if the job can be approved automatically
-                if (
-                    config.automatically_approve_jobs_with_less_than_fifty_matches
-                    and job.items.number_of_items < 50
-                ):
-                    console.print(
-                        f"This job with {job.items.number_of_items} matching items was automatically approved",
-                        style="green",
-                    )
-                    batchjobs.jobs.append(job)
-                else:
-                    # Here we check if the user has enabled no ask more limit.
-                    if args.no_ask_match_more_limit is None:
-                        logger.debug("No ask more was None")
-                        job.items.print_items_list(args=args)
-                        job.suggestion.print_search_strings()
-                        answer = ask_add_to_job_queue(job)
-                        if answer:
-                            batchjobs.jobs.append(job)
-                    else:
+                # Here we check if the user has enabled no ask more limit.
+                if args.no_ask_match_more_limit is None:
+                    logger.debug("No ask more was None")
+                    job.items.print_items_list(args=args)
+                    job.suggestion.print_search_strings()
+                    answer = ask_add_to_job_queue(job)
+                    if answer:
                         batchjobs.jobs.append(job)
-                logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
+                else:
+                    batchjobs.jobs.append(job)
+            logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
             print_job_statistics(batchjobs=batchjobs)
             if len(subjects_not_picked_yet) > 0:
                 if (
@@ -229,8 +219,18 @@ def get_validated_main_subjects_as_jobs(
         for job in batchjobs.jobs:
             job.items.print_items_list(args=args)
             job.suggestion.print_search_strings()
-            answer = ask_add_to_job_queue(job)
-            if answer:
+            if (
+                config.automatically_approve_jobs_with_less_than_fifty_matches
+                and len(job.items.number_of_items) < 50
+            ):
+                console.print(
+                    f"This job with {job.items.number_of_items} matching items was automatically approved",
+                    style="green",
+                )
                 batchjobs_limit.jobs.append(job)
+            else:
+                answer = ask_add_to_job_queue(job)
+                if answer:
+                    batchjobs_limit.jobs.append(job)
         return batchjobs_limit
     return batchjobs
