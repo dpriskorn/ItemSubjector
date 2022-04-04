@@ -160,7 +160,7 @@ class Suggestion(BaseModel):
         if self.item.aliases is not None and no_aliases is False:
             for alias in self.item.aliases:
                 # logger.debug(f"extracting alias:{alias}")
-                if len(alias) < 5 and alias not in config.list_of_allowed_aliases:
+                if len(alias) < 5 and alias not in config.items.list_of_allowed_aliases:
                     console.print(
                         f"Skipping short alias '{alias}' to avoid false positives",
                         style="#FF8000",
@@ -171,7 +171,7 @@ class Suggestion(BaseModel):
                         f"in a label of at least one Qid that is not a scholarly article",
                         style="#FF8000",
                     )
-                elif alias in config.list_of_allowed_aliases:
+                elif alias in config.items.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow list")
                     self.search_strings.add(clean_special_symbols(alias))
                 else:
