@@ -48,18 +48,6 @@ logging.basicConfig(level=config.loglevel)
 
 class ItemSubjector(BaseModel):
     @staticmethod
-    def login():
-        with console.status("Logging in with WikibaseIntegrator..."):
-            config.login_instance = wbi_login.Login(
-                auth_method="login",
-                user=config.username,
-                password=config.password,
-                debug=False,
-            )
-            # Set User-Agent
-            wbi_config.config["USER_AGENT_DEFAULT"] = config.user_agent
-
-    @staticmethod
     def match_main_subjects_from_sparql(args: argparse.Namespace = None):
         """Collect subjects via SPARQL and call get_validated_main_subjects()
         If we get any validated jobs we handle them"""
@@ -79,7 +67,6 @@ class ItemSubjector(BaseModel):
             main_subjects = []
             results = execute_sparql_query(
                 args.sparql.replace("{", "{{").replace("}", "}}"),
-                debug=args.debug_sparql,
             )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")

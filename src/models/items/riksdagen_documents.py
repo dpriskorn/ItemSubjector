@@ -60,7 +60,6 @@ class RiksdagenDocumentItems(Items):
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "sv". }}
             }}
             """,
-                debug=suggestion.args.debug_sparql,
             )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")

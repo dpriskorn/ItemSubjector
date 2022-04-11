@@ -154,7 +154,6 @@ class ScholarlyArticleItems(Items):
                   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
                 }}
                 """,
-                debug=suggestion.args.debug_sparql,
             )
             logging.info(
                 f'Got {len(results["results"]["bindings"])} preprint items from '
