@@ -57,7 +57,6 @@ class ThesisItems(Items):
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
             """,
-                debug=suggestion.args.debug_sparql,
             )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")

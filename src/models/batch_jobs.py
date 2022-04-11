@@ -3,7 +3,9 @@ from typing import List
 
 from pydantic import BaseModel
 
+import config
 from src.models.batch_job import BatchJob
+from src.models.login import Login
 
 
 class BatchJobs(BaseModel):
@@ -35,9 +37,8 @@ class BatchJobs(BaseModel):
         if self.jobs is None or len(self.jobs) == 0:
             raise ValueError("did not get what we need")
         print_keep_an_eye_on_wdqs_lag()
-        from src import login
-
-        login()
+        if config.login_instance is None:
+            Login()
         self.print_running_jobs()
         start_time = datetime.now()
         for job in self.jobs:
