@@ -5,7 +5,8 @@ repos:
     name: black
     language: system
     entry: black .
-    types: [python]
+    pass_filenames: false
+    #types: [python]
 
   - id: codespell
     name: codespell
