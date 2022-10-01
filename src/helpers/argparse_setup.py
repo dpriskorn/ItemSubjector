@@ -5,8 +5,8 @@ def setup_argparse_and_return_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="""
-ItemSubjector enables working main subject statements on items based on a 
-heuristic matching the subject with the title of the item. 
+ItemSubjector enables working main subject statements on items based on a
+heuristic matching the subject with the title of the item.
 
 Example adding one Qid:
 '$ itemsubjector.py -a Q1234'

@@ -3,17 +3,17 @@ from __future__ import annotations
 import argparse
 import logging
 import random
-from typing import Union, List, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional, Union
 
 import config
 from src import (
-    strip_prefix,
-    print_best_practice,
-    console,
-    ask_yes_no_question,
     TaskIds,
     ask_add_to_job_queue,
+    ask_yes_no_question,
+    console,
+    print_best_practice,
     print_job_statistics,
+    strip_prefix,
 )
 from src.helpers.menus import select_task
 from src.models.batch_jobs import BatchJobs
@@ -25,7 +25,7 @@ from src.models.items.thesis import ThesisItems
 from src.tasks import Task
 
 if TYPE_CHECKING:
-    from src import Task, BatchJob
+    from src import BatchJob
 
 # TODO rewrite as OOP
 logger = logging.getLogger(__name__)

@@ -1,10 +1,19 @@
 [tool.poetry]
 name = "itemsubjector"
-version = "0.3-alpha4"
+version = "0.3.1"
 description = "CLI-tool to easily add \"main subject\" aka topics in bulk to groups of items on Wikidata"
 authors = ["Dennis Priskorn <68460690+dpriskorn@users.noreply.github.com>"]
 license = "GPLv3+"
 readme = "README.md"
+homepage = "https://github.com/dpriskorn/ItemSubjector"
+repository = "https://github.com/dpriskorn/ItemSubjector"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Topic :: Utilities",
+]
+keywords = ["wikidata", "subjects", "entity linking", "scientific graph", "linked open data", "open scientific data"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
@@ -18,7 +27,32 @@ console-menu = "^0.7.1"
 [tool.poetry.group.dev.dependencies]
 black = "^22.8.0"
 coverage = "^6.5.0"
+pre-commit = "^2.20.0"
+pytest = "^7.1.3"
+isort = "^5.10.1"
+pyupgrade = "^2.38.2"
+codespell = "^2.2.1"
+bandit = "^1.7.4"
+flake8 = "^5.0.4"
+mypy = "^0.981"
+flake8-2020 = "^1.7.0"
+flake8-bugbear = "^22.9.23"
+safety = "^2.2.0"
+flake8-comprehensions = "^3.10.0"
+flake8-return = "^1.1.3"
+
+
+[[tool.poetry.source]]
+name = "pypi-test"
+url = "https://test.pypi.org/simple/"
+default = false
+secondary = false
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

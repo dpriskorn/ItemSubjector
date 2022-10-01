@@ -30,8 +30,8 @@ class BatchJobs(BaseModel):
     def run_jobs(self):
         from src.helpers.console import (
             console,
-            print_keep_an_eye_on_wdqs_lag,
             print_finished,
+            print_keep_an_eye_on_wdqs_lag,
         )
 
         if self.jobs is None or len(self.jobs) == 0:

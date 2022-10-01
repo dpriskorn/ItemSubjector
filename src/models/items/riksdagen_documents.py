@@ -29,7 +29,7 @@ class RiksdagenDocumentItems(Items):
             raise ValueError("task was None")
         if task.language_code is None:
             raise ValueError("task.language_code was None")
-        # Fetch all items maching the search strings
+        # Fetch all items matching the search strings
         self.list = []
         # Include spaces around the n-gram to avoid edits like this one
         # https://www.wikidata.org/w/index.php?title=Q40671507&diff=1497186802&oldid=1496945583
@@ -38,20 +38,20 @@ class RiksdagenDocumentItems(Items):
             results = execute_sparql_query(
                 f"""
             #{config.user_agent}
-            SELECT DISTINCT ?item ?itemLabel 
+            SELECT DISTINCT ?item ?itemLabel
             WHERE {{
               hint:Query hint:optimizer "None".
               SERVICE wikibase:mwapi {{
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";
                                 mwapi:srsearch 'haswbstatement:P8433 -haswbstatement:P921={suggestion.item.id} "{search_string}"' .
-                ?title wikibase:apiOutput mwapi:title. 
+                ?title wikibase:apiOutput mwapi:title.
               }}
               BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
               ?item rdfs:label ?label.
-              # We lowercase the label first and search for the 
+              # We lowercase the label first and search for the
               # string in both the beginning, middle and end of the label
-              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) ||
                      REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
                      REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
               # remove more specific forms of the main subject also

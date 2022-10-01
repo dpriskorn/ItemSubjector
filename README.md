@@ -12,7 +12,7 @@ As of september 2021 there were 37M scientific articles in Wikidata, but 27M of 
 subject statement. That makes them very hard to find for scientists which is bad for science, 
 because building on the work of others is essential in the global scientific community.
 
-To my knowledge none of the scientific search engines that are currenly used in the scientific community rely on an
+To my knowledge none of the scientific search engines that are currently used in the scientific community rely on an
 open graph editable by anyone and maintained by the community itself for the purpose of helping fellow
 scientists find each others work. Wikipedia and Scholia can fill that gap but we need good tooling to curate the 
 millions of items.
@@ -39,15 +39,20 @@ Download the release tarball or clone the tool using Git.
 ## Clone the repository 
 `git clone https://github.com/dpriskorn/ItemSubjector.git && cd ItemSubjector`
 
-and run
-
-`pip install -r requirements.txt`
-
-to install all requirements.
-
 Then checkout the latest release. 
 
 `git checkout v0.x` where x is the latest number on the release page.
+
+## Setup the environment
+
+Make a virtual environment and set it up using poetry. If you don't have poetry installed run:
+`$ pip install poetry`
+
+and then setup everying with
+
+`$ poetry install`
+
+to install all requirements in a virtual environment.
 
 ## PAWS
 *Note: PAWS is not ideal for batch jobs unless you 

@@ -46,7 +46,7 @@ class ScholarlyArticleItems(Items):
             # SPARQL where it becomes "\\" and thus match a single backslash
             return f"""
                 #{config.user_agent}
-                SELECT DISTINCT ?item ?itemLabel 
+                SELECT DISTINCT ?item ?itemLabel
                 WHERE {{
                   hint:Query hint:optimizer "None".
                   BIND(STR('{cirrussearch_parameters} \"{search_string}\"') as ?search_string)
@@ -54,20 +54,20 @@ class ScholarlyArticleItems(Items):
                     bd:serviceParam wikibase:api "Search";
                                     wikibase:endpoint "www.wikidata.org";
                                     mwapi:srsearch ?search_string.
-                    ?title wikibase:apiOutput mwapi:title. 
+                    ?title wikibase:apiOutput mwapi:title.
                   }}
                   BIND(IRI(CONCAT(STR(wd:), ?title)) AS ?item)
                   ?item rdfs:label ?label.
                   BIND(REPLACE(LCASE(?label), ",", "") as ?label1)
                   BIND(REPLACE(?label1, ":", "") as ?label2)
-                  BIND(REPLACE(?label2, ";", "") as ?label3)          
+                  BIND(REPLACE(?label2, ";", "") as ?label3)
                   BIND(REPLACE(?label3, "\\\\(", "") as ?label4)
                   BIND(REPLACE(?label4, "\\\\)", "") as ?label5)
                   BIND(REPLACE(?label5, "\\\\[", "") as ?label6)
                   BIND(REPLACE(?label6, "\\\\]", "") as ?label7)
                   BIND(REPLACE(?label7, "\\\\\\\\", "") as ?label8)
                   BIND(?label8 as ?cleaned_label)
-                  FILTER(CONTAINS(?cleaned_label, ' {search_string.lower()} '@{task.language_code.value}) || 
+                  FILTER(CONTAINS(?cleaned_label, ' {search_string.lower()} '@{task.language_code.value}) ||
                          REGEX(?cleaned_label, '.* {search_string.lower()}$'@{task.language_code.value}) ||
                          REGEX(?cleaned_label, '^{search_string.lower()} .*'@{task.language_code.value}))
                   MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}
@@ -140,14 +140,14 @@ class ScholarlyArticleItems(Items):
             results_preprint = execute_sparql_query(
                 f"""
                 #{config.user_agent}
-                SELECT DISTINCT ?item ?itemLabel 
+                SELECT DISTINCT ?item ?itemLabel
                 WHERE {{
-                  ?item wdt:P31/wd:P279* wd:Q580922. # preprint 
+                  ?item wdt:P31/wd:P279* wd:Q580922. # preprint
                   MINUS {{
                   ?item wdt:P921 wd:{suggestion.item.id};
                   }}
                   ?item rdfs:label ?label.
-                  FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+                  FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) ||
                          REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
                          REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
                   MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}

@@ -3,38 +3,38 @@ import logging
 
 import pandas as pd  # type: ignore
 from pydantic import BaseModel
-from wikibaseintegrator import wbi_login, wbi_config  # type: ignore
+from wikibaseintegrator import wbi_config, wbi_login  # type: ignore
 from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.argparse_setup import setup_argparse_and_return_args
 from src.helpers.cleaning import strip_prefix
 from src.helpers.console import (
-    console,
-    print_found_items_table,
     ask_add_to_job_queue,
-    ask_yes_no_question,
-    print_finished,
-    print_keep_an_eye_on_wdqs_lag,
-    print_best_practice,
-    print_job_statistics,
     ask_discard_existing_job_pickle,
+    ask_yes_no_question,
+    console,
+    print_best_practice,
+    print_finished,
+    print_found_items_table,
+    print_job_statistics,
+    print_keep_an_eye_on_wdqs_lag,
 )
 from src.helpers.enums import TaskIds
 from src.helpers.jobs import (
+    get_validated_main_subjects_as_jobs,
+    handle_job_preparation_or_run_directly_if_any_jobs,
     process_qid_into_job,
     process_user_supplied_qids_into_batch_jobs,
-    handle_job_preparation_or_run_directly_if_any_jobs,
-    get_validated_main_subjects_as_jobs,
 )
 from src.helpers.menus import select_task
 from src.helpers.migration import migrate_pickle_detection
 from src.helpers.pickle import (
-    parse_job_pickle,
-    remove_job_pickle,
     add_to_job_pickle,
     check_if_pickle_exists,
     get_hash_of_job_pickle,
+    parse_job_pickle,
+    remove_job_pickle,
 )
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
