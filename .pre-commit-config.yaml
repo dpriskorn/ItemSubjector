@@ -47,5 +47,6 @@ repos:
     name: pytest
     language: system
     entry: pytest
-    args: ["--durations=10", "--exitfirst", "tests/"]
-    types: [ python ]
+    args: ["--durations=10", "--exitfirst"]
+    # see https://stackoverflow.com/questions/64011304/running-pytest-as-a-pre-commit-hook-no-such-file-or-directory-issue
+    pass_filenames: false
