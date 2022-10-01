@@ -26,7 +26,7 @@ class ThesisItems(Items):
             raise ValueError("task was None")
         if task.language_code is None:
             raise ValueError("task.language_code was None")
-        # Fetch all items maching the search strings
+        # Fetch all items matching the search strings
         self.list = []
         for search_string in suggestion.search_strings:
             # We don't use CirrusSearch in this query because we can do it more easily in
@@ -35,7 +35,7 @@ class ThesisItems(Items):
             # minus the Qid we want to add
             results = execute_sparql_query(
                 f"""
-            SELECT DISTINCT ?item ?itemLabel 
+            SELECT DISTINCT ?item ?itemLabel
             WHERE {{
               {{
                 ?item wdt:P31/wd:P279* wd:Q1266946. # thesis
@@ -50,7 +50,7 @@ class ThesisItems(Items):
               ?item wdt:P921 wd:{suggestion.item.id};
               }}
               ?item rdfs:label ?label.
-              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) ||
                      REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
                      REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{suggestion.item.id}. }}

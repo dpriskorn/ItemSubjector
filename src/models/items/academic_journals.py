@@ -47,14 +47,14 @@ class AcademicJournalItems(Items):
                 f"""
             #{config.user_agent}
             SELECT ?item ?itemLabel
-            WHERE 
+            WHERE
             {{
               ?item wdt:P31 wd:Q737498.
               minus {{?item wdt:P921 wd:{suggestion.item.id}.}}
               ?item rdfs:label ?label.
-              # We lowercase the label first and search for the 
+              # We lowercase the label first and search for the
               # string in both the beginning, middle and end of the label
-              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) || 
+              FILTER(CONTAINS(LCASE(?label), " {search_string.lower()} "@{task.language_code.value}) ||
                      REGEX(LCASE(?label), ".* {search_string.lower()}$"@{task.language_code.value}) ||
                      REGEX(LCASE(?label), "^{search_string.lower()} .*"@{task.language_code.value}))
               MINUS {{?item wdt:P921/wdt:P279 wd:{suggestion.item.id}. }}

@@ -25,7 +25,7 @@ from src.models.items.thesis import ThesisItems
 from src.tasks import Task
 
 if TYPE_CHECKING:
-    from src import BatchJob, Task
+    from src import BatchJob
 
 # TODO rewrite as OOP
 logger = logging.getLogger(__name__)

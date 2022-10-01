@@ -49,7 +49,7 @@ class Suggestion(BaseModel):
 
     @staticmethod
     def __is_not_scientific_article__(qid: str):
-        """Looks up the QID in Wikidata to chech whether it is a scholarly article or not.
+        """Looks up the QID in Wikidata to check whether it is a scholarly article or not.
         We negate the result"""
         if qid is None:
             raise ValueError("qid was None")
@@ -142,8 +142,6 @@ class Suggestion(BaseModel):
         else:
             logger.debug(f"args:{self.args}")
             if self.args.no_aliases is True:
-                from src import console
-
                 console.print("Alias matching is turned off")
                 no_aliases = True
             elif self.item.id in config.items.no_alias_for_scholarly_items:

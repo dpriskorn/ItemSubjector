@@ -90,7 +90,7 @@ def print_found_items_table(args: argparse.Namespace = None, items: Items = None
         list_to_show = items.list[0:50]
     else:
         # Show 1 sample for each 20 items in the list
-        list_to_show = items.list[0 : int(len(items.list) / 20)]
+        list_to_show = items.list[0:int(len(items.list) / 20)]
     if len(items.list) > 4000:
         console.print(
             "[red]Warning: This is a very large batch, please proceed with caution[/red]"
