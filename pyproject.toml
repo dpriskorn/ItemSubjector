@@ -34,6 +34,7 @@ pyupgrade = "^2.38.2"
 codespell = "^2.2.1"
 bandit = "^1.7.4"
 flake8 = "^5.0.4"
+mypy = "^0.981"
 
 
 [[tool.poetry.source]]
