@@ -1,4 +1,15 @@
 [[package]]
+name = "ansiwrap"
+version = "0.8.4"
+description = "textwrap, but savvy to ANSI colors and styles"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+textwrap3 = ">=0.9.2"
+
+[[package]]
 name = "backoff"
 version = "2.1.2"
 description = "Function decoration for backoff and retry"
@@ -76,6 +87,18 @@ python-versions = "*"
 
 [package.extras]
 test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
+
+[[package]]
+name = "console-menu"
+version = "0.7.1"
+description = "A simple console menu system"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ansiwrap = "*"
+six = "*"
 
 [[package]]
 name = "coverage"
@@ -312,6 +335,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
+name = "textwrap3"
+version = "0.9.2"
+description = "textwrap from Python 3.6 backport (plus a few tweaks)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -373,9 +404,13 @@ notebooks = ["jupyter"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "bcf8a023d20c060be895166b3a8de6be5c22960cc365bd7ea825ab3e402c3d7a"
+content-hash = "a0cdb8bc1a7bf10499bf37b8c4fef66ae815854d36e244254cdddca5588cd1cc"
 
 [metadata.files]
+ansiwrap = [
+    {file = "ansiwrap-0.8.4-py2.py3-none-any.whl", hash = "sha256:7b053567c88e1ad9eed030d3ac41b722125e4c1271c8a99ade797faff1f49fb1"},
+    {file = "ansiwrap-0.8.4.zip", hash = "sha256:ca0c740734cde59bf919f8ff2c386f74f9a369818cdc60efe94893d01ea8d9b7"},
+]
 backoff = [
     {file = "backoff-2.1.2-py3-none-any.whl", hash = "sha256:b135e6d7c7513ba2bfd6895bc32bc8c66c6f3b0279b4c6cd866053cfd7d3126b"},
     {file = "backoff-2.1.2.tar.gz", hash = "sha256:407f1bc0f22723648a8880821b935ce5df8475cf04f7b6b5017ae264d30f6069"},
@@ -424,6 +459,10 @@ colorama = [
 commonmark = [
     {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
     {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
+]
+console-menu = [
+    {file = "console-menu-0.7.1.tar.gz", hash = "sha256:0380e542dcf5f6fb41fb036622e481f9a36cc2f7fb87db12fcff2fe9b9e8c9d3"},
+    {file = "console_menu-0.7.1-py2.py3-none-any.whl", hash = "sha256:c0c3261a83a58c6b49f94ab987c738fa95742ae374bad9fbddc7077161d6ada1"},
 ]
 coverage = [
     {file = "coverage-6.5.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ef8674b0ee8cc11e2d574e3e2998aea5df5ab242e012286824ea3c6970580e53"},
@@ -633,6 +672,10 @@ setuptools = [
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+textwrap3 = [
+    {file = "textwrap3-0.9.2-py2.py3-none-any.whl", hash = "sha256:bf5f4c40faf2a9ff00a9e0791fed5da7415481054cef45bb4a3cfb1f69044ae0"},
+    {file = "textwrap3-0.9.2.zip", hash = "sha256:5008eeebdb236f6303dcd68f18b856d355f6197511d952ba74bc75e40e0c3414"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
