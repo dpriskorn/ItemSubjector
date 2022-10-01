@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from src import console
-from src.models.wikimedia.wikidata.sparql_item import Value, SparqlItem
+from src.models.wikimedia.wikidata.sparql_item import SparqlItem, Value
 
 
 class TestSparqlItem(TestCase):

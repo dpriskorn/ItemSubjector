@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
-from typing import List, Optional, TYPE_CHECKING, Set
+from typing import TYPE_CHECKING, List, Optional, Set
 from urllib.parse import quote
 
 from pydantic import BaseModel

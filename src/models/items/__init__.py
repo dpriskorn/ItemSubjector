@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import random
-from typing import List, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel
 
