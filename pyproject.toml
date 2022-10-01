@@ -1,12 +1,22 @@
+[tool.poetry]
+name = "itemsubjector"
+version = "0.3-alpha4"
+description = "CLI-tool to easily add \"main subject\" aka topics in bulk to groups of items on Wikidata"
+authors = ["Dennis Priskorn <68460690+dpriskorn@users.noreply.github.com>"]
+license = "GPLv3+"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.11"
+wikibaseintegrator = "^0.12.1"
+pydantic = "^1.10.2"
+rich = "^12.5.1"
+pandas = "^1.5.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.8.0"
+coverage = "^6.5.0"
+
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
-    "pydantic~=1.9.0",
-    "requests~=2.27.1",
-    "git+git://github.com/LeMyst/WikibaseIntegrator@v0.12.0.dev5#egg=wikibaseintegrator",
-    "rich~=10.9.0",
-    "console-menu",
-    "SPARQLWrapper~=1.8.5"
-]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
