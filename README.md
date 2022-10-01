@@ -39,15 +39,20 @@ Download the release tarball or clone the tool using Git.
 ## Clone the repository 
 `git clone https://github.com/dpriskorn/ItemSubjector.git && cd ItemSubjector`
 
-and run
-
-`pip install -r requirements.txt`
-
-to install all requirements.
-
 Then checkout the latest release. 
 
 `git checkout v0.x` where x is the latest number on the release page.
+
+## Setup the environment
+
+Make a virtual environment and set it up using poetry. If you don't have poetry installed run:
+`$ pip install poetry`
+
+and then setup everying with
+
+`$ poetry install`
+
+to install all requirements in a virtual environment.
 
 ## PAWS
 *Note: PAWS is not ideal for batch jobs unless you 
