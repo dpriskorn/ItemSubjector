@@ -41,6 +41,6 @@ class TestSuggestion(TestCase):
             ),
         )
         suggestion.extract_search_strings()
-        # suggestion.print_search_strings()
-        if not len(suggestion.search_strings) == 9:
-            self.fail()
+        suggestion.print_search_strings()
+        print(len(suggestion.search_strings))
+        assert len(suggestion.search_strings) == 10
