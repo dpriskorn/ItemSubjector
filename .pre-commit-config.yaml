@@ -47,6 +47,5 @@ repos:
     name: pytest
     language: system
     entry: pytest
-    args:
-      - "--durations=10"
+    args: ["--durations=10", "--exitfirst", "tests/"]
     types: [ python ]
