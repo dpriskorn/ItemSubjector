@@ -17,7 +17,9 @@ repos:
     name: bandit
     language: system
     entry: bandit --recursive --skip B301,B105,B403,B311,B101,B324 src  # B101 is assert statements
-    types: [python]
+    # types: [python]
+    pass_filenames: false
+
 
   - id: isort
     name: isort
@@ -43,6 +45,13 @@ repos:
            "--statistics"]
     types: [ python ]
 
+  - id: safety
+    name: safety
+    language: system
+    entry: safety
+    args: ["check"]
+    pass_filenames: false
+
   - id: pytest
     name: pytest
     language: system
@@ -50,3 +59,4 @@ repos:
     args: ["--durations=10", "--exitfirst"]
     # see https://stackoverflow.com/questions/64011304/running-pytest-as-a-pre-commit-hook-no-such-file-or-directory-issue
     pass_filenames: false
+
