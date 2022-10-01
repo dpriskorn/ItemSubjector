@@ -48,7 +48,7 @@ class Entity(BaseModel):
             raise ValueError("No login instance in config.login_instance")
         wbi = WikibaseIntegrator(login=config.login_instance)
         item = wbi.item.get(self.id)
-        item.add_claims([statement], action_if_exists=ActionIfExists.APPEND)
+        item.add_claims([statement], action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
         try:
             item.write(
                 summary=f"Added {summary} with [[{config.tool_wikipage}]] "
