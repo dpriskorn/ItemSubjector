@@ -12,7 +12,7 @@ As of september 2021 there were 37M scientific articles in Wikidata, but 27M of 
 subject statement. That makes them very hard to find for scientists which is bad for science, 
 because building on the work of others is essential in the global scientific community.
 
-To my knowledge none of the scientific search engines that are currenly used in the scientific community rely on an
+To my knowledge none of the scientific search engines that are currently used in the scientific community rely on an
 open graph editable by anyone and maintained by the community itself for the purpose of helping fellow
 scientists find each others work. Wikipedia and Scholia can fill that gap but we need good tooling to curate the 
 millions of items.
