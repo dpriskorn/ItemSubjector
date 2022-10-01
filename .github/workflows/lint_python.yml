@@ -7,13 +7,15 @@ jobs:
       ia_sandbox: ${{ secrets.ia_sandbox }}
     steps:
       - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
+          cache: 'poetry'
       - run: pip install --upgrade pip wheel
-      - run: pip install poetry
       - run: poetry install --with=dev
-      - run: bandit --recursive --skip B301,B105,B403,B311,B101,B324 src  # B101 is assert statements
+      - run: poetry run bandit --recursive --skip B301,B105,B403,B311,B101,B324 src  # B101 is assert statements
       - run: black --check .
       - run: codespell  # --ignore-words-list="" --skip="*.css,*.js,*.lock"
       - run: flake8 --ignore=C408,C416,E203,F401,F541,R501,R502,R503,R504,W503
