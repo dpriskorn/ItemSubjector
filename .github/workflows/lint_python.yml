@@ -22,6 +22,6 @@ jobs:
       - run: mkdir --parents --verbose .mypy_cache
       - run: mypy --ignore-missing-imports --install-types --non-interactive .
       - run: cp config/__init__example.py config/__init__.py
-      - run: pytest .
+      - run: pytest --exitfirst .
       - run: shopt -s globstar && pyupgrade --keep-runtime-typing --py37-plus **/*.py
       - run: safety check
