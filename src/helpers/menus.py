@@ -34,7 +34,7 @@ def select_task() -> Task:
     logger = logging.getLogger(__name__)
     from src.tasks import tasks
 
-    labels = list([task.label for task in tasks])
+    labels = [task.label for task in tasks]
     # console.print(labels)
     menu = SelectionMenu(labels, "Select a task")
     menu.show()
