@@ -50,7 +50,7 @@ Make a virtual environment and set it up using poetry. If you don't have poetry 
 
 and then setup everying with
 
-`$ poetry install`
+`$ poetry install --without=dev`
 
 to install all requirements in a virtual environment.
 
@@ -64,7 +64,7 @@ The tool runs in PAWS with no known
 issues.
 * log in to PAWS
 * open a terminal
-* run `git clone https://github.com/dpriskorn/ItemSubjector.git .itemsubjector && cd .itemsubjector && pip install -r requirements.txt` 
+* run `git clone https://github.com/dpriskorn/ItemSubjector.git .itemsubjector && cd .itemsubjector && pip install poetry && poetry install --without=dev` 
   <- note the dot in front of the directory name 
   that hides it from publication which is crucial to 
   avoid publication of your login credentials.
@@ -82,7 +82,7 @@ config/__init__.py and enter the botusername
 for your account 
 and make sure you give it the *edit page permission* 
 and *high volume permissions*)
-* e.g. `cp config.example.py config.py && nano config.py`
+* e.g. `cd config && cp __init__example.py __init__.py && nano __init__.py`
 
 *GNU Nano is an editor, press `ctrl+x` when you are done and `y` to save your changes*
 
@@ -100,15 +100,15 @@ of the target item (e.g. scientific article).
 
 Run the script with the -a or --add argument 
 followed by one or more QIDs or URLS:
-* `python itemsubjector.py -a Q108528107` or
-* `python itemsubjector.py -a https://www.wikidata.org/wiki/Q108528107`
+* `poetry run python itemsubjector.py -a Q108528107` or
+* `poetry run python itemsubjector.py -a https://www.wikidata.org/wiki/Q108528107`
 
 *Note since v0.2 you should not add subjects that are subclass 
 of each other in one go. 
 This is because of internal changes related to job handling*
 
 Add the narrow first and then the broader like this:
-* `python itemsubjector.py -a narrow-QID && python itemsubjector.py -a broader-QID`
+* `poetry run python itemsubjector.py -a narrow-QID && poetry run python itemsubjector.py -a broader-QID`
 
 Please investigate before adding broad 
 subjects (with thousands of matches) 
@@ -124,33 +124,33 @@ it is necessary to disable alias matching to
 avoid garbage matches. 
 
 Usage example:
-`python itemsubjector.py -a Q34 --no-aliases` 
+`poetry run python itemsubjector.py -a Q34 --no-aliases` 
 (the shorthand `-na` also works)
 
 ### Disable search expression confirmation
 Avoid the extra question "Do you want to continue?":
 
 Usage example:
-`python itemsubjector.py -a Q34 --no-confirmation` 
+`poetry run python itemsubjector.py -a Q34 --no-confirmation` 
 (the shorthand `-nc` also works)
 
 ### Show links column in table of search expressions 
 This is handy if you want to look them up easily.
 
 Usage example:
-`python itemsubjector.py -a Q34 --show-search-urls` 
+`poetry run python itemsubjector.py -a Q34 --show-search-urls` 
 (the shorthand `-su` also works)
 
 ### Show links column in table of search expressions 
 This is handy if you want to look them up easily.
 
 Usage example:
-`python itemsubjector.py -a Q34 --show-item-urls` 
+`poetry run python itemsubjector.py -a Q34 --show-item-urls` 
 (the shorthand `-iu` also works)
 
 ### Limit to scholarly articles without main subject
 Usage example:
-`python itemsubjector.py -a Q34 --limit-to-items-without-p921` 
+`poetry run python itemsubjector.py -a Q34 --limit-to-items-without-p921` 
 (the shorthand `-w` also works)
 
 ## Matching main subjects based on a SPARQL query.
@@ -158,7 +158,7 @@ The tool can create a list of jobs by picking random subjects from a
 users SPARQL query.
 
 Usage example for diseases:
-`python itemsubjector.py -iu --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136.}"`
+`poetry run python itemsubjector.py -iu --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136.}"`
 
 This makes it much easier to cover a range a subjects. 
 This example query returns ~5000 items to match :)
