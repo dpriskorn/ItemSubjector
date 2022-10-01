@@ -151,7 +151,7 @@ class ItemSubjector(BaseModel):
         else:
             # if not args.run_prepared_jobs:
             if args.add is None:
-                console.print("Got no QIDs. Quitting")
+                console.print("Got no arguments or QIDs. Try '--help' for help.")
                 exit(0)
             task: Task = select_task()
             if task is None:
