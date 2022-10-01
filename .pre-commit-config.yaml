@@ -1,0 +1,52 @@
+repos:
+- repo: local
+  hooks:
+  - id: black
+    name: black
+    language: system
+    entry: black .
+    types: [python]
+
+  - id: codespell
+    name: codespell
+    language: system
+    entry: codespell
+    types: [python]
+
+  - id: bandit
+    name: bandit
+    language: system
+    entry: bandit --recursive --skip B301,B105,B403,B311,B101,B324 src  # B101 is assert statements
+    types: [python]
+
+  - id: isort
+    name: isort
+    language: system
+    entry: isort
+    args: ["--profile", "black", "--filter-files"]
+    types: [python]
+
+  - id: pyupgrade
+    name: pyupgrade
+    language: system
+    entry: pyupgrade
+    args: ["--keep-runtime-typing", "--py37-plus"]
+    types: [python]
+
+# https://flake8.pycqa.org/en/latest/user/using-hooks.html
+  - id: flake8
+    name: flake8
+    language: system
+    entry: flake8
+    args: ["--ignore=C408,C416,E203,F401,F541,R501,R502,R503,R504,W503",
+           "--max-complexity=21", "--max-line-length=162", "--show-source",
+           "--statistics"]
+    types: [ python ]
+
+  - id: pytest
+    name: pytest
+    language: system
+    entry: pytest
+    args:
+      - "--durations=10"
+    types: [ python ]
