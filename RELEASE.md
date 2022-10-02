@@ -7,4 +7,4 @@
 * Commit changes and push
 * When CI is successful merge the PR
 * Create release in Github
-* Publish to pypi `$ poetry publish`
+* Publish to pypi `$ poetry publish --build`
