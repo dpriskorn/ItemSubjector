@@ -46,16 +46,43 @@ package wikimedia {
         class EntityID{
         letter: WikidataNamespaceLetters
             rest: str
-        __init__()
         __str__()
         }
-        class ForeignID{
-        __init__()
+        abstract class Query{
+            __execute__()
+            __parse_results__()
+            __prepare_and_build_query__()
+            __strip_bad_chars__()
+            get_results()
+            print_number_of_results()
+        }
+        class PreprintArticleQuery {
+            __prepare_and_build_query__()
+        }
+        class RiksdagenDocumentQuery {
+            __prepare_and_build_query__()
+        }
+        class PublishedArticleQuery {
+            __build_query__()
+            __check_we_got_everything_we_need__()
+            __prepare_and_build_query__()
+            __setup_cirrussearch_params__()
         }
         class SparqlItem{
             item: Value
             itemLabel: Value
             validate_qid_and_copy_label()
+        }
+        class MainSubjectItem {
+            item: Item = None
+            search_strings: List[str] = None
+            task: Task = None
+            args: argparse.Namespace = None
+            __init__()
+            __str__()
+            add_to_items()
+            extract_search_strings()
+            search_urls ())
         }
         class Item{
             label: Optional[str] = None
@@ -84,50 +111,39 @@ package wikimedia {
             SUPINE
             THIRD_PERSON_SINGULAR
         }
-        enum WikidataLexicalCategory {
-            ADJECTIVE
-            ADVERB
-            AFFIX
-            NOUN
-            PROPER_NOUN
-            VERB
-        }
-        enum WikidataNamespaceLetters {
-            ITEM
-            LEXEME
-            PROPERTY
-        }
+'        enum WikidataLexicalCategory {
+'            ADJECTIVE
+'            ADVERB
+'            AFFIX
+'            NOUN
+'            PROPER_NOUN
+'            VERB
+'        }
+'        enum WikidataNamespaceLetters {
+'            ITEM
+'            LEXEME
+'            PROPERTY
+'        }
     }
 }
 package items {
-    abstract class Items
-    class AcademicJournalItems {
-    fetch_based_on_label()
+    abstract class Items {
+        execute_queries()
+        fetch_based_on_label()
+        number_of_sparql_items()
+        print_items_list()
+        print_total_items()
+        random_shuffle_items()
+        remove_duplicates()
     }
     class RiksdagenDocumentItems {
-    +list
-    +fetch_based_on_label()
+execute_queries()
+fetch_based_on_label()
     }
-
     class ScholarlyArticleItems {
-    +list
-    +fetch_based_on_label()
+execute_queries()
+fetch_based_on_label()
     }
-    class ThesisItems {
-    list
-    fetch_based_on_label()
-    }
-}
-class Suggestion {
-    item: Item = None
-    search_strings: List[str] = None
-    task: Task = None
-    args: argparse.Namespace = None
-    __init__()
-    __str__()
-    add_to_items()
-    extract_search_strings()
-    search_urls ())
 }
 
 class Task {
@@ -136,7 +152,6 @@ class Task {
     label: str = None
     language_code: SupportedLanguageCode = None
     number_of_queries_per_search_string = 1
-    __init__()
     __str__()
 }
 
@@ -152,18 +167,26 @@ class BatchJob {
     +items: Items
     run()
 }
-
-Items <|-- AcademicJournalItems
+class ItemSubjector {
+    export_jobs_to_dataframe()
+    match_main_subjects_from_sparql()
+    run()
+}
+'Items <|-- AcademicJournalItems
 Items <|-- RiksdagenDocumentItems
 Items <|-- ScholarlyArticleItems
-Items <|-- ThesisItems
+'Items <|-- ThesisItems
 BaseModel <|-- Entity
 BaseModel <|-- Task
-BaseModel <|-- Suggestion
 BaseModel <|-- BatchJob
 BaseModel <|-- BatchJobs
 BaseModel <|-- Items
+BaseModel <|-- ItemSubjector
 Entity <|-- Item
 Item <|-- SparqlItem
+Item <|-- MainSubjectItem
+Query <|-- PreprintArticleQuery
+Query <|-- PublishedArticleQuery
+Query <|-- RiksdagenDocumentQuery
 
 @enduml
