@@ -231,7 +231,7 @@ class MainSubjectItem(Item):
         else:
             raise ValueError(f"{self.task.id} was not recognized")
 
-    def fetch_items_and_get_job(self) -> Optional["BatchJob"]:
+    def fetch_items_and_get_job_if_confirmed(self) -> Optional["BatchJob"]:
         """This method handles all the work needed to return a job"""
         self.__strip_qid_prefix__()
         self.__fetch_label_and_description_and_aliases__()
