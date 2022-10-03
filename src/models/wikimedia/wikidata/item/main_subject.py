@@ -235,27 +235,38 @@ class MainSubjectItem(Item):
         """This method handles all the work needed to return a job"""
         self.__strip_qid_prefix__()
         self.__fetch_label_and_description_and_aliases__()
-        if self.label:
+        if self.__got_label__():
             console.print(f"Working on {self.label}")
-            if self.confirmation:
-                answer = ask_yes_no_question("Do you want to continue?")
-                if not answer:
-                    return None
-            self.__prepare_before_fetching_items__()
-            if self.items:
-                with console.status(
+            if self.__is_confirmed__():
+                return self.__fetch_and_parse__()
+        return None
+    def __is_confirmed__(self) -> bool:
+        if self.confirmation:
+            return ask_yes_no_question("Do you want to continue?")
+        else:
+            return True
+
+    def __fetch_and_parse__(self) -> Optional[BatchJob]:
+        self.__prepare_before_fetching_items__()
+        if self.items:
+            with console.status(
                     f"Fetching items with labels that have one of "
                     f"the search strings by running a total of "
                     f"{self.number_of_queries} "
                     f"queries on WDQS..."
-                ):
-                    self.items.fetch_based_on_label()
-                return self.__parse_into_job__()
-            else:
-                raise ValueError("items was None")
+            ):
+                self.items.fetch_based_on_label()
+            return self.__parse_into_job__()
         else:
-            if self.task:
-                console.print(
-                    f"Label for {self.task.language_code.name.title()} was None on {self.url}, skipping"
-                )
-            return None
+            raise ValueError("items was None")
+
+    def __got_label__(self) -> bool:
+        if not self.label:
+            if not self.task:
+                raise ValueError("task was None")
+            console.print(
+                f"Label for {self.task.language_code.name.title()} was None, see {self.url}, skipping"
+            )
+            return False
+        else:
+            return True
