@@ -157,14 +157,7 @@ class ItemSubjector(BaseModel):
             if args.add is None:
                 console.print("Got no arguments or QIDs. Try '--help' for help.")
                 exit(0)
-            task: Task = select_task()
-            if task is None:
-                raise ValueError("Got no task")
-            jobs = []
-            jobs.extend(
-                process_user_supplied_qids_into_batch_jobs(args=args, task=task)
-            )
-            batchjobs = BatchJobs(jobs=jobs)
+            batchjobs = get_validated_main_subjects_as_jobs(args=args, main_subjects=args.add)
             handle_job_preparation_or_run_directly_if_any_jobs(
                 args=args, batchjobs=batchjobs
             )
