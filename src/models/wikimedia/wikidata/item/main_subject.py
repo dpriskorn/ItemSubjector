@@ -14,6 +14,7 @@ from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import console
 from src.helpers.questions import ask_yes_no_question
 from src.models.items import Items
+from src.models.items.riksdagen_documents import RiksdagenDocumentItems
 from src.models.items.scholarly_articles import ScholarlyArticleItems
 from src.models.wikimedia.wikidata.enums import Property, Qid
 from src.models.wikimedia.wikidata.item import Item
@@ -221,8 +222,8 @@ class MainSubjectItem(Item):
     def __instantiate_the_right_class_for_this_task__(self):
         if self.task.id == TaskIds.SCHOLARLY_ARTICLES:
             self.items = ScholarlyArticleItems(main_subject_item=self)
-        # elif self.task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-        #     items = RiksdagenDocumentItems(main_subject_item=self)
+        elif self.task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
+            self.items = RiksdagenDocumentItems(main_subject_item=self)
         # elif self.task.id == TaskIds.THESIS:
         #     items = ThesisItems(main_subject_item=self)
         # elif self.task.id == TaskIds.ACADEMIC_JOURNALS:

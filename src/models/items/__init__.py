@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 import argparse
 import logging
@@ -7,6 +7,7 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
+from src.helpers.console import console
 from src.models.wikimedia.wikidata.item.sparql import SparqlItem
 
 # if TYPE_CHECKING:
@@ -41,3 +42,9 @@ class Items(BaseModel):
         logger.debug(f"{len(self.sparql_items)} before duplicate removal")
         self.sparql_items = list(set(self.sparql_items))
         logger.debug(f"{len(self.sparql_items)} after duplicate removal")
+
+    def print_total_items(self):
+        console.print(f"Got a total of {len(self.sparql_items)} items")
+
+    def execute_queries(self):
+        pass

@@ -1,9 +1,9 @@
 import config
 from src.helpers.console import console
-from src.models.wikimedia.wikidata.query.article import ArticleQuery
+from src.models.wikimedia.wikidata.query import Query
 
 
-class PublishedArticleQuery(ArticleQuery):
+class PublishedArticleQuery(Query):
     cirrussearch_parameters: str = ""
 
     def __check_we_got_everything_we_need__(self):
@@ -83,4 +83,3 @@ class PublishedArticleQuery(ArticleQuery):
             )
         else:
             self.cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921={self.main_subject_item.id}"
-

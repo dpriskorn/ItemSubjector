@@ -25,14 +25,14 @@ tasks = [
             number_of_queries_per_search_string=2,
         )
     ),
-    # Task(
-    #     **dict(
-    #         id=TaskIds.RIKSDAGEN_DOCUMENTS,
-    #         label="Add main subject to documents from Riksdagen",
-    #         language_code=SupportedLanguageCode.SWEDISH,
-    #         best_practice_information=None,
-    #     )
-    # ),
+    Task(
+        **dict(
+            id=TaskIds.RIKSDAGEN_DOCUMENTS,
+            label="Add main subject to documents from Riksdagen",
+            language_code=SupportedLanguageCode.SWEDISH,
+            best_practice_information=None,
+        )
+    ),
     # Task(
     #     **dict(
     #         id=TaskIds.THESIS,

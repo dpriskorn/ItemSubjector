@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from pydantic import BaseModel
 from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
@@ -15,6 +15,8 @@ class Query(BaseModel):
     search_string = ""
     query_string = ""
     items: List[Item] = []
+    # any here because of pydantic error
+    main_subject_item: Any
 
     def __parse_results__(self) -> None:
         # console.print(self.results)

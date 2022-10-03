@@ -1,9 +1,13 @@
 import config
-from src.models.wikimedia.wikidata.query.article import ArticleQuery
+from src.models.wikimedia.wikidata.query import Query
 
 
-class PreprintArticleQuery(ArticleQuery):
+class PreprintArticleQuery(Query):
     def __prepare_and_build_query__(self):
+        # We don't use CirrusSearch in this query because we can do it more easily in
+        # SPARQL on a small subgraph like this
+        # find all items that are ?main_subject_item wdt:P31/wd:P279* wd:Q1266946
+        # minus the Qid we want to add
         self.query_string = f"""
         #{config.user_agent}
         SELECT DISTINCT ?item ?itemLabel
