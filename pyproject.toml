@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "itemsubjector"
-version = "0.3.2"
+version = "0.3.3"
 description = "CLI-tool to easily add \"main subject\" aka topics in bulk to groups of items on Wikidata"
 authors = ["Dennis Priskorn <68460690+dpriskorn@users.noreply.github.com>"]
 license = "GPLv3+"

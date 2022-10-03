@@ -44,7 +44,9 @@ class BatchJobs(BaseModel):
         self.print_running_jobs()
         start_time = datetime.now()
         for job in self.jobs:
-            job.main_subject_item.add_to_items(jobs=self.jobs, job_count=self.number_of_jobs)
+            job.main_subject_item.add_to_items(
+                jobs=self.jobs, job_count=self.number_of_jobs
+            )
         print_finished()
         end_time = datetime.now()
         console.print(f"Total runtime: {end_time - start_time}")

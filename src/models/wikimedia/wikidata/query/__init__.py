@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from pydantic import BaseModel
 from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore

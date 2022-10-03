@@ -5,7 +5,6 @@ from src.models.wikimedia.wikidata.query.riksdagen_document import (
     RiksdagenDocumentQuery,
 )
 
-
 # logger = logging.getLogger(__name__)
 
 

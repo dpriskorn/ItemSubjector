@@ -45,6 +45,7 @@ from src.tasks import tasks
 logging.basicConfig(level=config.loglevel)
 logger = logging.getLogger(__name__)
 
+
 class ItemSubjector(BaseModel):
     @staticmethod
     def match_main_subjects_from_sparql(args: argparse.Namespace = None):

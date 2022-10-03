@@ -240,6 +240,7 @@ class MainSubjectItem(Item):
             if self.__is_confirmed__():
                 return self.__fetch_and_parse__()
         return None
+
     def __is_confirmed__(self) -> bool:
         if self.confirmation:
             return ask_yes_no_question("Do you want to continue?")
@@ -250,10 +251,10 @@ class MainSubjectItem(Item):
         self.__prepare_before_fetching_items__()
         if self.items:
             with console.status(
-                    f"Fetching items with labels that have one of "
-                    f"the search strings by running a total of "
-                    f"{self.number_of_queries} "
-                    f"queries on WDQS..."
+                f"Fetching items with labels that have one of "
+                f"the search strings by running a total of "
+                f"{self.number_of_queries} "
+                f"queries on WDQS..."
             ):
                 self.items.fetch_based_on_label()
             return self.__parse_into_job__()
