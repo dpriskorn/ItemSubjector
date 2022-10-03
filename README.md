@@ -240,6 +240,13 @@ removed the QuickStatements export to simplify the program.
 * This project has been used in a scientific paper I wrote together with 
 [Houcemeddine Turki](https://scholia.toolforge.org/author/Q53505397)
 
+## Rewrite 2022:
+* Important to break down methods to 1 method 1 task to increase readability. -> helps reuse in other projects.
+* Important to avoid resetting attributes and instantiate classes instead. -> helps reuse in other projects.
+* Simplify as much as possible to keep the whole thing lean and avoid scope creep. -> helps reuse in other projects. (KISS-principle)
+* Difficult to judge which features are used and which are not. User testing would be nice.
+* UML diagrams are nice. They give a good quick overview.
+
 # Thanks
 During the development of this tool the author got a 
 help multiple times from **Jan Ainali** and **Jon Søby**
@@ -254,7 +261,7 @@ helpful people in the Wikimedia Cloud Services Support chat that
 helped with making batch jobs run successfully.
 
 Thanks also to **jsamwrites** for help with testing and suggestions 
-for improvement.
+for improvement and for using the tool to improve a ton of items :).
 
 # License
 GPLv3+
