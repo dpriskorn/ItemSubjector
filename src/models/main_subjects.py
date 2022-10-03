@@ -7,14 +7,13 @@ from time import sleep
 from typing import List, Optional
 
 from pydantic import BaseModel
-from wikibaseintegrator.wbi_helpers import execute_sparql_query # type: ignore
+from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
-from src.helpers.cli_messages import print_best_practice, print_job_statistics
+from src.helpers.cli_messages import print_job_statistics
 from src.helpers.console import console
 from src.helpers.menus import select_task
 from src.helpers.questions import ask_add_to_job_queue, ask_yes_no_question
-from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.tasks import Task
@@ -46,20 +45,20 @@ class MainSubjects(BaseModel):
         else:
             console.print("Got 0 results. Try another query or debug it using --debug")
 
-    def process_user_supplied_qids_into_batch_jobs(self) -> List[BatchJob]:
-        """Given a sparql_items of QIDs, we go through
-        them and return a sparql_items of jobs"""
-        # TODO this should not return anything
-        if self.task:
-            print_best_practice(self.task)
-            jobs = []
-            for qid in self.args.add:
-                main_subject_item = MainSubjectItem(id=qid, args=self.args, task=self.task)
-                job = main_subject_item.fetch_items_and_get_job_if_confirmed()
-                if job:
-                    jobs.append(job)
-            return jobs
-        return []
+    # def process_user_supplied_qids_into_batch_jobs(self) -> List[BatchJob]:
+    #     """Given a sparql_items of QIDs, we go through
+    #     them and return a sparql_items of jobs"""
+    #     # TODO this should not return anything
+    #     if self.task:
+    #         print_best_practice(self.task)
+    #         jobs = []
+    #         for qid in self.args.add:
+    #             main_subject_item = MainSubjectItem(id=qid, args=self.args, task=self.task)
+    #             job = main_subject_item.fetch_items_and_get_job_if_confirmed()
+    #             if job:
+    #                 jobs.append(job)
+    #         return jobs
+    #     return []
 
     def handle_job_preparation_or_run_directly_if_any_jobs(self):
         if self.batchjobs is None:
