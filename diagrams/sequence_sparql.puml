@@ -15,7 +15,12 @@ alt "arguments: sparql && limit"
             ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
             Wikidata -> ItemSubjector : response
             ItemSubjector -> User : present max 50 items
+            alt auto-approve < 50 items enabled
+                ItemSubjector -> User : auto-approving batch
+            end
+            alt auto-approve < 50 items enabled OR > 50 items
             ItemSubjector -> User : ask for approval of batch
+            end
             ItemSubjector -> User : show count of batches and matches in the job list in memory
         end
         alt "above limit"
@@ -36,8 +41,13 @@ alt "arguments: sparql && limit && prepare-jobs"
             ItemSubjector -> Wikidata : fetch scientific articles according to SPARQL query built based on the details
             Wikidata -> ItemSubjector : response
             ItemSubjector -> User : present max 50 items
+                        alt auto-approve < 50 items enabled
+                ItemSubjector -> User : auto-approving batch
+            end
+            alt auto-approve < 50 items enabled OR > 50 items
             ItemSubjector -> User : ask for approval of batch
-            ItemSubjector -> User : show count of batches and matches in the job list in memory
+            end
+ItemSubjector -> User : show count of batches and matches in the job list in memory
         end
         alt "above limit"
             ItemSubjector -> User : ask before continuing
