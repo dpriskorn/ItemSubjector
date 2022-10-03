@@ -7,7 +7,7 @@ tasks = [
     Task(
         **dict(
             id=TaskIds.SCHOLARLY_ARTICLES,
-            label="Add main subject to scholarly articles and preprints",
+            label="Add main subject to scholarly articles, thesis' and preprints",
             language_code=SupportedLanguageCode.ENGLISH,
             best_practice_information=(
                 "When adding Qid main subjects please try to first "
