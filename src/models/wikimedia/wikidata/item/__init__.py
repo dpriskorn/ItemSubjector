@@ -43,9 +43,7 @@ class Item(Entity):
             f"Fetching {self.task.language_code.name.title()} label and aliases from the Wikidata API..."
         ):
             wbi = WikibaseIntegrator()
-            if not self.id:
-                id = self.id
-            item = wbi.item.get(id)
+            item = wbi.item.get(self.id)
             label = item.labels.get(self.task.language_code.value)
             if label:
                 self.label = str(label)
