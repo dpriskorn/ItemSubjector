@@ -6,12 +6,13 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 from src.models.items import Items
 from src.models.wikimedia.wikidata.query.preprint_article import PreprintArticleQuery
 from src.models.wikimedia.wikidata.query.published_article import PublishedArticleQuery
+from src.models.wikimedia.wikidata.query.thesis import ThesisQuery
 
 logger = logging.getLogger(__name__)
 
 
 class ScholarlyArticleItems(Items):
-    """This supports both published peer reviewed articles and preprints"""
+    """This supports both published peer reviewed articles, thesis' and preprints"""
 
     cirrussearch_parameters: str = ""
     results: Dict = {}
@@ -38,3 +39,9 @@ class ScholarlyArticleItems(Items):
             preprint_query.get_results()
             preprint_query.print_number_of_results()
             self.sparql_items.extend(preprint_query.items)
+            thesis_query = ThesisQuery(
+                search_string=search_string, main_subject_item=self.main_subject_item
+            )
+            thesis_query.get_results()
+            thesis_query.print_number_of_results()
+            self.sparql_items.extend(thesis_query.items)
