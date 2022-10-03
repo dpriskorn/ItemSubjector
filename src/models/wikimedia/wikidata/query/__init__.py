@@ -53,11 +53,11 @@ class Query(BaseModel):
     def get_results(self):
         """Do everything needed to get the results"""
         self.__strip_bad_chars__()
-        self.__build_query__()
+        self.__prepare_and_build_query__()
         self.__execute__()
         self.__parse_results__()
 
-    def __build_query__(self):
+    def __prepare_and_build_query__(self):
         pass
 
     def print_number_of_results(self):

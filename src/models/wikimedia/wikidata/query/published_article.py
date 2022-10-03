@@ -6,13 +6,11 @@ from src.models.wikimedia.wikidata.query.article import ArticleQuery
 class PublishedArticleQuery(ArticleQuery):
     cirrussearch_parameters: str = ""
 
-    def check_we_got_everything_we_need(self):
+    def __check_we_got_everything_we_need__(self):
         if not self.main_subject_item:
-            raise ValueError("suggestion was None")
-        if not self.main_subject_item:
-            raise ValueError("suggestion.main_subject_item was None")
+            raise ValueError("main_subject_item was None")
         if not self.main_subject_item.args:
-            raise ValueError("suggestion.args was None")
+            raise ValueError("main_subject_item.args was None")
         if self.main_subject_item.args.limit_to_items_without_p921:
             raise Exception(
                 "Limiting to items without P921 is not " "supported yet for this task."
@@ -21,25 +19,19 @@ class PublishedArticleQuery(ArticleQuery):
             raise ValueError("task was None")
         if self.main_subject_item.task.language_code is None:
             raise ValueError("task.language_code was None")
-        if self.main_subject_item.args.limit_to_items_without_p921:
-            console.print(
-                "Limiting to scholarly articles without P921 main subject only"
-            )
-            cirrussearch_parameters = (
-                f"haswbstatement:P31=Q13442814 -haswbstatement:P921"
-            )
-        else:
-            cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921={self.main_subject_item.id}"
         if self.main_subject_item.task is None:
             raise ValueError("task was None")
         if self.main_subject_item.task.language_code is None:
             raise ValueError("task.language_code was None")
-        if cirrussearch_parameters is None:
-            raise ValueError("cirrussearch_parameters was None")
 
-    def __build_query__(
+    def __prepare_and_build_query__(
         self,
     ):
+        self.__check_we_got_everything_we_need__()
+        self.__setup_cirrussearch_params__()
+        self.__build_query__()
+
+    def __build_query__(self):
         # This query uses https://www.w3.org/TR/sparql11-property-paths/ to
         # find subjects that are subclass of one another up to 3 hops away
         # This query also uses the https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI
@@ -80,3 +72,15 @@ class PublishedArticleQuery(ArticleQuery):
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
             """
+
+    def __setup_cirrussearch_params__(self):
+        if self.main_subject_item.args.limit_to_items_without_p921:
+            console.print(
+                "Limiting to scholarly articles without P921 main subject only"
+            )
+            self.cirrussearch_parameters = (
+                f"haswbstatement:P31=Q13442814 -haswbstatement:P921"
+            )
+        else:
+            self.cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921={self.main_subject_item.id}"
+
