@@ -71,7 +71,7 @@ def handle_job_preparation_or_run_directly_if_any_jobs(
 
 
 def get_validated_main_subjects_as_jobs(
-    args: argparse.Namespace = None, main_subjects: List[str] = None
+    args: argparse.Namespace, main_subjects: List[str]
 ) -> BatchJobs:
     """This function randomly picks a subject and add it to the
     sparql_items of jobs if it had any matches and the user approved it"""
