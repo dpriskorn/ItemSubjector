@@ -48,12 +48,12 @@ def print_found_items_table(args: argparse.Namespace = None, items: Items = None
     if items.sparql_items is None:
         raise ValueError("items.sparql_items was None")
     table = Table(title="Matched items found")
-    if len(items.sparql_items) < 1000:
+    if items.number_of_sparql_items < 1000:
         list_to_show = items.sparql_items[0:50]
     else:
         # Show 1 sample for each 20 items in the sparql_items
-        list_to_show = items.sparql_items[0 : int(len(items.sparql_items) / 20)]
-    if len(items.sparql_items) > 4000:
+        list_to_show = items.sparql_items[0 : int(items.number_of_sparql_items / 20)]
+    if items.number_of_sparql_items > 4000:
         console.print(
             "[red]Warning: This is a very large batch, please proceed with caution[/red]"
         )
@@ -82,12 +82,13 @@ def print_finished():
 
 def print_job_statistics(batchjobs: BatchJobs = None):
     if not batchjobs:
-        raise ValueError("jobs was None")
+        raise ValueError("batchjobs was None")
     if not batchjobs.jobs:
-        raise ValueError("batchjobs.jobs was None")
+        # No jobs to print information about
+        return
     if not isinstance(batchjobs.jobs, list):
         raise ValueError("jobs was not a sparql_items")
-    if not len(batchjobs.jobs):
+    if not batchjobs.number_of_jobs:
         console.print("The jobs sparql_items is empty")
     else:
         total_number_of_queries = sum([job.number_of_queries for job in batchjobs.jobs])
@@ -100,7 +101,7 @@ def print_job_statistics(batchjobs: BatchJobs = None):
             and job.main_subject_item.items.sparql_items
         )
         console.print(
-            f"The jobs sparql_items now contain a total of {len(batchjobs.jobs)} "  # type: ignore
+            f"The jobs sparql_items now contain a total of {batchjobs.number_of_jobs} "  # type: ignore
             f"jobs with a total of "
             f"{total_number_of_items} items found from "
             f"{total_number_of_queries} queries"

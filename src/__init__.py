@@ -69,8 +69,8 @@ class ItemSubjector(BaseModel):
             )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
-                main_subjects.append(item_json["main_subject_item"]["value"])
-        if len(main_subjects) > 0:
+                main_subjects.append(item_json["item"]["value"])
+        if main_subjects:
             console.print(f"Got {len(main_subjects)} results")
             batchjobs = get_validated_main_subjects_as_jobs(
                 args=args, main_subjects=main_subjects
@@ -87,13 +87,13 @@ class ItemSubjector(BaseModel):
         logger.info("Exporting jobs to DataFrame. All jobs are appended to one frame")
         batchjobs = parse_job_pickle()
         if batchjobs:
-            if batchjobs and batchjobs.job_count > 0:
-                logger.info(f"Found {batchjobs.job_count} jobs")
+            if batchjobs and batchjobs.number_of_jobs > 0:
+                logger.info(f"Found {batchjobs.number_of_jobs} jobs")
                 df = pd.DataFrame()
                 count = 1
                 for job in batchjobs.jobs:
                     count += 1
-                    logger.info(f"Working on job {count}/{batchjobs.job_count}")
+                    logger.info(f"Working on job {count}/{batchjobs.number_of_jobs}")
                     job_df = pd.DataFrame()
                     for item in job.main_subject_item.items.sparql_items:
                         job_df = job_df.append(
