@@ -59,8 +59,6 @@ class MainSubjectItem(Item):
             if claim.mainsnak.property_number == Property.INSTANCE_OF.value:
                 qid = claim.mainsnak.datavalue["value"]["id"]
                 logger.info(f"Found P31 with value {qid}")
-                from src.helpers.console import console
-
                 # console.print(claim.mainsnak)
                 if qid == Qid.SCHOLARLY_ARTICLE.value:
                     logger.debug("__is_not_scientific_article__:returning false now")
