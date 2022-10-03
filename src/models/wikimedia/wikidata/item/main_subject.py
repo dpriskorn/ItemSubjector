@@ -256,6 +256,6 @@ class MainSubjectItem(Item):
         else:
             if self.task:
                 console.print(
-                    f"Label for {self.task.language_code} was None on {self.url}, skipping"
+                    f"Label for {self.task.language_code.name.title()} was None on {self.url}, skipping"
                 )
             return None
