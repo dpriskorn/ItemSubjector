@@ -1,5 +1,5 @@
 import config
-from src import console
+from src.helpers.console import console
 from src.models.wikimedia.wikidata.query.article import ArticleQuery
 
 

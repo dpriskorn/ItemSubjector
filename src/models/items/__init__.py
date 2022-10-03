@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import random
-from typing import List, Any
+from typing import Any, List
 
 from pydantic import BaseModel
 

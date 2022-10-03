@@ -8,21 +8,13 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.argparse_setup import setup_argparse_and_return_args
-from src.helpers.console import (
-    console,
-    print_keep_an_eye_on_wdqs_lag,
-)
 from src.helpers.cli_messages import (
     print_best_practice,
-    print_found_items_table,
     print_finished,
+    print_found_items_table,
     print_job_statistics,
 )
-from src.helpers.questions import (
-    ask_add_to_job_queue,
-    ask_discard_existing_job_pickle,
-    ask_yes_no_question,
-)
+from src.helpers.console import console, print_keep_an_eye_on_wdqs_lag
 from src.helpers.enums import TaskIds
 from src.helpers.jobs import (
     get_validated_main_subjects_as_jobs,
@@ -37,6 +29,11 @@ from src.helpers.pickle import (
     get_hash_of_job_pickle,
     parse_job_pickle,
     remove_job_pickle,
+)
+from src.helpers.questions import (
+    ask_add_to_job_queue,
+    ask_discard_existing_job_pickle,
+    ask_yes_no_question,
 )
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
@@ -157,7 +154,9 @@ class ItemSubjector(BaseModel):
             if args.add is None:
                 console.print("Got no arguments or QIDs. Try '--help' for help.")
                 exit(0)
-            batchjobs = get_validated_main_subjects_as_jobs(args=args, main_subjects=args.add)
+            batchjobs = get_validated_main_subjects_as_jobs(
+                args=args, main_subjects=args.add
+            )
             handle_job_preparation_or_run_directly_if_any_jobs(
                 args=args, batchjobs=batchjobs
             )

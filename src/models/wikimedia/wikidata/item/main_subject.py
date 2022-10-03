@@ -1,5 +1,5 @@
 import logging
-from typing import Set, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, Set
 from urllib.parse import quote
 
 from wikibaseintegrator import WikibaseIntegrator  # type: ignore
@@ -80,9 +80,7 @@ class MainSubjectItem(Item):
             string = string + f"{url}\n"
         return string
 
-    def add_to_items(
-        self, jobs: List["BatchJob"] = None, job_count: int = None
-    ):
+    def add_to_items(self, jobs: List["BatchJob"] = None, job_count: int = None):
         """Add a suggested Qid as main subject on all items that
         have a label that matches one of the search strings for this Qid
         We calculate a new edit group hash each time this function is
@@ -101,8 +99,6 @@ class MainSubjectItem(Item):
         count = 0
         for target_item in self.items.sparql_items:
             count += 1
-            from src import console
-
             if not target_item.label:
                 target_item.label = "main_subject_item with missing label"
             with console.status(

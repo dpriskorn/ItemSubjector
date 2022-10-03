@@ -6,16 +6,10 @@ import random
 from typing import List
 
 import config
-from src.helpers.cli_messages import (
-    print_best_practice,
-    print_job_statistics,
-)
+from src.helpers.cli_messages import print_best_practice, print_job_statistics
 from src.helpers.console import console
 from src.helpers.menus import select_task
-from src.helpers.questions import (
-    ask_add_to_job_queue,
-    ask_yes_no_question,
-)
+from src.helpers.questions import ask_add_to_job_queue, ask_yes_no_question
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem

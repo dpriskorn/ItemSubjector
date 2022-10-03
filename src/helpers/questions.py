@@ -1,7 +1,8 @@
 # from __future__ import annotations
 
-from src.helpers.console import console
 from typing import TYPE_CHECKING
+
+from src.helpers.console import console
 
 if TYPE_CHECKING:
     from src.models.batch_jobs import BatchJob

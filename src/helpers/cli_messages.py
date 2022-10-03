@@ -6,12 +6,11 @@ from urllib.parse import quote
 
 from rich.table import Table
 
-from src.models.task import Task
-from src.helpers.console import console
-from src.models.batch_jobs import BatchJobs
 from src.helpers.cleaning import clean_rich_formatting
-from src.helpers.console import press_enter_to_continue
+from src.helpers.console import console, press_enter_to_continue
+from src.models.batch_jobs import BatchJobs
 from src.models.items import Items
+from src.models.task import Task
 
 
 def print_best_practice(task: Task):

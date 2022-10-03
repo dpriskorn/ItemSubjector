@@ -20,19 +20,21 @@ class BatchJobs(BaseModel):
             raise ValueError("jobs is not a sparql_items")
         from src.helpers.console import console
 
+        number_of_items = sum(
+            job.main_subject_item.items.number_of_sparql_items
+            for job in self.jobs
+            if job.main_subject_item.items and job.main_subject_item.items.sparql_items
+        )
         console.print(
             f"Running {len(self.jobs)} job(s) with a total of "
-            f"{sum(len(job.main_subject_item.items.sparql_items) for job in self.jobs if job.main_subject_item.items and job.main_subject_item.items.sparql_items)} items "
+            f"{number_of_items} items "
             f"non-interactively now. You can take a "
             f"coffee break and lean back :)"
         )
 
     def run_jobs(self):
-        from src.helpers.console import (
-            console,
-            print_keep_an_eye_on_wdqs_lag,
-        )
         from src import print_finished
+        from src.helpers.console import console, print_keep_an_eye_on_wdqs_lag
 
         if self.jobs is None or len(self.jobs) == 0:
             raise ValueError("did not get what we need")
