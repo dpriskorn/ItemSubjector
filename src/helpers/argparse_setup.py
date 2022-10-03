@@ -60,15 +60,6 @@ Example working on all diseases:
         help="Remove prepared jobs",
     )
     parser.add_argument(
-        "-m",
-        "--match-existing-main-subjects",
-        action="store_true",
-        help=(
-            "Match from sparql_items of 136.000 already used "
-            "main subjects on other scientific articles"
-        ),
-    )
-    parser.add_argument(
         "-w",
         "--limit-to-items-without-p921",
         action="store_true",
