@@ -106,10 +106,4 @@ Example working on all diseases:
         type=int,
         help="When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job sparql_items",
     )
-    parser.add_argument(
-        "--export-jobs-to-dataframe",
-        action="store_true",
-        help="Export the prepared job sparql_items to a Pandas DataFrame.",
-        default=False,
-    )
     return parser.parse_args()
