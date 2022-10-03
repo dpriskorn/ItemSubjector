@@ -26,5 +26,5 @@ class ThesisQuery(Query):
               MINUS {{?item wdt:P921 ?topic. ?topic wdt:P279 wd:{self.main_subject_item.id}. }}
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
-            """,
+            """
         )
