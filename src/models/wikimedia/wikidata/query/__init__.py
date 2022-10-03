@@ -16,7 +16,7 @@ class Query(BaseModel):
     query_string = ""
     items: List[Item] = []
 
-    def parse_results(self) -> None:
+    def __parse_results__(self) -> None:
         # console.print(self.results)
         for item_json in self.results["results"]["bindings"]:
             logging.debug(f"item_json:{item_json}")
@@ -27,7 +27,7 @@ class Query(BaseModel):
             else:
                 logger.info(f"{item.label} found in blocklist, skipping")
 
-    def strip_bad_chars(self):
+    def __strip_bad_chars__(self):
         # Note this has to match the cleaning done in the sparql query
         # We lowercase and remove common symbols
         # We replace like this to save CPU cycles see
@@ -47,17 +47,17 @@ class Query(BaseModel):
             .replace("]", "")
         )
 
-    def execute(self):
+    def __execute__(self):
         self.results = execute_sparql_query(self.query_string)
 
     def get_results(self):
         """Do everything needed to get the results"""
-        self.strip_bad_chars()
-        self.build_query()
-        self.execute()
-        self.parse_results()
+        self.__strip_bad_chars__()
+        self.__build_query__()
+        self.__execute__()
+        self.__parse_results__()
 
-    def build_query(self):
+    def __build_query__(self):
         pass
 
     def print_number_of_results(self):

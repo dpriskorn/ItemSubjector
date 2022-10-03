@@ -3,7 +3,7 @@ from src.models.wikimedia.wikidata.query.article import ArticleQuery
 
 
 class PreprintArticleQuery(ArticleQuery):
-    def build_query(self):
+    def __build_query__(self):
         self.query_string = f"""
         #{config.user_agent}
         SELECT DISTINCT ?item ?itemLabel

@@ -37,7 +37,7 @@ class PublishedArticleQuery(ArticleQuery):
         if cirrussearch_parameters is None:
             raise ValueError("cirrussearch_parameters was None")
 
-    def build_query(
+    def __build_query__(
         self,
     ):
         # This query uses https://www.w3.org/TR/sparql11-property-paths/ to
