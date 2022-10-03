@@ -246,7 +246,7 @@ class MainSubjectItem(Item):
         else:
             return True
 
-    def __fetch_and_parse__(self) -> Optional[BatchJob]:
+    def __fetch_and_parse__(self) -> Optional["BatchJob"]:
         self.__prepare_before_fetching_items__()
         if self.items:
             with console.status(
