@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def select_suggestion(suggestions: List[MainSubjectItem], item: Item):
-    if not item or not item.qid or not suggestions:
+    if not item or not item.id or not suggestions:
         raise ValueError("Did not get what we need")
     logger = logging.getLogger(__name__)
     menu = SelectionMenu(

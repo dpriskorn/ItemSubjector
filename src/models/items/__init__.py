@@ -7,7 +7,7 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
-from src.models.wikimedia.wikidata.sparql_item import SparqlItem
+from src.models.wikimedia.wikidata.item.sparql import SparqlItem
 
 # if TYPE_CHECKING:
 #     from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem

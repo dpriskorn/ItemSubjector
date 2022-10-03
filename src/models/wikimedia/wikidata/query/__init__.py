@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 from src.models.wikimedia.wikidata.item import Item
-from src.models.wikimedia.wikidata.sparql_item import SparqlItem
+from src.models.wikimedia.wikidata.item.sparql import SparqlItem
 
 logger = logging.getLogger(__name__)
 

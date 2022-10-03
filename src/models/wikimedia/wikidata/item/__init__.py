@@ -21,7 +21,6 @@ class Item(Entity):
     args: Optional[argparse.Namespace] = None
     confirmation: bool = False
     description: Optional[str] = None
-    qid: str = ""
     task: Optional[Task] = None
 
     class Config:
@@ -45,7 +44,7 @@ class Item(Entity):
         ):
             wbi = WikibaseIntegrator()
             if not self.id:
-                id = self.qid
+                id = self.id
             item = wbi.item.get(id)
             label = item.labels.get(self.task.language_code.value)
             if label:
@@ -63,8 +62,8 @@ class Item(Entity):
                 # logging.debug(f"aliases:{self.aliases}")
 
     def __strip_qid_prefix__(self):
-        if "https://www.wikidata.org/wiki/" in self.qid:
-            self.qid = self.qid[30:]
-        if "http://www.wikidata.org/entity/" in self.qid:
-            self.qid = self.qid[31:]
-        # logger.debug(f"qid:{qid}")
+        if "https://www.wikidata.org/wiki/" in self.id:
+            self.id = self.id[30:]
+        if "http://www.wikidata.org/entity/" in self.id:
+            self.id = self.id[31:]
+        # logger.debug(f"id:{id}")
