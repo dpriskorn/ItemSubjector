@@ -64,12 +64,12 @@ def print_found_items_table(args: argparse.Namespace = None, items: Items = None
         f"items, please review as many as possible for false "
         f"positives and reject the batch if you find any."
     )
-    if args.show_item_urls:
+    if getattr(args, "show_item_urls", False):
         table.add_column(f"Wikidata URL")
     for item in list_to_show:
         if item.label is None:
             raise ValueError("main_subject_item.label was None")
-        if args.show_item_urls:
+        if getattr(args, "show_item_urls", False):
             label = clean_rich_formatting(item.label)
             table.add_row(label, item.url)
         else:
