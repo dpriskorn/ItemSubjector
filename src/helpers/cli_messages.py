@@ -93,7 +93,7 @@ def print_job_statistics(batchjobs: BatchJobs = None):
     else:
         total_number_of_queries = sum([job.number_of_queries for job in batchjobs.jobs])
         total_number_of_items = sum(
-            len(job.main_subject_item.items.sparql_items)
+            job.main_subject_item.items.number_of_sparql_items
             for job in batchjobs.jobs
             if batchjobs.jobs
             and job
