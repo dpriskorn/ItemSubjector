@@ -6,7 +6,7 @@ from src.models.wikimedia.wikidata.entiyt_id import EntityId
 class ForeignID:
     id: Optional[str]
     property: Optional[str]  # This is the property with type ExternalId
-    source_item_id: Optional[str]  # This is the Q-item for the source
+    source_item_id: Optional[str]  # This is the Q-main_subject_item for the source
 
     def __init__(
         self,

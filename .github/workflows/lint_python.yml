@@ -17,7 +17,7 @@ jobs:
       - run: poetry install --with=dev
       - run: poetry run bandit --recursive --skip B301,B105,B403,B311,B101,B324 src  # B101 is assert statements
       - run: poetry run black --check .
-      - run: poetry run codespell  # --ignore-words-list="" --skip="*.css,*.js,*.lock"
+      - run: poetry run codespell  # --ignore-words-sparql_items="" --skip="*.css,*.js,*.lock"
       - run: poetry run flake8 --ignore=C408,C416,E203,F401,F541,R501,R502,R503,R504,W503
                     --max-complexity=21 --max-line-length=162 --show-source --statistics .
       - run: poetry run isort --check-only --profile black .

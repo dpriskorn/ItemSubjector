@@ -37,7 +37,7 @@ class Entity(BaseModel):
         This mandates an editgroups hash to be supplied"""
         logger = logging.getLogger(__name__)
         if self.id is None:
-            raise ValueError("no id on item")
+            raise ValueError("no id on main_subject_item")
         if statement is None:
             raise ValueError("Statement was None")
         if summary is None:
@@ -58,5 +58,6 @@ class Entity(BaseModel):
             logger.error(f"Got error from the API: {e}")
         # logger.debug(f"result from WBI:{result}")
 
+    @property
     def url(self):
         return f"http://www.wikidata.org/entity/{self.id}"

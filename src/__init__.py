@@ -8,23 +8,25 @@ from wikibaseintegrator.wbi_helpers import execute_sparql_query  # type: ignore
 
 import config
 from src.helpers.argparse_setup import setup_argparse_and_return_args
-from src.helpers.cleaning import strip_prefix
 from src.helpers.console import (
+    console,
+    print_keep_an_eye_on_wdqs_lag,
+)
+from src.helpers.cli_messages import (
+    print_best_practice,
+    print_found_items_table,
+    print_finished,
+    print_job_statistics,
+)
+from src.helpers.questions import (
     ask_add_to_job_queue,
     ask_discard_existing_job_pickle,
     ask_yes_no_question,
-    console,
-    print_best_practice,
-    print_finished,
-    print_found_items_table,
-    print_job_statistics,
-    print_keep_an_eye_on_wdqs_lag,
 )
 from src.helpers.enums import TaskIds
 from src.helpers.jobs import (
     get_validated_main_subjects_as_jobs,
     handle_job_preparation_or_run_directly_if_any_jobs,
-    process_qid_into_job,
     process_user_supplied_qids_into_batch_jobs,
 )
 from src.helpers.menus import select_task
@@ -57,7 +59,7 @@ class ItemSubjector(BaseModel):
         if "P1889" not in args.sparql:
             console.print(
                 "Your SPARQL did not contain P1889 (different from). "
-                "Please include 'MINUS {?item wdt:P1889 [].}' "
+                "Please include 'MINUS {?main_subject_item wdt:P1889 [].}' "
                 "in your WHERE clause to avoid false positives."
             )
             exit(0)
@@ -70,7 +72,7 @@ class ItemSubjector(BaseModel):
             )
             for item_json in results["results"]["bindings"]:
                 logging.debug(f"item_json:{item_json}")
-                main_subjects.append(item_json["item"]["value"])
+                main_subjects.append(item_json["main_subject_item"]["value"])
         if len(main_subjects) > 0:
             console.print(f"Got {len(main_subjects)} results")
             batchjobs = get_validated_main_subjects_as_jobs(
@@ -87,8 +89,8 @@ class ItemSubjector(BaseModel):
         logger = logging.getLogger(__name__)
         logger.info("Exporting jobs to DataFrame. All jobs are appended to one frame")
         batchjobs = parse_job_pickle()
-        if batchjobs is not None:
-            if batchjobs is not None and batchjobs.job_count > 0:
+        if batchjobs:
+            if batchjobs and batchjobs.job_count > 0:
                 logger.info(f"Found {batchjobs.job_count} jobs")
                 df = pd.DataFrame()
                 count = 1
@@ -96,7 +98,7 @@ class ItemSubjector(BaseModel):
                     count += 1
                     logger.info(f"Working on job {count}/{batchjobs.job_count}")
                     job_df = pd.DataFrame()
-                    for item in job.items.list:
+                    for item in job.main_subject_item.items.sparql_items:
                         job_df = job_df.append(
                             pd.DataFrame(
                                 data=[
@@ -109,14 +111,16 @@ class ItemSubjector(BaseModel):
                             )
                         )
                     df = df.append(job_df)
-                    logger.debug(f"Added {len(job.items.list)} items to the dataframe")
+                    logger.debug(
+                        f"Added {len(job.main_subject_item.items.sparql_items)} items to the dataframe"
+                    )
                 logger.debug(f"Exporting {len(df)} rows to pickle")
                 pickle_filename = "dataframe.pkl.gz"
                 df.to_pickle(pickle_filename)
                 console.print(f"Wrote to {pickle_filename} in the current directory")
         else:
             console.print(
-                "No jobs found. Create a job list first by using '--prepare-jobs'"
+                "No jobs found. Create a job sparql_items first by using '--prepare-jobs'"
             )
 
     def run(self):
@@ -124,10 +128,10 @@ class ItemSubjector(BaseModel):
         logger = logging.getLogger(__name__)
         migrate_pickle_detection()
         args = setup_argparse_and_return_args()
-        # console.print(args.list)
+        # console.print(args.sparql_items)
         if args.remove_prepared_jobs is True:
             remove_job_pickle()
-            console.print("Removed the job list.")
+            console.print("Removed the job sparql_items.")
             # exit(0)
         if args.prepare_jobs is True:
             logger.info("Preparing jobs")
@@ -139,7 +143,7 @@ class ItemSubjector(BaseModel):
         if args.run_prepared_jobs is True:
             logger.info("Running prepared jobs")
             batchjobs = parse_job_pickle()
-            if batchjobs is not None and len(batchjobs.jobs) > 0:
+            if batchjobs and len(batchjobs.jobs) > 0:
                 file_hash = get_hash_of_job_pickle()
                 batchjobs.run_jobs()
                 # Remove the pickle afterwards

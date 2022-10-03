@@ -3,13 +3,15 @@ from typing import List
 
 from consolemenu import SelectionMenu  # type: ignore
 
-from src.models.suggestion import Suggestion
 from src.models.wikimedia.wikidata.item import Item
+from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.tasks import Task
 
+logger = logging.getLogger(__name__)
 
-def select_suggestion(suggestions: List[Suggestion] = None, item: Item = None):
-    if item is None or suggestions is None:
+
+def select_suggestion(suggestions: List[MainSubjectItem], item: Item):
+    if not item or not item.qid or not suggestions:
         raise ValueError("Did not get what we need")
     logger = logging.getLogger(__name__)
     menu = SelectionMenu(
@@ -31,7 +33,7 @@ def select_suggestion(suggestions: List[Suggestion] = None, item: Item = None):
 
 
 def select_task() -> Task:
-    logger = logging.getLogger(__name__)
+    # TODO use questionary here?
     from src.tasks import tasks
 
     labels = [task.label for task in tasks]
@@ -55,8 +57,8 @@ def select_task() -> Task:
 #     menu.join()
 #     selected_language_index = menu.selected_option
 #     mapping = {}
-#     for index, item in enumerate(WikimediaLanguageCode):
-#         mapping[index] = item
+#     for index, main_subject_item in enumerate(WikimediaLanguageCode):
+#         mapping[index] = main_subject_item
 #     selected_language = mapping[selected_language_index]
 #     logger.debug(f"selected:{selected_language_index}="
 #                  f"{selected_language}")
@@ -69,8 +71,8 @@ def select_task() -> Task:
 #     menu.join()
 #     selected_lexical_category_index = menu.selected_option
 #     category_mapping = {}
-#     for index, item in enumerate(WikidataLexicalCategory):
-#         category_mapping[index] = item
+#     for index, main_subject_item in enumerate(WikidataLexicalCategory):
+#         category_mapping[index] = main_subject_item
 #     selected_lexical_category = category_mapping[selected_lexical_category_index]
 #     logger.debug(f"selected:{selected_lexical_category_index}="
 #                  f"{selected_lexical_category}")

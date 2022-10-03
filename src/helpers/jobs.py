@@ -3,128 +3,44 @@ from __future__ import annotations
 import argparse
 import logging
 import random
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import List
 
 import config
-from src import (
-    TaskIds,
-    ask_add_to_job_queue,
-    ask_yes_no_question,
-    console,
+from src.helpers.cli_messages import (
     print_best_practice,
     print_job_statistics,
-    strip_prefix,
 )
+from src.helpers.console import console
 from src.helpers.menus import select_task
+from src.helpers.questions import (
+    ask_add_to_job_queue,
+    ask_yes_no_question,
+)
+from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
-from src.models.items import Items
-from src.models.items.academic_journals import AcademicJournalItems
-from src.models.items.riksdagen_documents import RiksdagenDocumentItems
-from src.models.items.scholarly_articles import ScholarlyArticleItems
-from src.models.items.thesis import ThesisItems
+from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.tasks import Task
-
-if TYPE_CHECKING:
-    from src import BatchJob
 
 # TODO rewrite as OOP
 logger = logging.getLogger(__name__)
 
 
-def process_qid_into_job(
-    qid: str = None,
-    task: Task = None,
-    args: argparse.Namespace = None,
-    confirmation: bool = False,
-) -> Union[BatchJob, None]:
-    if qid is None:
-        raise ValueError("qid was None")
-    if args is None:
-        raise ValueError("args was None")
-    if task is None:
-        raise ValueError("task was None")
-    from src.models.wikimedia.wikidata.item import Item
-
-    item = Item(
-        id=strip_prefix(qid),
-    )
-    item.fetch_label_and_description_and_aliases(task=task)
-    if item.label is not None:
-        console.print(f"Working on {item}")
-        # generate suggestion with all we need
-        from src import Suggestion
-
-        suggestion = Suggestion(item=item, task=task, args=args)
-        if confirmation:
-            answer = ask_yes_no_question("Do you want to continue?")
-            if not answer:
-                return None
-        suggestion.extract_search_strings()
-        if config.loglevel == logging.INFO:
-            suggestion.print_search_strings()
-        if suggestion.search_strings is None:
-            raise ValueError("suggestion.search_strings was None")
-        number_of_queries = (
-            len(suggestion.search_strings) * task.number_of_queries_per_search_string
-        )
-        with console.status(
-            f"Fetching items with labels that have one of "
-            f"the search strings by running a total of "
-            f"{number_of_queries} "
-            f"queries on WDQS..."
-        ):
-            items: Optional[Items] = None
-            if task.id == TaskIds.SCHOLARLY_ARTICLES:
-                items = ScholarlyArticleItems()
-            elif task.id == TaskIds.RIKSDAGEN_DOCUMENTS:
-                items = RiksdagenDocumentItems()
-            elif task.id == TaskIds.THESIS:
-                items = ThesisItems()
-            elif task.id == TaskIds.ACADEMIC_JOURNALS:
-                items = AcademicJournalItems()
-            else:
-                raise ValueError(f"{task.id} was not recognized")
-            items.fetch_based_on_label(suggestion=suggestion, task=task)
-        if items.list is None:
-            raise ValueError("items.list was None")
-        if len(items.list) > 0:
-            # Remove duplicates
-            logger.debug(f"{len(items.list)} before duplicate removal")
-            items.list = list(set(items.list))
-            logger.debug(f"{len(items.list)} after duplicate removal")
-            # Randomize the list
-            items.random_shuffle_list()
-            from src import BatchJob
-
-            job = BatchJob(
-                items=items, number_of_queries=number_of_queries, suggestion=suggestion
-            )
-            return job
-        else:
-            console.print("No matching items found")
-            return None
-    else:
-        console.print(
-            f"Label for {task.language_code} was None on {item.url()}, skipping"
-        )
-        return None
-
-
 def process_user_supplied_qids_into_batch_jobs(
     args: argparse.Namespace = None, task: Task = None
 ) -> List[BatchJob]:
-    """Given a list of QIDs, we go through
-    them and return a list of jobs"""
+    """Given a sparql_items of QIDs, we go through
+    them and return a sparql_items of jobs"""
     # logger = logging.getLogger(__name__)
-    if args is None:
+    if not args:
         raise ValueError("args was None")
-    if task is None:
+    if not task:
         raise ValueError("task was None")
     print_best_practice(task)
     jobs = []
     for qid in args.add:
-        job = process_qid_into_job(qid=qid, task=task, args=args)
-        if job is not None:
+        main_subject_item = MainSubjectItem(qid=qid, args=args, task=task)
+        job = main_subject_item.fetch_items_and_get_job()
+        if job:
             jobs.append(job)
     return jobs
 
@@ -158,12 +74,12 @@ def get_validated_main_subjects_as_jobs(
     args: argparse.Namespace = None, main_subjects: List[str] = None
 ) -> BatchJobs:
     """This function randomly picks a subject and add it to the
-    list of jobs if it had any matches and the user approved it"""
+    sparql_items of jobs if it had any matches and the user approved it"""
     if args is None:
         raise ValueError("args was None")
     if main_subjects is None:
         raise ValueError("main subjects was None")
-    subjects_not_picked_yet = main_subjects
+    qid_subjects_not_picked_yet = main_subjects
     task: Task = select_task()
     if task is None:
         raise ValueError("Got no task")
@@ -171,66 +87,67 @@ def get_validated_main_subjects_as_jobs(
         raise ValueError("task was not a Task object")
     batchjobs = BatchJobs(jobs=[])
     while True:
-        # Check if we have any subjects left in the list
-        if len(subjects_not_picked_yet) > 0:
+        # Check if we have any subjects left in the sparql_items
+        if len(qid_subjects_not_picked_yet):
             console.print(f"Picking a random main subject")
-            qid = random.choice(subjects_not_picked_yet)
-            subjects_not_picked_yet.remove(qid)
-            job = process_qid_into_job(
-                qid=qid,
-                task=task,
-                args=args,
-                confirmation=args.no_confirmation,
+            qid = random.choice(qid_subjects_not_picked_yet)
+            qid_subjects_not_picked_yet.remove(qid)
+            main_subject_item = MainSubjectItem(
+                qid=qid, args=args, task=task, confirmation=args.no_confirmation
             )
-            if job is not None:
+            job = main_subject_item.fetch_items_and_get_job()
+            if job:
                 # Here we check if the user has enabled no ask more limit.
                 if args.no_ask_match_more_limit is None:
                     logger.debug("No ask more was None")
-                    job.items.print_items_list(args=args)
-                    job.suggestion.print_search_strings()
-                    answer = ask_add_to_job_queue(job)
-                    if answer:
-                        batchjobs.jobs.append(job)
+                    if job.main_subject_item.items:
+                        job.main_subject_item.items.print_items_list(args=args)
+                        job.main_subject_item.print_search_strings()
+                        answer = ask_add_to_job_queue(job)
+                        if answer:
+                            batchjobs.jobs.append(job)
                 else:
                     batchjobs.jobs.append(job)
             logger.debug(f"joblist now has {len(batchjobs.jobs)} jobs")
             print_job_statistics(batchjobs=batchjobs)
-            if len(subjects_not_picked_yet) > 0:
+            if len(qid_subjects_not_picked_yet) > 0:
                 if (
                     args.no_ask_match_more_limit is None
                     or args.no_ask_match_more_limit
                     < sum(
-                        len(job.items.list)
+                        len(job.main_subject_item.items.sparql_items)
                         for job in batchjobs.jobs
-                        if job.items.list is not None
+                        if job.main_subject_item.items
+                        and job.main_subject_item.items.sparql_items
                     )
                 ):
                     answer_was_yes = ask_yes_no_question("Match one more?")
                     if not answer_was_yes:
                         break
             else:
-                console.print("No more subjects in the list.")
+                console.print("No more subjects in the sparql_items.")
                 break
         else:
-            console.print("No more subjects in the list. Exiting.")
+            console.print("No more subjects in the sparql_items. Exiting.")
             break
-    if args.no_ask_match_more_limit is not None:
+    if args.no_ask_match_more_limit:
         batchjobs_limit = BatchJobs(jobs=[])
         for job in batchjobs.jobs:
-            job.items.print_items_list(args=args)
-            job.suggestion.print_search_strings()
-            if (
-                config.automatically_approve_jobs_with_less_than_fifty_matches
-                and job.items.number_of_items < 50
-            ):
-                console.print(
-                    f"This job with {job.items.number_of_items} matching items was automatically approved",
-                    style="green",
-                )
-                batchjobs_limit.jobs.append(job)
-            else:
-                answer = ask_add_to_job_queue(job)
-                if answer:
+            if job.main_subject_item.items:
+                job.main_subject_item.items.print_items_list(args=args)
+                job.main_subject_item.print_search_strings()
+                if (
+                    config.automatically_approve_jobs_with_less_than_fifty_matches
+                    and job.main_subject_item.items.number_of_sparql_items < 50
+                ):
+                    console.print(
+                        f"This job with {job.main_subject_item.items.number_of_sparql_items} matching items was automatically approved",
+                        style="green",
+                    )
                     batchjobs_limit.jobs.append(job)
+                else:
+                    answer = ask_add_to_job_queue(job)
+                    if answer:
+                        batchjobs_limit.jobs.append(job)
         return batchjobs_limit
     return batchjobs

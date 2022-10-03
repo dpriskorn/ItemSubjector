@@ -1,12 +1,10 @@
 from pydantic import BaseModel
 
-from src.models.items import Items
-from src.models.suggestion import Suggestion
+from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 
 
 class BatchJob(BaseModel):
     """Models a batch job intended to be run non-interactively"""
 
-    suggestion: Suggestion
-    items: Items
+    main_subject_item: MainSubjectItem
     number_of_queries: int
