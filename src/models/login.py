@@ -1,4 +1,4 @@
-from wikibaseintegrator import wbi_config, wbi_login
+from wikibaseintegrator import wbi_config, wbi_login # type: ignore
 
 import config
 

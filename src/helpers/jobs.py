@@ -32,7 +32,7 @@ def process_user_supplied_qids_into_batch_jobs(
     print_best_practice(task)
     jobs = []
     for qid in args.add:
-        main_subject_item = MainSubjectItem(qid=qid, args=args, task=task)
+        main_subject_item = MainSubjectItem(id=qid, args=args, task=task)
         job = main_subject_item.fetch_items_and_get_job()
         if job:
             jobs.append(job)
@@ -87,7 +87,7 @@ def get_validated_main_subjects_as_jobs(
             qid = random.choice(qid_subjects_not_picked_yet)
             qid_subjects_not_picked_yet.remove(qid)
             main_subject_item = MainSubjectItem(
-                qid=qid, args=args, task=task, confirmation=args.no_confirmation
+                id=qid, args=args, task=task, confirmation=args.no_confirmation
             )
             job = main_subject_item.fetch_items_and_get_job()
             if job:

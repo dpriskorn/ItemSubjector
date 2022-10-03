@@ -29,7 +29,7 @@ class Item(Entity):
     def __str__(self):
         return f"{self.label}, see {self.url}"
 
-    def __fetch_label_and_description_and_aliases__(self, task: Task = None):
+    def __fetch_label_and_description_and_aliases__(self):
         """Fetch label and aliases in the task language from the Wikidata API"""
         if not self.task:
             raise ValueError("self.task was None")
