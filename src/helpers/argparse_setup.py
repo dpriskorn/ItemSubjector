@@ -59,12 +59,12 @@ Example working on all diseases:
         action="store_true",
         help="Remove prepared jobs",
     )
-    parser.add_argument(
-        "-w",
-        "--limit-to-items-without-p921",
-        action="store_true",
-        help="Limit matching to scientific articles without P921 main subject",
-    )
+    # parser.add_argument(
+    #     "-w",
+    #     "--limit-to-items-without-p921",
+    #     action="store_true",
+    #     help="Limit matching to scientific articles without P921 main subject",
+    # )
     parser.add_argument(
         "-su",
         "--show-search-urls",

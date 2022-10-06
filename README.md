@@ -160,10 +160,10 @@ Usage example:
 `poetry run python itemsubjector.py -a Q34 --show-item-urls` 
 (the shorthand `-iu` also works)
 
-### Limit to scholarly articles without main subject
-Usage example:
-`poetry run python itemsubjector.py -a Q34 --limit-to-items-without-p921` 
-(the shorthand `-w` also works)
+[//]: # (### Limit to scholarly articles without main subject)
+[//]: # (Usage example:)
+[//]: # (`poetry run python itemsubjector.py -a Q34 --limit-to-items-without-p921` )
+[//]: # (&#40;the shorthand `-w` also works&#41;)
 
 ## Matching main subjects based on a SPARQL query.
 The tool can create a list of jobs by picking random subjects from a
@@ -225,8 +225,6 @@ optional arguments:
                         Remove prepared jobs
   -m, --match-existing-main-subjects
                         Match from list of 136.000 already used main subjects on other scientific articles
-  -w, --limit-to-items-without-p921
-                        Limit matching to scientific articles without P921 main subject
   -su, --show-search-urls
                         Show an extra column in the table of search strings with links
   -iu, --show-item-urls
@@ -258,6 +256,8 @@ removed the QuickStatements export to simplify the program.
 * Simplify as much as possible to keep the whole thing lean and avoid scope creep. -> helps reuse in other projects. (KISS-principle)
 * Difficult to judge which features are used and which are not. User testing would be nice.
 * UML diagrams are nice. They give a good quick overview.
+* Removing options that no-one seems to use helps keeping it simple. It would be valuable to get better insight of how the 
+program is used by the users. A discussion in github might help in this.
 
 # Thanks
 During the development of this tool the author got a 
