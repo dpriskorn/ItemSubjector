@@ -3,8 +3,7 @@ from src.models.wikimedia.wikidata.query import Query
 
 class ThesisQuery(Query):
     def __prepare_and_build_query__(self):
-        self.query_string = (
-            f"""
+        self.query_string = f"""
             SELECT DISTINCT ?item ?itemLabel
             WHERE {{
               {{
@@ -27,4 +26,3 @@ class ThesisQuery(Query):
               SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
             """
-        )

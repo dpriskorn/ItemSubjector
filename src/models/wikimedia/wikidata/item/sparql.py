@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 import config
-import config.items
 from src.models.wikimedia.wikidata.entiyt_id import EntityId
 from src.models.wikimedia.wikidata.item import Item
 
@@ -23,11 +22,11 @@ class SparqlItem(Item):
     def is_in_blocklist(self) -> bool:
         if self.id is None:
             raise ValueError("did not get an id")
-        if config.items.blocklist_for_scholarly_items is None:
+        if config.blocklist_for_scholarly_items is None:
             raise ValueError(
                 "config.blocklist_for_scholarly_items was None, please fix"
             )
-        if self.id in config.items.blocklist_for_scholarly_items:
+        if self.id in config.blocklist_for_scholarly_items:
             return True
         else:
             return False
