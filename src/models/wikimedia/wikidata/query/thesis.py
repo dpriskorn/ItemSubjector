@@ -1,9 +1,11 @@
+import config
 from src.models.wikimedia.wikidata.query import Query
 
 
 class ThesisQuery(Query):
     def __prepare_and_build_query__(self):
         self.query_string = f"""
+            #{config.user_agent}
             SELECT DISTINCT ?item ?itemLabel
             WHERE {{
               {{

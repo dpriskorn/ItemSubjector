@@ -11,10 +11,10 @@ class PublishedArticleQuery(Query):
             raise ValueError("main_subject_item was None")
         if not self.main_subject_item.args:
             raise ValueError("main_subject_item.args was None")
-        if self.main_subject_item.args.limit_to_items_without_p921:
-            raise Exception(
-                "Limiting to items without P921 is not " "supported yet for this task."
-            )
+        # if self.main_subject_item.args.limit_to_items_without_p921:
+        #     raise Exception(
+        #         "Limiting to items without P921 is not " "supported yet for this task."
+        #     )
         if self.main_subject_item.task is None:
             raise ValueError("task was None")
         if self.main_subject_item.task.language_code is None:
