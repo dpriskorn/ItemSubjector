@@ -6,16 +6,16 @@ def setup_argparse_and_return_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="""
 ItemSubjector enables working main subject statements on items based on a
-heuristic matching the subject with the title of the item.
+heuristic matching the subject with the title of the main_subject_item.
 
 Example adding one Qid:
 '$ itemsubjector.py -a Q1234'
 
-Example adding one Qid and prepare a job list to be run non-interactively later:
+Example adding one Qid and prepare a job sparql_items to be run non-interactively later:
 '$ itemsubjector.py -a Q1234 -p'
 
 Example working on all diseases:
-'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?item wdt:P1889 [].}}"'
+'$ itemsubjector.py --sparql "SELECT ?main_subject_item WHERE {?main_subject_item wdt:P31 wd:Q12136. MINUS {?main_subject_item wdt:P1889 [].}}"'
     """,
     )
     parser.add_argument(
@@ -59,21 +59,12 @@ Example working on all diseases:
         action="store_true",
         help="Remove prepared jobs",
     )
-    parser.add_argument(
-        "-m",
-        "--match-existing-main-subjects",
-        action="store_true",
-        help=(
-            "Match from list of 136.000 already used "
-            "main subjects on other scientific articles"
-        ),
-    )
-    parser.add_argument(
-        "-w",
-        "--limit-to-items-without-p921",
-        action="store_true",
-        help="Limit matching to scientific articles without P921 main subject",
-    )
+    # parser.add_argument(
+    #     "-w",
+    #     "--limit-to-items-without-p921",
+    #     action="store_true",
+    #     help="Limit matching to scientific articles without P921 main subject",
+    # )
     parser.add_argument(
         "-su",
         "--show-search-urls",
@@ -82,7 +73,7 @@ Example working on all diseases:
     )
     parser.add_argument(
         "-iu",
-        "--show-item-urls",
+        "--show-main_subject_item-urls",
         action="store_true",
         help="Show an extra column in the table of items with links",
     )
@@ -90,8 +81,8 @@ Example working on all diseases:
         "--sparql",
         nargs="?",
         help="Work on main subject items returned by this SPARQL query.\n"
-        'Note: "?item" has to be selected for it to work, see the example above.\n'
-        "Note: MINUS {?item wdt:P1889 [].} must be present in the query to avoid false positives.",
+        'Note: "?main_subject_item" has to be selected for it to work, see the example above.\n'
+        "Note: MINUS {?main_subject_item wdt:P1889 [].} must be present in the query to avoid false positives.",
     )
     parser.add_argument(
         "--debug-sparql",
@@ -104,12 +95,6 @@ Example working on all diseases:
         "--limit",
         nargs="?",
         type=int,
-        help="When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list",
-    )
-    parser.add_argument(
-        "--export-jobs-to-dataframe",
-        action="store_true",
-        help="Export the prepared job list to a Pandas DataFrame.",
-        default=False,
+        help="When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job sparql_items",
     )
     return parser.parse_args()

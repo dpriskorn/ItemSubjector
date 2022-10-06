@@ -13,7 +13,7 @@ class EntityId:
     rest: str
 
     def __init__(self, entity_id: str):
-        if entity_id is not None:
+        if entity_id:
             # Remove prefix if found
             if config.wd_prefix in entity_id:
                 logger.debug("Removing prefix")

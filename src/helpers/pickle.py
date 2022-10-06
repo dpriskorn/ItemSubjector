@@ -36,7 +36,7 @@ def check_if_pickle_exists(path):
 
 
 def parse_job_pickle(silent: bool = False) -> Optional[BatchJobs]:
-    """Reads the pickle into a list of batch jobs"""
+    """Reads the pickle into a sparql_items of batch jobs"""
     if check_if_pickle_exists(config.job_pickle_file_path):
         jobs: List[BatchJob] = []
         for job in read_from_pickle(config.job_pickle_file_path):
@@ -58,16 +58,16 @@ def remove_job_pickle(silent: bool = False, hash: str = None):
         if os.path.exists(config.job_pickle_file_path):
             os.remove(config.job_pickle_file_path)
             if not silent:
-                console.print("The job list file was removed")
+                console.print("The job sparql_items file was removed")
     if os.path.exists(config.job_pickle_file_path):
         hash_now = get_hash_of_job_pickle()
         if hash == hash_now:
             os.remove(config.job_pickle_file_path)
             if not silent:
-                console.print("The job list file was removed")
+                console.print("The job sparql_items file was removed")
         else:
             console.print(
-                "Job list file not deleted because the contents "
+                "Job sparql_items file not deleted because the contents "
                 "has changed since this batch of jobs was started."
             )
     else:

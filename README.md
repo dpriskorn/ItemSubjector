@@ -17,6 +17,11 @@ open graph editable by anyone and maintained by the community itself for the pur
 scientists find each others work. Wikipedia and Scholia can fill that gap but we need good tooling to curate the 
 millions of items.
 
+# Caveat 
+This type of matching that ONLY takes the label and not the underlying structured
+data into account is SUBOPTIMAL. You are very welcome to suggest or contribute improvements
+so we can improve the tool to help you make better edits.
+
 # Features
 This tool has the following features:
 * Adding a list of manually supplied main subjects to a few selected subgraphs 
@@ -34,6 +39,11 @@ so that batches can easily be undone later if needed.
 Click "details" in the summary of edits to see more.
 
 # Installation
+Download the latest release with:
+
+`$ pip install itemsubjector`
+
+# Alternative installation in venv
 Download the release tarball or clone the tool using Git.
 
 ## Clone the repository 
@@ -41,7 +51,7 @@ Download the release tarball or clone the tool using Git.
 
 Then checkout the latest release. 
 
-`git checkout v0.x` where x is the latest number on the release page.
+`git checkout vx.x.x` where x is the latest number on the release page.
 
 ## Setup the environment
 
@@ -72,6 +82,8 @@ issues.
 
 
 ## Wikimedia Cloud Services Kubernetes Beta cluster
+*Note: this is for advanced users experienced with a SSH console environment, ask in the [Telegram WikiCite group](https://meta.m.wikimedia.org/wiki/Telegram#Wikidata) if you need help*
+
 See [Kubernetes_HOWTO.md](Kubernetes_HOWTO.md)
 
 # Setup
@@ -82,7 +94,7 @@ config/__init__.py and enter the botusername
 for your account 
 and make sure you give it the *edit page permission* 
 and *high volume permissions*)
-* e.g. `cd config && cp __init__example.py __init__.py && nano __init__.py`
+* e.g. `cp config_example.py config.py && nano config.py`
 
 *GNU Nano is an editor, press `ctrl+x` when you are done and `y` to save your changes*
 
@@ -148,10 +160,10 @@ Usage example:
 `poetry run python itemsubjector.py -a Q34 --show-item-urls` 
 (the shorthand `-iu` also works)
 
-### Limit to scholarly articles without main subject
-Usage example:
-`poetry run python itemsubjector.py -a Q34 --limit-to-items-without-p921` 
-(the shorthand `-w` also works)
+[//]: # (### Limit to scholarly articles without main subject)
+[//]: # (Usage example:)
+[//]: # (`poetry run python itemsubjector.py -a Q34 --limit-to-items-without-p921` )
+[//]: # (&#40;the shorthand `-w` also works&#41;)
 
 ## Matching main subjects based on a SPARQL query.
 The tool can create a list of jobs by picking random subjects from a
@@ -213,8 +225,6 @@ optional arguments:
                         Remove prepared jobs
   -m, --match-existing-main-subjects
                         Match from list of 136.000 already used main subjects on other scientific articles
-  -w, --limit-to-items-without-p921
-                        Limit matching to scientific articles without P921 main subject
   -su, --show-search-urls
                         Show an extra column in the table of search strings with links
   -iu, --show-item-urls
@@ -240,6 +250,15 @@ removed the QuickStatements export to simplify the program.
 * This project has been used in a scientific paper I wrote together with 
 [Houcemeddine Turki](https://scholia.toolforge.org/author/Q53505397)
 
+## Rewrite 2022:
+* Important to break down methods to 1 method 1 task to increase readability. -> helps reuse in other projects.
+* Important to avoid resetting attributes and instantiate classes instead. -> helps reuse in other projects.
+* Simplify as much as possible to keep the whole thing lean and avoid scope creep. -> helps reuse in other projects. (KISS-principle)
+* Difficult to judge which features are used and which are not. User testing would be nice.
+* UML diagrams are nice. They give a good quick overview.
+* Removing options that no-one seems to use helps keeping it simple. It would be valuable to get better insight of how the 
+program is used by the users. A discussion in github might help in this.
+
 # Thanks
 During the development of this tool the author got a 
 help multiple times from **Jan Ainali** and **Jon Søby**
@@ -254,7 +273,7 @@ helpful people in the Wikimedia Cloud Services Support chat that
 helped with making batch jobs run successfully.
 
 Thanks also to **jsamwrites** for help with testing and suggestions 
-for improvement.
+for improvement and for using the tool to improve a ton of items :).
 
 # License
 GPLv3+
