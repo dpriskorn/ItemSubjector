@@ -42,7 +42,8 @@ logger = logging.getLogger(__name__)
 
 
 class ItemSubjector(BaseModel):
-    def run(self):
+    @staticmethod
+    def run():
         """This is the main function that makes everything else happen"""
         migrate_pickle_detection()
         args = setup_argparse_and_return_args()
