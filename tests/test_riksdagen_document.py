@@ -3,7 +3,9 @@ from unittest import TestCase
 
 from src import tasks
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
-from src.models.wikimedia.wikidata.query.riksdagen_document import RiksdagenDocumentQuery
+from src.models.wikimedia.wikidata.query.riksdagen_document import (
+    RiksdagenDocumentQuery,
+)
 
 
 class TestRiksdagenDocumentQuery(TestCase):
@@ -23,7 +25,9 @@ class TestRiksdagenDocumentQuery(TestCase):
             q.search_string = string
             q.__prepare_and_build_query__()
             print(q.query_string)
-            assert q.query_string.replace(" ","").strip() == """
+            assert (
+                q.query_string.replace(" ", "").strip()
+                == """
             #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:So9q
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
@@ -47,5 +51,8 @@ class TestRiksdagenDocumentQuery(TestCase):
               # Thanks to Jan Ainali for this improvement :)
               MINUS {?main_subject_item wdt:P921 ?topic. ?topic wdt:P279 wd:Q407541. }
               SERVICE wikibase:label { bd:serviceParam wikibase:language "sv". }
-            }""".replace(" ","").strip()
+            }""".replace(
+                    " ", ""
+                ).strip()
+            )
             break

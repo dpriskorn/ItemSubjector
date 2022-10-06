@@ -23,7 +23,9 @@ class TestPreprintArticle(TestCase):
             q.search_string = string
             q.__prepare_and_build_query__()
             print(q.query_string)
-            assert q.query_string.replace(" ","").strip() == """
+            assert (
+                q.query_string.replace(" ", "").strip()
+                == """
             #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:So9q
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
@@ -42,5 +44,8 @@ class TestPreprintArticle(TestCase):
               )
               MINUS {?item wdt:P921/wdt:P279 wd:Q407541. }
               SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-            }""".replace(" ","").strip()
+            }""".replace(
+                    " ", ""
+                ).strip()
+            )
             break
