@@ -8,7 +8,6 @@ from wikibaseintegrator.models import Claim  # type: ignore
 from wikibaseintegrator.wbi_helpers import search_entities  # type: ignore
 
 import config
-import config.items
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import console
@@ -139,7 +138,7 @@ class MainSubjectItem(Item):
             if self.args.no_aliases is True:
                 console.print("Alias matching is turned off")
                 no_aliases = True
-            elif self.id in config.items.no_alias_for_scholarly_items:
+            elif self.id in config.no_alias_for_scholarly_items:
                 logger.info(
                     f"Alias matching is turned off for this main_subject_item: {self.label}"
                 )
@@ -153,7 +152,7 @@ class MainSubjectItem(Item):
         if self.aliases and no_aliases is False:
             for alias in self.aliases:
                 # logger.debug(f"extracting alias:{alias}")
-                if len(alias) < 5 and alias not in config.items.list_of_allowed_aliases:
+                if len(alias) < 5 and alias not in config.list_of_allowed_aliases:
                     console.print(
                         f"Skipping short alias '{alias}' to avoid false positives",
                         style="#FF8000",
@@ -164,7 +163,7 @@ class MainSubjectItem(Item):
                         f"in a label of at least one Qid that is not a scholarly article",
                         style="#FF8000",
                     )
-                elif alias in config.items.list_of_allowed_aliases:
+                elif alias in config.list_of_allowed_aliases:
                     console.print(f"Found {alias} in the allow sparql_items")
                     self.search_strings.add(self.__clean_special_symbols__(alias))
                 else:

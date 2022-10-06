@@ -17,6 +17,11 @@ open graph editable by anyone and maintained by the community itself for the pur
 scientists find each others work. Wikipedia and Scholia can fill that gap but we need good tooling to curate the 
 millions of items.
 
+# Caveat 
+This type of matching that ONLY takes the label and not the underlying structured
+data into account is SUBOPTIMAL. You are very welcome to suggest or contribute improvements
+so we can improve the tool to help you make better edits.
+
 # Features
 This tool has the following features:
 * Adding a list of manually supplied main subjects to a few selected subgraphs 
@@ -34,6 +39,11 @@ so that batches can easily be undone later if needed.
 Click "details" in the summary of edits to see more.
 
 # Installation
+Download the latest release with:
+
+`$ pip install itemsubjector`
+
+# Alternative installation in venv
 Download the release tarball or clone the tool using Git.
 
 ## Clone the repository 
@@ -41,7 +51,7 @@ Download the release tarball or clone the tool using Git.
 
 Then checkout the latest release. 
 
-`git checkout v0.x` where x is the latest number on the release page.
+`git checkout vx.x.x` where x is the latest number on the release page.
 
 ## Setup the environment
 
@@ -72,6 +82,8 @@ issues.
 
 
 ## Wikimedia Cloud Services Kubernetes Beta cluster
+*Note: this is for advanced users experienced with a SSH console environment, ask in the [Telegram WikiCite group](https://meta.m.wikimedia.org/wiki/Telegram#Wikidata) if you need help*
+
 See [Kubernetes_HOWTO.md](Kubernetes_HOWTO.md)
 
 # Setup
@@ -82,7 +94,7 @@ config/__init__.py and enter the botusername
 for your account 
 and make sure you give it the *edit page permission* 
 and *high volume permissions*)
-* e.g. `cd config && cp __init__example.py __init__.py && nano __init__.py`
+* e.g. `cp config_example.py config.py && nano config.py`
 
 *GNU Nano is an editor, press `ctrl+x` when you are done and `y` to save your changes*
 
