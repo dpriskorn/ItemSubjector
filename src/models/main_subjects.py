@@ -183,5 +183,3 @@ class MainSubjects(BaseModel):
             exit(0)
         else:
             logger.info("Detected P1889 in the query")
-
-
