@@ -32,7 +32,6 @@ from src.helpers.questions import (
 from src.models.batch_job import BatchJob
 from src.models.batch_jobs import BatchJobs
 from src.models.main_subjects import MainSubjects
-from src.models.suggestion import Suggestion
 from src.models.task import Task
 from src.models.wikimedia.wikidata.entiyt_id import EntityId
 from src.tasks import tasks
