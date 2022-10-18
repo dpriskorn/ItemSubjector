@@ -31,7 +31,7 @@ class TestPublishedArticleQuery(TestCase):
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
               hint:Query hint:optimizer "None".
-              BIND(STR('haswbstatement:P31=Q13442814 -haswbstatement:P921 "fentanyl"') as ?search_string)
+              BIND(STR('haswbstatement:P31=Q13442814 -haswbstatement:P921=Q407541 "fentanyl"') as ?search_string)
               SERVICE wikibase:mwapi {
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";
