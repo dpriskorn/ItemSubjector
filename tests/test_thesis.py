@@ -1,6 +1,7 @@
 import argparse
 from unittest import TestCase
 
+import config
 from src import tasks
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.models.wikimedia.wikidata.query.thesis import ThesisQuery
@@ -21,6 +22,7 @@ class TestThesisQuery(TestCase):
         q = ThesisQuery(main_subject_item=msi)
         for string in msi.search_strings:
             q.search_string = string
+            config.username = "User:Username"
             q.__prepare_and_build_query__()
             print(q.query_string)
             assert (
