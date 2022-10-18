@@ -28,7 +28,7 @@ class TestPreprintArticle(TestCase):
             assert (
                 q.query_string.replace(" ", "").strip()
                 == """
-            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:So9q
+            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:Username
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
               ?item wdt:P31/wd:P279* wd:Q580922. # preprint
