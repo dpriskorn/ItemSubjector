@@ -24,7 +24,7 @@ jobs:
       # - run: poetry run isort --check-only --profile black .||true
       - run: mkdir --parents --verbose .mypy_cache
       - run: poetry run mypy --ignore-missing-imports --install-types --non-interactive .
-      - run: cp config/__init__example.py config/__init__.py
+      - run: cp config.example.py config.py
       - run: poetry run pytest --exitfirst .
       - run: shopt -s globstar && poetry run pyupgrade --keep-runtime-typing --py37-plus **/*.py
       - run: poetry run safety check
