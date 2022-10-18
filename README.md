@@ -192,51 +192,8 @@ unfinished prepared jobs before preparing
 new jobs by running --remove-prepared-jobs*
 
 ## List of all options
-This is the output of `itemsubjector.py -h`:
-```buildoutcfg
-usage: itemsubjector.py [-h] [-a ADD [ADD ...]] [-na] [-nc] [-p] [-r] [-rm] [-m] [-w] [-su] [-iu] [--sparql [SPARQL]] [--debug-sparql]
-                        [--no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT]] [--export-jobs-to-dataframe]
+See `$ itemsubjector.py -h` for all options.
 
-ItemSubjector enables working main subject statements on items based on a
-heuristic matching the subject with the title of the item.
-
-Example adding one QID:
-'$ itemsubjector.py -a Q1234'
-
-Example adding one QID and prepare a job list to be run non-interactively later:
-'$ itemsubjector.py -a Q1234 -p'
-
-Example working on all diseases:
-'$ itemsubjector.py --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?item wdt:P1889 [].}}"'
-
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -a ADD [ADD ...], --add ADD [ADD ...], --qid-to-add ADD [ADD ...]
-                        List of QIDs or URLs to Q-items that are to be added as main subjects on scientific articles. Always add the most specific ones first. See the
-                        README for examples
-  -na, --no-aliases     Turn off alias matching
-  -nc, --no-confirmation
-                        Turn off confirmation after displaying the search expressions, before running the queries.
-  -p, --prepare-jobs    Prepare a job for later execution, e.g. in a job engine
-  -r, --run-prepared-jobs
-                        Run prepared jobs non-interactively
-  -rm, --remove-prepared-jobs
-                        Remove prepared jobs
-  -m, --match-existing-main-subjects
-                        Match from list of 136.000 already used main subjects on other scientific articles
-  -su, --show-search-urls
-                        Show an extra column in the table of search strings with links
-  -iu, --show-item-urls
-                        Show an extra column in the table of items with links
-  --sparql [SPARQL]     Work on main subject items returned by this SPARQL query. Note: "?item" has to be selected for it to work, see the example above. Note: MINUS {?item
-                        wdt:P1889 [].} must be present in the query to avoid false positives.
-  --debug-sparql        Enable debugging of SPARQL queries.
-  --no-ask-match-more-limit [NO_ASK_MATCH_MORE_LIMIT], --limit [NO_ASK_MATCH_MORE_LIMIT]
-                        When working on SPARQL queries of e.g. galaxies, match more until this many matches are in the job list
-  --export-jobs-to-dataframe
-                        Export the prepared job list to a Pandas DataFrame.
-```
 # What I learned
 * I used the black code-formatter for the first time in this project and 
 it is a pleasure to not have to sit and manually format the code anymore.
