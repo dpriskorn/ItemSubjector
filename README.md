@@ -192,7 +192,7 @@ unfinished prepared jobs before preparing
 new jobs by running --remove-prepared-jobs*
 
 ## List of all options
-See `$ itemsubjector.py -h` for all options.
+See `$ poetry run python itemsubjector.py -h` for all options.
 
 # What I learned
 * I used the black code-formatter for the first time in this project and 
