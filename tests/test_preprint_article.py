@@ -1,6 +1,7 @@
 import argparse
 from unittest import TestCase
 
+import config
 from src import tasks
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.models.wikimedia.wikidata.query.preprint_article import PreprintArticleQuery
@@ -21,12 +22,13 @@ class TestPreprintArticle(TestCase):
         q = PreprintArticleQuery(main_subject_item=msi)
         for string in msi.search_strings:
             q.search_string = string
+            config.username = "User:Username"
             q.__prepare_and_build_query__()
             print(q.query_string)
             assert (
                 q.query_string.replace(" ", "").strip()
                 == """
-            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:So9q
+            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:Username
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
               ?item wdt:P31/wd:P279* wd:Q580922. # preprint

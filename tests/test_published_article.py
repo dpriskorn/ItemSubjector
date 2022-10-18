@@ -1,6 +1,7 @@
 import argparse
 from unittest import TestCase
 
+import config
 from src import tasks
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.models.wikimedia.wikidata.query.published_article import PublishedArticleQuery
@@ -22,16 +23,17 @@ class TestPublishedArticleQuery(TestCase):
         q = PublishedArticleQuery(main_subject_item=msi)
         for string in msi.search_strings:
             q.search_string = string
+            config.username = "User:Username"
             q.__prepare_and_build_query__()
             print(q.query_string)
             assert (
                 q.query_string.replace(" ", "").replace("\\", "").strip()
                 == """
-            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:So9q
+            #ItemSubjector (https://github.com/dpriskorn/ItemSubjector), User:Username
             SELECT DISTINCT ?item ?itemLabel
             WHERE {
               hint:Query hint:optimizer "None".
-              BIND(STR('haswbstatement:P31=Q13442814 -haswbstatement:P921 "fentanyl"') as ?search_string)
+              BIND(STR('haswbstatement:P31=Q13442814 -haswbstatement:P921=Q407541 "fentanyl"') as ?search_string)
               SERVICE wikibase:mwapi {
                 bd:serviceParam wikibase:api "Search";
                                 wikibase:endpoint "www.wikidata.org";

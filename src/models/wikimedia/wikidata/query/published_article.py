@@ -1,5 +1,4 @@
 import config
-from src.helpers.console import console
 from src.models.wikimedia.wikidata.query import Query
 
 
@@ -74,12 +73,12 @@ class PublishedArticleQuery(Query):
             """
 
     def __setup_cirrussearch_params__(self):
-        if self.main_subject_item.args.limit_to_items_without_p921:
-            console.print(
-                "Limiting to scholarly articles without P921 main subject only"
-            )
-            self.cirrussearch_parameters = (
-                f"haswbstatement:P31=Q13442814 -haswbstatement:P921"
-            )
-        else:
-            self.cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921={self.main_subject_item.id}"
+        # if self.main_subject_item.args.limit_to_items_without_p921:
+        #     console.print(
+        #         "Limiting to scholarly articles without P921 main subject only"
+        #     )
+        #     self.cirrussearch_parameters = (
+        #         f"haswbstatement:P31=Q13442814 -haswbstatement:P921"
+        #     )
+        # else:
+        self.cirrussearch_parameters = f"haswbstatement:P31=Q13442814 -haswbstatement:P921={self.main_subject_item.id}"
