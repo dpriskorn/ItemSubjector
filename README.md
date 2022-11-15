@@ -170,7 +170,7 @@ The tool can create a list of jobs by picking random subjects from a
 users SPARQL query.
 
 Usage example for diseases:
-`poetry run python itemsubjector.py -iu --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136.}"`
+`poetry run python itemsubjector.py -iu --sparql "SELECT ?item WHERE {?item wdt:P31 wd:Q12136. MINUS {?main_subject_item wdt:P1889 [].}}"`
 
 This makes it much easier to cover a range a subjects. 
 This example query returns ~5000 items to match :)
