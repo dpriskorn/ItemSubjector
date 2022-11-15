@@ -17,6 +17,7 @@ from src.helpers.questions import ask_add_to_job_queue, ask_yes_no_question
 from src.models.batch_jobs import BatchJobs
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.tasks import Task
+from src.models.batch_job import BatchJob
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class MainSubjects(BaseModel):
     task: Optional[Task] = None
     main_subjects: List[str] = []
     batchjobs: BatchJobs = BatchJobs(jobs=[])
+    qid_subjects_not_picked_yet: List = []
 
     class Config:
         arbitrary_types_allowed = True
@@ -91,21 +93,12 @@ class MainSubjects(BaseModel):
         """This function randomly picks a subject and add it to the
         sparql_items of jobs if it had any matches and the user approved it"""
         # TODO break this down into smaller methods
-        qid_subjects_not_picked_yet = self.main_subjects
+        self.qid_subjects_not_picked_yet = self.main_subjects
         self.__select_task__()
         while True:
             # Check if we have any subjects left in the sparql_items
-            if len(qid_subjects_not_picked_yet):
-                console.print(f"Picking a random main subject")
-                qid = random.choice(qid_subjects_not_picked_yet)
-                qid_subjects_not_picked_yet.remove(qid)
-                main_subject_item = MainSubjectItem(
-                    id=qid,
-                    args=self.args,
-                    task=self.task,
-                    confirmation=self.args.no_confirmation,
-                )
-                job = main_subject_item.fetch_items_and_get_job_if_confirmed()
+            if len(self.qid_subjects_not_picked_yet):
+                job = self.__get_job__()
                 if job:
                     # Here we check if the user has enabled no ask more limit.
                     if self.args.no_ask_match_more_limit is None:
@@ -117,10 +110,11 @@ class MainSubjects(BaseModel):
                             if answer:
                                 self.batchjobs.jobs.append(job)
                     else:
+                        # We add them
                         self.batchjobs.jobs.append(job)
                 logger.debug(f"joblist now has {self.batchjobs.number_of_jobs} jobs")
                 print_job_statistics(batchjobs=self.batchjobs)
-                if len(qid_subjects_not_picked_yet):
+                if len(self.qid_subjects_not_picked_yet):
                     if (
                         self.args.no_ask_match_more_limit is None
                         or self.args.no_ask_match_more_limit
@@ -183,3 +177,16 @@ class MainSubjects(BaseModel):
             exit(0)
         else:
             logger.info("Detected P1889 in the query")
+
+    def __get_job__(self) -> Optional[BatchJob]:
+        console.print(f"Picking a random main subject")
+        qid = random.choice(self.qid_subjects_not_picked_yet)
+        self.qid_subjects_not_picked_yet.remove(qid)
+        main_subject_item = MainSubjectItem(
+            id=qid,
+            args=self.args,
+            task=self.task,
+            confirmation=self.args.no_confirmation,
+        )
+        return main_subject_item.fetch_items_and_get_job_if_confirmed()
+
