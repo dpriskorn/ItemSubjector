@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from consolemenu import SelectionMenu, MultiSelectMenu  # type: ignore
+from consolemenu import SelectionMenu  # type: ignore
 
 from src.helpers.console import console
 from src.models.wikimedia.wikidata.item import Item
