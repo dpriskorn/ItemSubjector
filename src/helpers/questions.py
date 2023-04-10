@@ -47,3 +47,18 @@ def ask_yes_no_question(message: str):
             else:
                 # the == operator just returns a boolean,
                 return answer[0].lower() == "y"
+
+def ask_yes_no_modify_question(self, message: str):
+    from src.helpers.menus import modify_aliases
+    
+    while True:
+        answer = console.input(message + " [Y/Enter/n/m]: ")
+        if len(answer) == 0 or answer[0].lower() in ("y", "n", "m"):
+            if len(answer) == 0:
+                return True
+            elif answer == "m":
+                modify_aliases(self)
+                return True
+            else:
+                # the == operator just returns a boolean,
+                return answer[0].lower() == "y"
