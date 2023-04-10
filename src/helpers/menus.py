@@ -51,10 +51,9 @@ def select_task() -> Task:
 
 def modify_aliases(self):
     # modify or add the aliases of a main_subject
-    if self.aliases:
-        labels = self.aliases 
-    else:
-        labels = []
+    if not self.aliases:
+        self.aliases = []
+    labels = self.aliases
     labels.append("Add an alias")
 
     while True:
