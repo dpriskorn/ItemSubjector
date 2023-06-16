@@ -11,7 +11,7 @@ import config
 from src.helpers.calculations import calculate_random_editgroups_hash
 from src.helpers.cleaning import clean_rich_formatting
 from src.helpers.console import console
-from src.helpers.questions import ask_yes_no_question
+from src.helpers.questions import ask_yes_no_question, ask_yes_no_modify_question
 from src.models.items import Items
 from src.models.items.riksdagen_documents import RiksdagenDocumentItems
 from src.models.items.scholarly_articles import ScholarlyArticleItems
@@ -236,13 +236,15 @@ class MainSubjectItem(Item):
         self.__fetch_label_and_description_and_aliases__()
         if self.__got_label__():
             console.print(f"Working on {self.label}")
+            if self.aliases:
+                console.print(f"Aliases: {self.aliases}")
             if self.__is_confirmed__():
                 return self.__fetch_and_parse__()
         return None
 
     def __is_confirmed__(self) -> bool:
         if self.confirmation:
-            return ask_yes_no_question("Do you want to continue?")
+            return ask_yes_no_modify_question(self, "Do you want to continue or modify the aliases?")
         else:
             return True
 

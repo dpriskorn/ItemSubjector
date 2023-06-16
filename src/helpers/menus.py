@@ -3,6 +3,7 @@ from typing import List
 
 from consolemenu import SelectionMenu  # type: ignore
 
+from src.helpers.console import console
 from src.models.wikimedia.wikidata.item import Item
 from src.models.wikimedia.wikidata.item.main_subject import MainSubjectItem
 from src.tasks import Task
@@ -48,6 +49,28 @@ def select_task() -> Task:
     logger.debug(f"selected:{task_index}=" f"{selected_task}")
     return selected_task
 
+def modify_aliases(self):
+    # modify or add the aliases of a main_subject
+    if not self.aliases:
+        self.aliases = []
+    labels = self.aliases
+    labels.append("Add an alias")
+
+    while True:
+        menu = SelectionMenu(labels, "Select an alias to delete or add a new alias")
+        menu.show()
+        menu.join()
+        selected_index = menu.selected_option
+        if selected_index > (len(labels) - 1):
+            logger.info("Got exit")
+            del labels[(len(labels) - 1)]
+            return self
+        elif selected_index < (len(labels) - 1):
+           del labels[selected_index]
+        elif selected_index == (len(labels) - 1):
+            newLabel = console.input("Input a new alias: ")
+            labels.insert((len(labels) - 1), newLabel)
+        
 
 # def select_language():
 #     logger = logging.getLogger(__name__)
