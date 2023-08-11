@@ -1,5 +1,5 @@
 # ItemSubjector
-*Warning ⚠️: this tool was made assuming edit groups made it possible to till back any batches in the past. unfortunately that is currently not possible for batches more than a year old. see https://t.me/c/1224298920/108683*
+*Warning ⚠️: This tool was made assuming edit groups made it possible to easily roll back any batches made in the past. Unfortunately that is currently not possible for batches more than a year old. see https://github.com/Wikidata/editgroups/issues/54*
 
 The purpose of this command-line tool is to add main subject statements to Wikidata 
 items based on a heuristic matching the subject with the title of the item. 
