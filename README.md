@@ -1,5 +1,6 @@
 # ItemSubjector
 **Please use the webapp rewrite https://github.com/dpriskorn/ItemSubjectorApp instead to avoid large batches of garbage edits needing to be reverted**
+
 *Warning ⚠️: This tool was made assuming edit groups made it possible to easily roll back any batches made in the past. Unfortunately that is currently not possible for batches more than a year old. see https://github.com/Wikidata/editgroups/issues/54*
 
 The purpose of this command-line tool is to add main subject statements to Wikidata 
